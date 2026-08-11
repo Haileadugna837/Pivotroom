@@ -10,12 +10,16 @@ the tree.
 | Google Calendar/Meet client (OAuth, event+Meet creation, freebusy) | `src/lib/google/` | built |
 | Google Calendar connect flow (per-expert OAuth) | `src/app/api/integrations/google/` | built |
 | Admin email allowlist | `src/lib/admin.ts` | built (`haile12adugna@gmail.com`) |
-| Login/signup (email+password, Google OAuth), header/nav | `src/features/auth/`, `src/app/login/`, `src/app/signup/`, `src/app/auth/callback/` | built |
-| Expert directory, profile page, apply-as-expert, reviews display | `src/features/experts/`, `src/app/experts/` | built |
+| Shared sidebar component (role-aware nav + sign out) | `src/components/sidebar.tsx` | built |
+| Login/signup (email+password, Google OAuth), top header/nav | `src/features/auth/`, `src/app/login/`, `src/app/signup/`, `src/app/auth/callback/` | built |
+| **Client account area** — My Bookings, Settings | `src/app/dashboard/layout.tsx` (sidebar), `src/app/dashboard/page.tsx`, `src/app/dashboard/settings/page.tsx` | built |
+| **Expert account area** — Profile (apply/edit), Availability, Bookings | `src/app/dashboard/expert/{profile,availability,bookings}/page.tsx` | built |
+| **Admin account area** — Pending Experts, Payments, Payouts, Settings | `src/app/admin/layout.tsx` (sidebar), `src/app/admin/{page,payments,payouts,settings}.tsx` | built |
+| Expert directory, public profile page, reviews display | `src/features/experts/`, `src/app/experts/` | built |
 | Expert availability windows (per-date, not weekly recurring) | `src/features/booking/components/availability-manager.tsx`, `src/features/booking/server/availability-actions.ts` | built |
 | Booking creation (fixed 15/30/45/60-min durations, auto-priced, availability + conflict checked), client/expert lists, completion | `src/features/booking/`, `src/app/bookings/[id]/` | built |
 | Manual payment proof submission + bank instructions | `src/features/payments-verification/`, form on `/bookings/[id]` | built |
-| Admin: approve experts (full profile visible), verify/reject payments (auto-confirms booking + creates Meet link + payout + notifies), mark payouts paid, mark bookings completed | `src/features/admin/`, `src/app/admin/` | built |
+| Admin actions: approve experts (full profile visible), verify/reject payments (auto-confirms booking + creates Meet link + payout + notifies), mark payouts paid, mark bookings completed | `src/features/admin/` | built |
 | Post-session reviews/ratings | `src/features/reviews/` | built |
 | Email notifications (Resend) | `src/features/notifications/` | built and live in production |
 
@@ -32,6 +36,7 @@ the tree.
 - Auth: Supabase Auth, email/password + Google OAuth (both enabled and working in production). Google's OAuth consent screen is still in **Testing** publishing status — only explicitly added test users (Google Cloud Console → OAuth consent screen → Test users) can use "Sign in with Google"; everyone else gets a Google-side `access_denied` screen. Decided to keep adding test users manually for now rather than start Google's verification review (needed to open Google Sign-In to the public, since `calendar.events` is a sensitive scope — requires a privacy policy page, app homepage copy, and takes days-to-weeks). Email/password signup has no such restriction and already works for anyone.
 - Admin access: hardcoded email allowlist in `src/lib/admin.ts` (`ADMIN_EMAILS`, exported — also used as the notification recipient list). Admin sees the applicant's full profile (name, email, category, headline, full bio, rate, applied date) when reviewing pending experts.
 - Brand name: Pivotroom.africa.
+- Navigation: the top header is now minimal (logo, Find an expert, Dashboard/Sign in). Everything account-related lives inside role-aware sidebars: `/dashboard/*` for clients/experts, `/admin/*` for admin. Both layouts redirect unauthenticated/unauthorized users before rendering. Sign out is a sidebar item (bottom of `Sidebar`), not in the top header. `/experts/apply` now just redirects to `/dashboard/expert/profile`, which doubles as both the first-time application form and the ongoing profile editor (same `ApplyForm`/`applyAsExpert` upsert — pre-filled with `initialValues` when a row already exists; editing never touches `is_approved`).
 
 ## Deployment
 

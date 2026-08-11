@@ -11,6 +11,17 @@ export async function getMyExpertProfile(userId: string) {
   return data;
 }
 
+export async function getMyExpertProfileFull(userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("experts")
+    .select("id, headline, bio, category_id, price_per_15_min, is_approved")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export async function hasConnectedGoogleCalendar(userId: string) {
   const supabase = await createClient();
   const { data } = await supabase

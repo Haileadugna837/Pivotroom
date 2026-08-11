@@ -1,7 +1,5 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { isAdminEmail } from "@/lib/admin";
-import { signOut } from "@/features/auth/server/actions";
 
 export async function Header() {
   const supabase = await createClient();
@@ -17,15 +15,7 @@ export async function Header() {
       <nav className="flex items-center gap-4 text-sm">
         <Link href="/experts">Find an expert</Link>
         {user ? (
-          <>
-            {isAdminEmail(user.email) && <Link href="/admin">Admin</Link>}
-            <Link href="/dashboard">Dashboard</Link>
-            <form action={signOut}>
-              <button type="submit" className="text-black/60 dark:text-white/60">
-                Sign out
-              </button>
-            </form>
-          </>
+          <Link href="/dashboard">Dashboard</Link>
         ) : (
           <>
             <Link href="/login">Sign in</Link>

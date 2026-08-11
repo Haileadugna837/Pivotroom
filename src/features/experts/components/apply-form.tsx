@@ -2,12 +2,25 @@ import { applyAsExpert } from "@/features/experts/server/actions";
 
 type Category = { id: string; name: string };
 
-export function ApplyForm({ categories }: { categories: Category[] }) {
+type ApplyFormProps = {
+  categories: Category[];
+  initialValues?: {
+    headline: string | null;
+    bio: string | null;
+    category_id: string | null;
+    price_per_15_min: number | null;
+  } | null;
+};
+
+export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
+  const isEditing = Boolean(initialValues);
+
   return (
     <form action={applyAsExpert} className="flex flex-col gap-3">
       <input
         name="headline"
         required
+        defaultValue={initialValues?.headline ?? ""}
         placeholder="Headline (e.g. Senior Product Manager)"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
@@ -15,12 +28,14 @@ export function ApplyForm({ categories }: { categories: Category[] }) {
         name="bio"
         required
         rows={4}
+        defaultValue={initialValues?.bio ?? ""}
         placeholder="Short bio"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
       <select
         name="category_id"
         required
+        defaultValue={initialValues?.category_id ?? ""}
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       >
         <option value="">Select a category</option>
@@ -38,6 +53,7 @@ export function ApplyForm({ categories }: { categories: Category[] }) {
           min="0"
           step="0.01"
           required
+          defaultValue={initialValues?.price_per_15_min ?? undefined}
           placeholder="e.g. 75"
           className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
@@ -48,9 +64,9 @@ export function ApplyForm({ categories }: { categories: Category[] }) {
       </p>
       <button
         type="submit"
-        className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
       >
-        Submit application
+        {isEditing ? "Save changes" : "Submit application"}
       </button>
     </form>
   );
