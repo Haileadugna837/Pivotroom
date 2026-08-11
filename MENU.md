@@ -9,7 +9,7 @@ the tree.
 | Supabase clients (browser/server/middleware) | `src/lib/supabase/` | built |
 | Google Calendar/Meet client | `src/lib/google/` | credentials ready (`.env.local`), client code not built |
 | Admin email allowlist | `src/lib/admin.ts` | not built (needs admin email) |
-| Login/signup (email+password, Google OAuth) | `src/features/auth/` | not built |
+| Login/signup (email+password, Google OAuth) | `src/features/auth/` | Google provider enabled in Supabase; app code not built |
 | Expert profiles, search/discovery | `src/features/experts/` | not built |
 | Booking flow, availability (Google Calendar sync) | `src/features/booking/` | not built |
 | Google Meet link generation | `src/features/video/` | not built |
@@ -31,7 +31,6 @@ the tree.
 ## Pending inputs before those areas can be built
 
 - Admin email address(es) for the allowlist.
-- Confirm Google provider is enabled in Supabase dashboard (Authentication → Providers → Google) with the Client ID/Secret pasted in.
 - Email notification provider choice + API key (not yet requested).
 
 ## Credentials on hand (in `.env.local`, not committed)
