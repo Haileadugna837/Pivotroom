@@ -16,7 +16,7 @@ the tree.
 | Manual payment proof submission + bank instructions | `src/features/payments-verification/`, form on `/bookings/[id]` | built |
 | Admin: approve experts, verify/reject payments (auto-confirms booking + creates Meet link + payout + notifies), mark payouts paid, mark bookings completed | `src/features/admin/`, `src/app/admin/` | built |
 | Post-session reviews/ratings | `src/features/reviews/` | built |
-| Email notifications (Resend) | `src/features/notifications/` | built, sending disabled until `RESEND_API_KEY` is set |
+| Email notifications (Resend) | `src/features/notifications/` | built, `RESEND_API_KEY` on hand — live once deployed |
 
 ## Decisions locked in
 
@@ -57,18 +57,22 @@ RLS policies added this round: `bookings: client submit payment` (pending_paymen
 
 ## Pending inputs
 
-- `RESEND_API_KEY` (resend.com → API Keys → Create) to actually start sending emails — code is ready, currently no-ops with a console warning.
+None currently blocking — all core flows have their credentials. Still open:
+domain-verified email sender (see Known gaps above).
 
 ## Credentials on hand (in `.env.local`, not committed)
 
 - Supabase URL, anon key, and service role key
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (Calendar API enabled, consent screen in Testing mode, `calendar.events` scope added, OAuth client "Pivotroom web" created)
 - `NEXT_PUBLIC_SITE_URL` (currently `http://localhost:3000` — update when a real domain is live, and add its `/api/integrations/google/callback` URL to the Google OAuth client's authorized redirect URIs)
+- `RESEND_API_KEY` (sending from shared `onboarding@resend.dev` until domain verified)
 
 ## Known sandbox limitation
 
-Outbound requests to `*.supabase.co` are blocked by this dev container's network
-egress allowlist — `npm run dev` will error on any Supabase-backed page here.
-This is a sandbox restriction, not a code bug; verified by running equivalent
-queries directly via the Supabase MCP tools. Works normally on any real
-deployment (Vercel, etc.).
+Outbound requests to `*.supabase.co` and `api.resend.com` are blocked by this dev
+container's network egress allowlist — `npm run dev` will error on any
+Supabase- or email-backed page here, and there's no way to smoke-test a real
+Resend send from inside this sandbox. This is a sandbox restriction, not a
+code bug; verified by running equivalent queries directly via the Supabase
+MCP tools and by a direct curl to api.resend.com (403 from the proxy, not
+from Resend). Works normally on any real deployment (Vercel, etc.).
