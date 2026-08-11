@@ -6,6 +6,7 @@ type BookingRow = {
   status: string;
   price: number | null;
   currency: string;
+  counterpartName?: string | null;
 };
 
 export function BookingsList({ bookings, emptyLabel }: { bookings: BookingRow[]; emptyLabel: string }) {
@@ -21,7 +22,12 @@ export function BookingsList({ bookings, emptyLabel }: { bookings: BookingRow[];
             href={`/bookings/${b.id}`}
             className="flex items-center justify-between rounded-lg border border-black/10 p-3 text-sm hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
           >
-            <span>{new Date(b.start_time).toLocaleString()}</span>
+            <span>
+              {new Date(b.start_time).toLocaleString()}
+              {b.counterpartName && (
+                <span className="text-black/50 dark:text-white/50"> · {b.counterpartName}</span>
+              )}
+            </span>
             <span className="text-black/60 dark:text-white/60">{b.status}</span>
           </Link>
         </li>

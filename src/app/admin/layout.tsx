@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
-import { Sidebar, type SidebarItem } from "@/components/sidebar";
+import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
 
 const items: SidebarItem[] = [
   { href: "/admin", label: "Pending Experts" },
@@ -20,9 +20,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (!user || !isAdminEmail(user.email)) redirect("/");
 
   return (
-    <div className="flex flex-1">
-      <Sidebar title="Admin" items={items} />
-      <main className="flex-1">{children}</main>
-    </div>
+    <SidebarLayout title="Admin" items={items}>
+      {children}
+    </SidebarLayout>
   );
 }

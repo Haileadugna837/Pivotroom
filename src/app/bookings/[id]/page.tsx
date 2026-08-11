@@ -49,6 +49,34 @@ export default async function BookingDetailPage({
     <div className="mx-auto max-w-lg px-4 py-10">
       <h1 className="text-xl font-semibold">Booking</h1>
       <dl className="mt-4 space-y-2 text-sm">
+        {isClient && booking.expertName && (
+          <div className="flex justify-between">
+            <dt className="text-black/50 dark:text-white/50">Expert</dt>
+            <dd>{booking.expertName}</dd>
+          </div>
+        )}
+        {isExpert && booking.clientName && (
+          <div className="flex justify-between">
+            <dt className="text-black/50 dark:text-white/50">Client</dt>
+            <dd>{booking.clientName}</dd>
+          </div>
+        )}
+        {isAdmin && (
+          <>
+            {booking.expertName && (
+              <div className="flex justify-between">
+                <dt className="text-black/50 dark:text-white/50">Expert</dt>
+                <dd>{booking.expertName}</dd>
+              </div>
+            )}
+            {booking.clientName && (
+              <div className="flex justify-between">
+                <dt className="text-black/50 dark:text-white/50">Client</dt>
+                <dd>{booking.clientName}</dd>
+              </div>
+            )}
+          </>
+        )}
         <div className="flex justify-between">
           <dt className="text-black/50 dark:text-white/50">When</dt>
           <dd>{new Date(booking.start_time).toLocaleString()}</dd>

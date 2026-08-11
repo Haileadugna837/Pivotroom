@@ -11,7 +11,18 @@ export async function getBookingForClient(bookingId: string) {
     .maybeSingle();
 
   if (error) throw error;
-  return data;
+  if (!data) return null;
+
+  const [{ data: expertProfile }, { data: clientProfile }] = await Promise.all([
+    supabase.from("expert_public_profiles").select("full_name").eq("id", data.expert_id).maybeSingle(),
+    supabase.from("profiles").select("full_name").eq("id", data.client_id).maybeSingle(),
+  ]);
+
+  return {
+    ...data,
+    expertName: expertProfile?.full_name ?? null,
+    clientName: clientProfile?.full_name ?? null,
+  };
 }
 
 export async function getMyBookingsAsClient() {
@@ -28,7 +39,18 @@ export async function getMyBookingsAsClient() {
     .order("start_time", { ascending: false });
 
   if (error) throw error;
-  return data;
+  if (!data.length) return [];
+
+  const { data: expertProfiles } = await supabase
+    .from("expert_public_profiles")
+    .select("id, full_name")
+    .in(
+      "id",
+      data.map((b) => b.expert_id),
+    );
+  const nameByExpertId = new Map((expertProfiles ?? []).map((p) => [p.id, p.full_name]));
+
+  return data.map((b) => ({ ...b, counterpartName: nameByExpertId.get(b.expert_id) ?? null }));
 }
 
 export async function getMyAvailability() {
@@ -65,5 +87,16 @@ export async function getMyBookingsAsExpert() {
     .order("start_time", { ascending: false });
 
   if (error) throw error;
-  return data;
+  if (!data.length) return [];
+
+  const { data: clientProfiles } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .in(
+      "id",
+      data.map((b) => b.client_id),
+    );
+  const nameByClientId = new Map((clientProfiles ?? []).map((p) => [p.id, p.full_name]));
+
+  return data.map((b) => ({ ...b, counterpartName: nameByClientId.get(b.client_id) ?? null }));
 }

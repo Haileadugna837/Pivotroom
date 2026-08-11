@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { getMyExpertProfile } from "@/features/experts/server/self";
-import { Sidebar, type SidebarItem } from "@/components/sidebar";
+import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
@@ -33,9 +33,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <div className="flex flex-1">
-      <Sidebar title="Account" items={items} />
-      <main className="flex-1">{children}</main>
-    </div>
+    <SidebarLayout title="Account" items={items}>
+      {children}
+    </SidebarLayout>
   );
 }

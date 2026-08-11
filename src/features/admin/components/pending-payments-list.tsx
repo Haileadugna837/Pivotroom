@@ -1,5 +1,7 @@
 import { verifyPayment, rejectPayment } from "@/features/admin/server/actions";
 
+type Profile = { full_name: string | null; email: string } | null;
+
 type PendingProof = {
   id: string;
   booking_id: string;
@@ -15,6 +17,8 @@ type PendingProof = {
     client_id: string;
     expert_id: string;
   } | null;
+  clientProfile: Profile;
+  expertProfile: Profile;
 };
 
 export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
@@ -28,6 +32,9 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
         const booking = p.bookings;
         return (
           <li key={p.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <p className="font-medium">
+              {p.expertProfile?.full_name ?? "Unknown expert"} ← {p.clientProfile?.full_name ?? "Unknown client"}
+            </p>
             <p>
               Txn <span className="font-mono">{p.transaction_id}</span> — {p.payer_name} —{" "}
               {p.payment_date}
