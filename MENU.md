@@ -13,7 +13,7 @@ the tree.
 | Login/signup (email+password, Google OAuth), header/nav | `src/features/auth/`, `src/app/login/`, `src/app/signup/`, `src/app/auth/callback/` | built |
 | Expert directory, profile page, apply-as-expert | `src/features/experts/`, `src/app/experts/` | built |
 | Booking creation + client/expert booking lists | `src/features/booking/`, `src/app/bookings/[id]/` | built |
-| Manual payment proof submission | `src/features/payments-verification/`, form on `/bookings/[id]` | built (client side) |
+| Manual payment proof submission + bank instructions | `src/features/payments-verification/`, form on `/bookings/[id]` | built |
 | Admin: approve experts, verify/reject payments (auto-confirms booking + creates Meet link + payout), mark payouts paid | `src/features/admin/`, `src/app/admin/` | built |
 | Post-session reviews/ratings | `src/features/reviews/` | not built |
 | Email notifications | `src/features/notifications/` | not built (email provider not chosen) |
@@ -49,13 +49,8 @@ proof) → `confirmed` (admin verifies) → `completed` (not yet automated) /
 - No way to mark a booking `completed` after the session happens.
 - No reviews feature yet.
 - No email notifications (booking confirmed, payment rejected, reminders).
-- No payment instructions shown to the client on `/bookings/[id]` — placeholder
-  text only. Needs real payment details (bank/mobile money) from the user.
-
 ## Pending inputs
 
-- Real payment instructions (bank account / mobile money details) to show
-  clients before they pay.
 - Email notification provider choice + API key (not yet requested).
 
 ## Credentials on hand (in `.env.local`, not committed)

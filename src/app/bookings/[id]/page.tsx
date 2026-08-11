@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getBookingForClient } from "@/features/booking/server/queries";
 import { PaymentProofForm } from "@/features/payments-verification/components/payment-proof-form";
+import { PaymentInstructions } from "@/features/payments-verification/components/payment-instructions";
 
 const STATUS_LABEL: Record<string, string> = {
   pending_payment: "Awaiting payment",
@@ -65,10 +66,7 @@ export default async function BookingDetailPage({
       {booking.status === "pending_payment" && (
         <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
           <h2 className="mb-2 text-sm font-medium">Pay for this session</h2>
-          <p className="mb-4 text-sm text-black/60 dark:text-white/60">
-            Payment instructions will be shown here once provided. After paying,
-            submit your transaction details below for admin verification.
-          </p>
+          <PaymentInstructions price={booking.price} currency={booking.currency} />
           <PaymentProofForm bookingId={booking.id} />
         </div>
       )}
