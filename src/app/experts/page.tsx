@@ -1,0 +1,32 @@
+import { getApprovedExperts } from "@/features/experts/server/queries";
+import { ExpertCard } from "@/features/experts/components/expert-card";
+
+export default async function ExpertsPage() {
+  const experts = await getApprovedExperts();
+
+  return (
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <h1 className="mb-6 text-xl font-semibold">Find an expert</h1>
+      {experts.length === 0 ? (
+        <p className="text-sm text-black/60 dark:text-white/60">
+          No experts are listed yet.
+        </p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {experts.map((expert) => (
+            <ExpertCard
+              key={expert.id}
+              headline={expert.headline}
+              bio={expert.bio}
+              sessionRate={expert.session_rate}
+              currency={expert.currency}
+              sessionDurationMinutes={expert.session_duration_minutes}
+              categoryName={expert.categories?.name ?? null}
+              fullName={expert.profile?.full_name ?? null}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
