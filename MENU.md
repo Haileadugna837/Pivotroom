@@ -7,7 +7,7 @@ the tree.
 | Area | Path | Status |
 |---|---|---|
 | Supabase clients (browser/server/middleware) | `src/lib/supabase/` | built |
-| Google Calendar/Meet client | `src/lib/google/` | not built (needs `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET`) |
+| Google Calendar/Meet client | `src/lib/google/` | credentials ready (`.env.local`), client code not built |
 | Admin email allowlist | `src/lib/admin.ts` | not built (needs admin email) |
 | Login/signup (email+password, Google OAuth) | `src/features/auth/` | not built |
 | Expert profiles, search/discovery | `src/features/experts/` | not built |
@@ -31,5 +31,10 @@ the tree.
 ## Pending inputs before those areas can be built
 
 - Admin email address(es) for the allowlist.
-- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` from Google Cloud Console (Calendar API enabled, OAuth consent screen configured — see chat for exact steps).
+- Confirm Google provider is enabled in Supabase dashboard (Authentication → Providers → Google) with the Client ID/Secret pasted in.
 - Email notification provider choice + API key (not yet requested).
+
+## Credentials on hand (in `.env.local`, not committed)
+
+- Supabase URL + anon key
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (Calendar API enabled, consent screen in Testing mode, `calendar.events` scope added, OAuth client "Pivotroom web" created)
