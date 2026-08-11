@@ -37,8 +37,8 @@ export default async function ExpertDetailPage({
         <p className="mt-2 text-sm text-black/70 dark:text-white/70">{expert.bio}</p>
       )}
       <p className="mt-3 font-medium">
-        {expert.session_rate != null
-          ? `${expert.currency} ${expert.session_rate} / ${expert.session_duration_minutes} min`
+        {expert.price_per_15_min != null
+          ? `${expert.currency} ${expert.price_per_15_min} / 15 min`
           : "Rate not set"}
       </p>
 
@@ -52,9 +52,9 @@ export default async function ExpertDetailPage({
         {user ? (
           <BookingForm
             expertId={expert.id}
-            sessionRate={expert.session_rate}
+            pricePer15Min={expert.price_per_15_min}
             currency={expert.currency}
-            sessionDurationMinutes={expert.session_duration_minutes}
+            availability={expert.availability}
           />
         ) : (
           <p className="text-sm">

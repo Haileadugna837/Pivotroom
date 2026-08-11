@@ -19,9 +19,8 @@ export default async function ExpertsPage() {
               <ExpertCard
                 headline={expert.headline}
                 bio={expert.bio}
-                sessionRate={expert.session_rate}
+                pricePer15Min={expert.price_per_15_min}
                 currency={expert.currency}
-                sessionDurationMinutes={expert.session_duration_minutes}
                 categoryName={expert.categories?.name ?? null}
                 fullName={expert.profile?.full_name ?? null}
               />

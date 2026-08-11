@@ -60,3 +60,31 @@ export async function isSlotAvailable({
 
   return { available: true };
 }
+
+// Confirms the requested [startTime, endTime) on `date` sits fully inside
+// one of the expert's declared availability windows for that date.
+export async function isWithinAvailabilityWindow({
+  expertId,
+  date,
+  startTime,
+  endTime,
+}: {
+  expertId: string;
+  date: string;
+  startTime: string; // HH:MM:SS
+  endTime: string; // HH:MM:SS
+}): Promise<boolean> {
+  const admin = createAdminClient();
+
+  const { data, error } = await admin
+    .from("expert_availability")
+    .select("id")
+    .eq("expert_id", expertId)
+    .eq("date", date)
+    .lte("start_time", startTime)
+    .gte("end_time", endTime)
+    .limit(1);
+
+  if (error) throw error;
+  return data.length > 0;
+}

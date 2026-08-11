@@ -5,7 +5,7 @@ export async function getPendingExperts() {
   const admin = createAdminClient();
   const { data: experts, error } = await admin
     .from("experts")
-    .select("id, headline, bio, session_rate, currency, category_id, created_at")
+    .select("id, headline, bio, price_per_15_min, currency, categories(name), created_at")
     .eq("is_approved", false)
     .order("created_at", { ascending: true });
   if (error) throw error;

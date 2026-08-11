@@ -1,9 +1,8 @@
 type ExpertCardProps = {
   headline: string | null;
   bio: string | null;
-  sessionRate: number | null;
+  pricePer15Min: number | null;
   currency: string;
-  sessionDurationMinutes: number;
   categoryName: string | null;
   fullName: string | null;
 };
@@ -11,9 +10,8 @@ type ExpertCardProps = {
 export function ExpertCard({
   headline,
   bio,
-  sessionRate,
+  pricePer15Min,
   currency,
-  sessionDurationMinutes,
   categoryName,
   fullName,
 }: ExpertCardProps) {
@@ -30,9 +28,7 @@ export function ExpertCard({
       {headline && <p className="text-sm text-black/70 dark:text-white/70">{headline}</p>}
       {bio && <p className="line-clamp-2 text-xs text-black/50 dark:text-white/50">{bio}</p>}
       <div className="mt-2 text-sm font-medium">
-        {sessionRate != null
-          ? `${currency} ${sessionRate} / ${sessionDurationMinutes} min`
-          : "Rate not set"}
+        {pricePer15Min != null ? `${currency} ${pricePer15Min} / 15 min` : "Rate not set"}
       </div>
     </div>
   );

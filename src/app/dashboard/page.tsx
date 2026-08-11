@@ -2,8 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyExpertProfile, hasConnectedGoogleCalendar } from "@/features/experts/server/self";
-import { getMyBookingsAsClient, getMyBookingsAsExpert } from "@/features/booking/server/queries";
+import {
+  getMyBookingsAsClient,
+  getMyBookingsAsExpert,
+  getMyAvailability,
+} from "@/features/booking/server/queries";
 import { BookingsList } from "@/features/booking/components/bookings-list";
+import { AvailabilityManager } from "@/features/booking/components/availability-manager";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -18,9 +23,9 @@ export default async function DashboardPage() {
     getMyBookingsAsClient(),
   ]);
 
-  const [calendarConnected, expertBookings] = expertProfile
-    ? await Promise.all([hasConnectedGoogleCalendar(user.id), getMyBookingsAsExpert()])
-    : [false, []];
+  const [calendarConnected, expertBookings, availability] = expertProfile
+    ? await Promise.all([hasConnectedGoogleCalendar(user.id), getMyBookingsAsExpert(), getMyAvailability()])
+    : [false, [], []];
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10">
@@ -62,6 +67,10 @@ export default async function DashboardPage() {
                     Google Calendar connected.
                   </p>
                 )}
+                <div>
+                  <h3 className="mb-2 text-sm font-medium">Availability</h3>
+                  <AvailabilityManager windows={availability} />
+                </div>
                 <div>
                   <h3 className="mb-2 text-sm font-medium">Bookings as expert</h3>
                   <BookingsList bookings={expertBookings} emptyLabel="No bookings yet." />

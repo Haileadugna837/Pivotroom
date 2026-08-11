@@ -30,26 +30,22 @@ export function ApplyForm({ categories }: { categories: Category[] }) {
           </option>
         ))}
       </select>
-      <div className="flex gap-3">
+      <label className="text-sm">
+        Price per 15 minutes (ETB)
         <input
-          name="session_rate"
+          name="price_per_15_min"
           type="number"
           min="0"
           step="0.01"
           required
-          placeholder="Session rate (USD)"
-          className="flex-1 rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          placeholder="e.g. 75"
+          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
-        <input
-          name="session_duration_minutes"
-          type="number"
-          min="15"
-          step="5"
-          defaultValue={30}
-          placeholder="Duration (min)"
-          className="w-40 rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
-        />
-      </div>
+      </label>
+      <p className="text-xs text-black/50 dark:text-white/50">
+        Clients book in 15/30/45/60-minute sessions; the price scales automatically
+        from this per-15-minute rate.
+      </p>
       <button
         type="submit"
         className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"

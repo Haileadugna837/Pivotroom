@@ -31,6 +31,26 @@ export async function getMyBookingsAsClient() {
   return data;
 }
 
+export async function getMyAvailability() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return [];
+
+  const today = new Date().toISOString().slice(0, 10);
+  const { data, error } = await supabase
+    .from("expert_availability")
+    .select("id, date, start_time, end_time")
+    .eq("expert_id", user.id)
+    .gte("date", today)
+    .order("date", { ascending: true })
+    .order("start_time", { ascending: true });
+
+  if (error) throw error;
+  return data;
+}
+
 export async function getMyBookingsAsExpert() {
   const supabase = await createClient();
   const {

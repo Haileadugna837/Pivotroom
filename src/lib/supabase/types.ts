@@ -84,6 +84,41 @@ export type Database = {
         }
         Relationships: []
       }
+      expert_availability: {
+        Row: {
+          created_at: string
+          date: string
+          end_time: string
+          expert_id: string
+          id: string
+          start_time: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          end_time: string
+          expert_id: string
+          id?: string
+          start_time: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          end_time?: string
+          expert_id?: string
+          id?: string
+          start_time?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_availability_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_google_tokens: {
         Row: {
           access_token: string | null
@@ -170,8 +205,7 @@ export type Database = {
           headline: string | null
           id: string
           is_approved: boolean
-          session_duration_minutes: number
-          session_rate: number | null
+          price_per_15_min: number | null
         }
         Insert: {
           bio?: string | null
@@ -181,8 +215,7 @@ export type Database = {
           headline?: string | null
           id: string
           is_approved?: boolean
-          session_duration_minutes?: number
-          session_rate?: number | null
+          price_per_15_min?: number | null
         }
         Update: {
           bio?: string | null
@@ -192,8 +225,7 @@ export type Database = {
           headline?: string | null
           id?: string
           is_approved?: boolean
-          session_duration_minutes?: number
-          session_rate?: number | null
+          price_per_15_min?: number | null
         }
         Relationships: [
           {

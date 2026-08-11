@@ -14,16 +14,15 @@ export async function applyAsExpert(formData: FormData) {
   const headline = String(formData.get("headline") ?? "").trim();
   const bio = String(formData.get("bio") ?? "").trim();
   const categoryId = String(formData.get("category_id") ?? "") || null;
-  const sessionRate = Number(formData.get("session_rate"));
-  const sessionDurationMinutes = Number(formData.get("session_duration_minutes")) || 30;
+  const pricePer15Min = Number(formData.get("price_per_15_min"));
 
   const { error } = await supabase.from("experts").upsert({
     id: user.id,
     headline,
     bio,
     category_id: categoryId,
-    session_rate: Number.isFinite(sessionRate) ? sessionRate : null,
-    session_duration_minutes: sessionDurationMinutes,
+    price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
+    currency: "ETB",
   });
 
   if (error) throw error;
