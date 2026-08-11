@@ -1,6 +1,6 @@
 import { applyAsExpert } from "@/features/experts/server/actions";
 
-type Category = { id: string; name: string };
+type Category = { id: string; name: string; parent_id: string | null };
 
 type ApplyFormProps = {
   categories: Category[];
@@ -14,6 +14,15 @@ type ApplyFormProps = {
 
 export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
+  const topLevel = categories.filter((c) => !c.parent_id);
+  const childrenByParent = new Map<string, Category[]>();
+  categories
+    .filter((c) => c.parent_id)
+    .forEach((c) => {
+      const list = childrenByParent.get(c.parent_id!) ?? [];
+      list.push(c);
+      childrenByParent.set(c.parent_id!, list);
+    });
 
   return (
     <form action={applyAsExpert} className="flex flex-col gap-3">
@@ -39,10 +48,15 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       >
         <option value="">Select a category</option>
-        {categories.map((c) => (
-          <option key={c.id} value={c.id}>
-            {c.name}
-          </option>
+        {topLevel.map((parent) => (
+          <optgroup key={parent.id} label={parent.name}>
+            <option value={parent.id}>{parent.name}</option>
+            {(childrenByParent.get(parent.id) ?? []).map((child) => (
+              <option key={child.id} value={child.id}>
+                — {child.name}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
       <label className="text-sm">

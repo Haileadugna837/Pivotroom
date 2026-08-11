@@ -187,13 +187,43 @@ export async function markPayoutPaid(formData: FormData) {
   revalidatePath("/admin");
 }
 
+export async function createCategory(formData: FormData) {
+  await requireAdmin();
+  const name = String(formData.get("name") ?? "").trim();
+  const parentId = String(formData.get("parent_id") ?? "") || null;
+  if (!name) throw new Error("Missing category name");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("categories").insert({ name, parent_id: parentId });
+  if (error) throw error;
+
+  revalidatePath("/admin/categories");
+}
+
+export async function deleteCategory(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing category id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("categories").delete().eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/categories");
+}
+
 export async function markBookingCompletedAsAdmin(formData: FormData) {
   await requireAdmin();
   const bookingId = String(formData.get("booking_id") ?? "");
   if (!bookingId) throw new Error("Missing booking_id");
 
   const admin = createAdminClient();
-  const { error } = await admin.from("bookings").update({ status: "completed" }).eq("id", bookingId);
+  const { error } = await admin
+    .from("bookings")
+    .update({ status: "completed" })
+    .eq("id", bookingId)
+    .eq("status", "confirmed")
+    .lte("end_time", new Date().toISOString());
   if (error) throw error;
 
   revalidatePath(`/bookings/${bookingId}`);

@@ -25,25 +25,28 @@ export function UnpaidPayoutsList({ payouts }: { payouts: UnpaidPayout[] }) {
     <ul className="flex flex-col gap-3">
       {payouts.map((p) => (
         <li key={p.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
-          <details>
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-              <div>
-                <p className="font-medium">
-                  {p.expertProfile?.full_name ?? p.expertProfile?.email ?? "Unknown expert"}
-                </p>
-                <p className="text-black/60 dark:text-white/60">
-                  {p.bookings ? new Date(p.bookings.start_time).toLocaleString() : ""} —{" "}
-                  {p.amount != null ? `${p.bookings?.currency} ${p.amount}` : "no amount"}
-                </p>
-              </div>
-              <form action={markPayoutPaid} onClick={(e) => e.stopPropagation()}>
-                <input type="hidden" name="payout_id" value={p.id} />
-                <button className="rounded-md bg-foreground px-3 py-1.5 text-background">
-                  Mark paid
-                </button>
-              </form>
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="font-medium">
+                {p.expertProfile?.full_name ?? p.expertProfile?.email ?? "Unknown expert"}
+              </p>
+              <p className="text-black/60 dark:text-white/60">
+                {p.bookings ? new Date(p.bookings.start_time).toLocaleString() : ""} —{" "}
+                {p.amount != null ? `${p.bookings?.currency} ${p.amount}` : "no amount"}
+              </p>
+            </div>
+            <form action={markPayoutPaid}>
+              <input type="hidden" name="payout_id" value={p.id} />
+              <button className="rounded-md bg-foreground px-3 py-1.5 text-background">
+                Mark paid
+              </button>
+            </form>
+          </div>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-xs text-black/50 dark:text-white/50">
+              Details
             </summary>
-            <div className="mt-3 space-y-1 border-t border-black/10 pt-3 text-black/70 dark:border-white/15 dark:text-white/70">
+            <div className="mt-2 space-y-1 border-t border-black/10 pt-2 text-black/70 dark:border-white/15 dark:text-white/70">
               <p>Expert email: {p.expertProfile?.email ?? "—"}</p>
               <p>
                 Client: {p.clientProfile?.full_name ?? "—"} ({p.clientProfile?.email ?? "—"})

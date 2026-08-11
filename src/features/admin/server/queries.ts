@@ -62,6 +62,61 @@ export async function getPendingPaymentProofs() {
   return attachNames(proofs);
 }
 
+export type BookingTab = "all" | "pending" | "confirmed" | "completed" | "cancelled" | "expired";
+
+export async function getAllBookingsForAdmin(tab: BookingTab) {
+  const admin = createAdminClient();
+  const nowIso = new Date().toISOString();
+
+  let query = admin
+    .from("bookings")
+    .select("id, client_id, expert_id, start_time, end_time, status, price, currency")
+    .order("start_time", { ascending: false });
+
+  if (tab === "pending") {
+    query = query.in("status", ["pending_payment", "payment_submitted"]).gte("end_time", nowIso);
+  } else if (tab === "confirmed") {
+    query = query.eq("status", "confirmed");
+  } else if (tab === "completed") {
+    query = query.eq("status", "completed");
+  } else if (tab === "cancelled") {
+    query = query.in("status", ["cancelled", "rejected"]);
+  } else if (tab === "expired") {
+    query = query.in("status", ["pending_payment", "payment_submitted"]).lt("end_time", nowIso);
+  }
+
+  const { data: bookings, error } = await query;
+  if (error) throw error;
+  if (!bookings.length) return [];
+
+  const ids = new Set<string>();
+  bookings.forEach((b) => {
+    ids.add(b.client_id);
+    ids.add(b.expert_id);
+  });
+  const { data: profiles } = await admin
+    .from("profiles")
+    .select("id, full_name, email")
+    .in("id", Array.from(ids));
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+
+  return bookings.map((b) => ({
+    ...b,
+    clientProfile: profileById.get(b.client_id) ?? null,
+    expertProfile: profileById.get(b.expert_id) ?? null,
+  }));
+}
+
+export async function getCategoriesForAdmin() {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("categories")
+    .select("id, name, parent_id")
+    .order("name", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
 export async function getUnpaidPayouts() {
   const admin = createAdminClient();
   const { data: payouts, error } = await admin

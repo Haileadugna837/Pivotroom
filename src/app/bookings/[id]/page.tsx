@@ -104,20 +104,27 @@ export default async function BookingDetailPage({
         </a>
       )}
 
-      {booking.status === "confirmed" && (isExpert || isAdmin) && (
-        <form
-          action={isExpert ? markBookingCompletedAsExpert : markBookingCompletedAsAdmin}
-          className="mt-4"
-        >
-          <input type="hidden" name="booking_id" value={booking.id} />
-          <button
-            type="submit"
-            className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/15"
+      {booking.status === "confirmed" &&
+        (isExpert || isAdmin) &&
+        (new Date(booking.end_time) <= new Date() ? (
+          <form
+            action={isExpert ? markBookingCompletedAsExpert : markBookingCompletedAsAdmin}
+            className="mt-4"
           >
-            Mark session completed
-          </button>
-        </form>
-      )}
+            <input type="hidden" name="booking_id" value={booking.id} />
+            <button
+              type="submit"
+              className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/15"
+            >
+              Mark session completed
+            </button>
+          </form>
+        ) : (
+          <p className="mt-4 text-xs text-black/50 dark:text-white/50">
+            You can mark this completed once the session ends at{" "}
+            {new Date(booking.end_time).toLocaleString()}.
+          </p>
+        ))}
 
       {booking.status === "pending_payment" && (
         <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">

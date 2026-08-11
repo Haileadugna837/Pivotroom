@@ -106,7 +106,9 @@ export async function markBookingCompletedAsExpert(formData: FormData) {
   const { error } = await supabase
     .from("bookings")
     .update({ status: "completed" })
-    .eq("id", bookingId);
+    .eq("id", bookingId)
+    .eq("status", "confirmed")
+    .lte("end_time", new Date().toISOString());
   if (error) throw error;
 
   revalidatePath(`/bookings/${bookingId}`);
