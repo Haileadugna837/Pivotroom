@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getApprovedExperts } from "@/features/experts/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
 
@@ -14,16 +15,17 @@ export default async function ExpertsPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2">
           {experts.map((expert) => (
-            <ExpertCard
-              key={expert.id}
-              headline={expert.headline}
-              bio={expert.bio}
-              sessionRate={expert.session_rate}
-              currency={expert.currency}
-              sessionDurationMinutes={expert.session_duration_minutes}
-              categoryName={expert.categories?.name ?? null}
-              fullName={expert.profile?.full_name ?? null}
-            />
+            <Link key={expert.id} href={`/experts/${expert.id}`}>
+              <ExpertCard
+                headline={expert.headline}
+                bio={expert.bio}
+                sessionRate={expert.session_rate}
+                currency={expert.currency}
+                sessionDurationMinutes={expert.session_duration_minutes}
+                categoryName={expert.categories?.name ?? null}
+                fullName={expert.profile?.full_name ?? null}
+              />
+            </Link>
           ))}
         </div>
       )}

@@ -29,3 +29,25 @@ export async function getApprovedExperts() {
     profile: profileById.get(expert.id) ?? null,
   }));
 }
+
+export async function getApprovedExpertById(id: string) {
+  const supabase = await createClient();
+
+  const { data: expert, error } = await supabase
+    .from("experts")
+    .select("id, headline, bio, session_rate, currency, session_duration_minutes, categories(name)")
+    .eq("id", id)
+    .eq("is_approved", true)
+    .maybeSingle();
+
+  if (error) throw error;
+  if (!expert) return null;
+
+  const { data: profile } = await supabase
+    .from("expert_public_profiles")
+    .select("id, full_name, avatar_url")
+    .eq("id", id)
+    .maybeSingle();
+
+  return { ...expert, profile: profile ?? null };
+}

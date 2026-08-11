@@ -1,6 +1,14 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
+import {
+  getPendingExperts,
+  getPendingPaymentProofs,
+  getUnpaidPayouts,
+} from "@/features/admin/server/queries";
+import { PendingExpertsList } from "@/features/admin/components/pending-experts-list";
+import { PendingPaymentsList } from "@/features/admin/components/pending-payments-list";
+import { UnpaidPayoutsList } from "@/features/admin/components/unpaid-payouts-list";
 
 export default async function AdminPage() {
   const supabase = await createClient();
@@ -10,21 +18,48 @@ export default async function AdminPage() {
 
   if (!user || !isAdminEmail(user.email)) redirect("/");
 
-  const hasServiceRoleKey = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-10">
+        <h1 className="text-xl font-semibold">Admin</h1>
+        <p className="mt-4 text-sm text-amber-700 dark:text-amber-500">
+          `SUPABASE_SERVICE_ROLE_KEY` is not set in `.env.local` — admin queries
+          cannot run yet.
+        </p>
+      </div>
+    );
+  }
+
+  const [experts, proofs, payouts] = await Promise.all([
+    getPendingExperts(),
+    getPendingPaymentProofs(),
+    getUnpaidPayouts(),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <h1 className="text-xl font-semibold">Admin</h1>
-      {!hasServiceRoleKey ? (
-        <p className="mt-4 text-sm text-amber-700 dark:text-amber-500">
-          Payment verification and payout tools need `SUPABASE_SERVICE_ROLE_KEY`
-          in `.env.local` before they can load data.
-        </p>
-      ) : (
-        <p className="mt-4 text-sm text-black/60 dark:text-white/60">
-          Payment verification queue coming next.
-        </p>
-      )}
+
+      <section className="mt-8">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-black/50 dark:text-white/50">
+          Pending expert applications
+        </h2>
+        <PendingExpertsList experts={experts} />
+      </section>
+
+      <section className="mt-10">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-black/50 dark:text-white/50">
+          Pending payment verification
+        </h2>
+        <PendingPaymentsList proofs={proofs} />
+      </section>
+
+      <section className="mt-10">
+        <h2 className="mb-3 text-sm font-medium uppercase tracking-wide text-black/50 dark:text-white/50">
+          Unpaid expert payouts
+        </h2>
+        <UnpaidPayoutsList payouts={payouts} />
+      </section>
     </div>
   );
 }
