@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function getApprovedExperts() {
   const supabase = await createClient();
@@ -6,7 +7,7 @@ export async function getApprovedExperts() {
   const { data: experts, error: expertsError } = await supabase
     .from("experts")
     .select("id, headline, bio, price_per_15_min, currency, categories(name)")
-    .eq("is_approved", true)
+    .eq("status", "approved")
     .order("created_at", { ascending: false });
 
   if (expertsError) throw expertsError;
@@ -37,7 +38,7 @@ export async function getApprovedExpertById(id: string) {
     .from("experts")
     .select("id, headline, bio, price_per_15_min, currency, categories(name)")
     .eq("id", id)
-    .eq("is_approved", true)
+    .eq("status", "approved")
     .maybeSingle();
 
   if (error) throw error;
@@ -59,6 +60,14 @@ export async function getApprovedExpertById(id: string) {
     .order("start_time", { ascending: true });
 
   if (availabilityError) throw availabilityError;
+
+  // Fire-and-forget page view record for the admin metrics dashboard.
+  // Uses the admin client since visitors (including anonymous ones) have
+  // no RLS access to this table by design.
+  createAdminClient()
+    .from("expert_profile_views")
+    .insert({ expert_id: id })
+    .then(() => {});
 
   return { ...expert, profile: profile ?? null, availability };
 }

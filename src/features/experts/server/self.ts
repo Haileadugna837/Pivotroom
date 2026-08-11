@@ -4,7 +4,7 @@ export async function getMyExpertProfile(userId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("experts")
-    .select("id, is_approved")
+    .select("id, status")
     .eq("id", userId)
     .maybeSingle();
   if (error) throw error;
@@ -15,7 +15,9 @@ export async function getMyExpertProfileFull(userId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("experts")
-    .select("id, headline, bio, category_id, price_per_15_min, is_approved")
+    .select(
+      "id, headline, bio, category_id, price_per_15_min, status, payout_account_name, payout_account_number",
+    )
     .eq("id", userId)
     .maybeSingle();
   if (error) throw error;

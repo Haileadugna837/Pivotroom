@@ -14,14 +14,18 @@ the tree.
 | Account settings: change email, change password (email/password accounts only) | `src/features/auth/components/account-settings-forms.tsx`, `updateEmail`/`updatePassword` in `src/features/auth/server/actions.ts` | built |
 | Login/signup (email+password, Google OAuth), top header/nav | `src/features/auth/`, `src/app/login/`, `src/app/signup/`, `src/app/auth/callback/` | built |
 | **Client account area** — My Bookings, Settings | `src/app/dashboard/layout.tsx` (sidebar), `src/app/dashboard/page.tsx`, `src/app/dashboard/settings/page.tsx` | built |
-| **Expert account area** — Profile (apply/edit), Availability, Bookings | `src/app/dashboard/expert/{profile,availability,bookings}/page.tsx` | built |
-| **Admin account area** — Pending Experts, Bookings (all/pending/confirmed/completed/cancelled/expired), Payments, Payouts, Categories, Settings | `src/app/admin/layout.tsx` (sidebar), `src/app/admin/{page,bookings,payments,payouts,categories,settings}.tsx` | built |
+| **Expert account area** — Profile (apply/edit, incl. payout bank account), Availability, Bookings, Payments (own status, read-only) | `src/app/dashboard/expert/{profile,availability,bookings,payments}/page.tsx` | built |
+| **Admin account area** — Dashboard (metrics), Experts (all/pending/approved/rejected/suspended), Bookings (all/pending/confirmed/completed/cancelled/expired), Payments, Payouts (all/unpaid/paid), Categories, Settings | `src/app/admin/layout.tsx` (sidebar), `src/app/admin/{page,experts,bookings,payments,payouts,categories,settings}` | built |
+| Expert status lifecycle: pending → approved / rejected / suspended, re-approvable from rejected or suspended | `experts.status`, `src/features/admin/server/actions.ts` (`approveExpert`/`rejectExpert`/`suspendExpert`), `src/features/admin/components/experts-table.tsx` | built |
+| Admin edit of any expert's profile fields (not just their own) | `src/app/admin/experts/[id]/page.tsx`, `src/features/admin/components/expert-edit-form.tsx`, `updateExpertAsAdmin` | built |
+| Admin metrics dashboard (expert counts by status, clients, expert profile views, avg views/expert) | `getDashboardMetrics` in `src/features/admin/server/queries.ts`, `src/features/admin/components/metric-card.tsx` | built |
+| Expert profile page view tracking | `expert_profile_views` table, insert in `getApprovedExpertById` | built |
 | Category/sub-category management (2-level: parent + children) | `src/features/admin/components/categories-manager.tsx`, `createCategory`/`deleteCategory` | built |
 | Expert directory, public profile page, reviews display | `src/features/experts/`, `src/app/experts/` | built |
 | Expert availability windows (per-date, not weekly recurring) | `src/features/booking/components/availability-manager.tsx`, `src/features/booking/server/availability-actions.ts` | built |
 | Booking creation (fixed 15/30/45/60-min durations, auto-priced, availability + conflict checked), client/expert lists, completion | `src/features/booking/`, `src/app/bookings/[id]/` | built |
 | Manual payment proof submission + bank instructions | `src/features/payments-verification/`, form on `/bookings/[id]` | built |
-| Admin actions: approve experts (full profile visible), verify/reject payments (auto-confirms booking + creates Meet link + payout + notifies), mark payouts paid, mark bookings completed | `src/features/admin/` | built |
+| Admin actions: approve/reject/suspend experts (full profile visible, editable), verify/reject payments (auto-confirms booking + creates Meet link + payout + notifies), mark payouts paid, mark bookings completed | `src/features/admin/` | built |
 | Post-session reviews/ratings | `src/features/reviews/` | built |
 | Email notifications (Resend) | `src/features/notifications/` | built and live in production |
 
@@ -38,7 +42,7 @@ the tree.
 - Auth: Supabase Auth, email/password + Google OAuth (both enabled and working in production). Google's OAuth consent screen is still in **Testing** publishing status — only explicitly added test users (Google Cloud Console → OAuth consent screen → Test users) can use "Sign in with Google"; everyone else gets a Google-side `access_denied` screen. Decided to keep adding test users manually for now rather than start Google's verification review (needed to open Google Sign-In to the public, since `calendar.events` is a sensitive scope — requires a privacy policy page, app homepage copy, and takes days-to-weeks). Email/password signup has no such restriction and already works for anyone.
 - Admin access: hardcoded email allowlist in `src/lib/admin.ts` (`ADMIN_EMAILS`, exported — also used as the notification recipient list). Admin sees the applicant's full profile (name, email, category, headline, full bio, rate, applied date) when reviewing pending experts.
 - Brand name: Pivotroom.africa.
-- Navigation: the top header is now minimal (logo, Find an expert, Dashboard/Sign in). Everything account-related lives inside role-aware sidebars: `/dashboard/*` for clients/experts, `/admin/*` for admin, via `SidebarLayout` — static column on desktop, hamburger-triggered slide-in drawer with backdrop on mobile (`md:` breakpoint). Both layouts redirect unauthenticated/unauthorized users before rendering. Sign out is a sidebar item (bottom of the nav), not in the top header. `/experts/apply` now just redirects to `/dashboard/expert/profile`, which doubles as both the first-time application form and the ongoing profile editor (same `ApplyForm`/`applyAsExpert` upsert — pre-filled with `initialValues` when a row already exists; editing never touches `is_approved`).
+- Navigation: the top header is now minimal (logo, Find an expert, Dashboard/Sign in). Everything account-related lives inside role-aware sidebars: `/dashboard/*` for clients/experts, `/admin/*` for admin, via `SidebarLayout` — static column on desktop, hamburger-triggered slide-in drawer with backdrop on mobile (`md:` breakpoint). Both layouts redirect unauthenticated/unauthorized users before rendering. Sign out is a sidebar item (bottom of the nav), not in the top header. `/experts/apply` now just redirects to `/dashboard/expert/profile`, which doubles as both the first-time application form and the ongoing profile editor (same `ApplyForm`/`applyAsExpert` upsert — pre-filled with `initialValues` when a row already exists; editing never touches `status`).
 - Counterpart names on bookings: an expert can see the name of a client who booked them via a new `profiles` RLS policy (`profiles: expert read own clients`, scoped to rows with a matching booking — not a blanket grant); a client already saw the expert's name via `expert_public_profiles`. Both `BookingsList` rows and `/bookings/[id]` show the name.
 - Account email changes: `supabase.auth.updateUser({ email })` triggers Supabase's own confirmation-link flow to the new address. `profiles.email` is kept in sync via a new `on_auth_user_email_updated` trigger (mirrors the existing signup trigger) so it doesn't drift from `auth.users.email`. Password change is only offered when the account has an `email` identity (`user.identities`) — hidden entirely for Google-only accounts.
 - Admin visibility: `getPendingPaymentProofs` and `getUnpaidPayouts` now resolve and attach `clientProfile`/`expertProfile` (name + email) via a shared `attachNames` helper — no more raw UUIDs in the admin UI. Payouts render as a header row (name, amount, **Mark paid** button — sibling to, not nested inside, the disclosure) plus a separate `<details>` for extra info (client email, expert email, session time range). The button was originally nested inside `<summary>`, which is why "Mark paid" appeared broken — clicking an interactive control inside `<summary>` races against the browser's native open/close toggle. Don't reintroduce that nesting.
@@ -47,6 +51,11 @@ the tree.
 - Session completion is now time-gated, not just status-gated: the RLS policy `bookings: expert mark completed` requires `end_time <= now()` in its `USING` clause (in addition to `status = 'confirmed'`), and the admin path (service role, bypasses RLS) enforces the same via explicit `.eq("status","confirmed").lte("end_time", nowIso)` on the update. `/bookings/[id]` only renders the button once `end_time` has passed; before that it shows when the button will become available.
 - Categories now support one level of nesting (`categories.parent_id`, self-referencing, `on delete set null`). `experts.category_id`'s FK was changed to `on delete set null` too, so deleting a category never fails or cascades — it just clears the field on any expert using it. Admin manages categories at `/admin/categories`; the expert profile form groups the `<select>` by parent via `<optgroup>`, indenting children with "— ".
 - New `/admin/bookings`: all bookings in a table (When / Client / Expert / Price / Status), filterable via tabs backed by `?tab=` search param (server-rendered, no client JS) — `getAllBookingsForAdmin(tab)` in `src/features/admin/server/queries.ts`. "Expired" is a derived bucket, not a stored status: `status in ('pending_payment','payment_submitted') and end_time < now()` — i.e. a booking that was never confirmed and whose scheduled time has already passed. "Pending" is the same status set but with `end_time >= now()`. "Cancelled" folds in `rejected` alongside `cancelled` since there's no separate tab for it.
+- Expert lifecycle replaced the old `is_approved` boolean with `experts.status` ('pending' | 'approved' | 'rejected' | 'suspended', DB check constraint). **Rejecting no longer deletes the row** (it used to) — rejected/suspended experts stay in the table so admin can review and re-approve them from `/admin/experts?tab=rejected` or `?tab=suspended` (both show an "Approve" button, same action as the pending tab). All public/booking-facing queries now filter `status = 'approved'` instead of `is_approved = true`.
+- Payout bank account: experts add `payout_account_name`/`payout_account_number` on their profile form (`/dashboard/expert/profile`), covered by their existing self-update RLS policy. Admin sees these on `/admin/payouts` inside each row's "Details" disclosure — that's literally where admin gets the account to send money to. Admin can also edit these directly per-expert via `/admin/experts/[id]`.
+- Payouts got their own `all`/`unpaid`/`paid` tabs (`?tab=`, defaults to `unpaid`) — `getPayoutsForAdmin(tab)`. Paid rows show a "Paid on {date}" badge instead of the "Mark paid" button.
+- Expert-facing read-only payments view at `/dashboard/expert/payments`: for each of their bookings, shows the client name, price, payment-proof status (pending/verified/rejected), and payout status (unpaid/paid + paid date). No "mark paid" control for experts — explicitly decided to keep payout confirmation admin-only so it stays a trustworthy record of who's actually been paid, not a self-report. Needed a new RLS policy (`payment_proofs: expert read own bookings`) since experts previously had no read access to payment_proofs at all.
+- Admin dashboard metrics (`/admin`, now the sidebar's first item) are deliberately simple, computed via `count(*, {head:true})` queries, no analytics service: total experts + per-status breakdown, "clients" (defined as `profiles count - experts count`, i.e. registered users who never applied to be an expert — not a maintained `role` column, since that field isn't actually used anywhere else), total expert-profile-page views (`expert_profile_views`, one row inserted per `/experts/[id]` render, fire-and-forget via the admin client so anonymous visitors don't need any RLS grant), and views ÷ approved-expert-count for the average. This is expert-profile-page traffic specifically, not site-wide analytics — labeled that way on the cards to avoid overclaiming.
 
 ## Deployment
 
@@ -58,15 +67,19 @@ the tree.
 
 ## Database (project `dleyuziqoppoypbjxlqt`, region eu-west-2)
 
-Tables: `profiles` (auto-created on signup via trigger), `categories` (seeded with
-8 starter categories), `experts` (now: `price_per_15_min`, `currency` — no more
-`session_rate`/`session_duration_minutes`), `expert_availability` (per-date
-windows), `expert_google_tokens` (service-role write, expert can read own row),
-`bookings`, `payment_proofs`, `expert_payouts`, `reviews`. All have RLS enabled.
-View `expert_public_profiles` exposes only name/avatar for approved experts
-(intentionally security-definer — flagged ERROR by the linter but scoped to 3
-non-sensitive columns, filtered to `is_approved = true`; accepted tradeoff, do
-not "fix" by loosening `profiles` RLS).
+Tables: `profiles` (auto-created on signup via trigger), `categories` (now with
+`parent_id` for one level of sub-categories, `on delete set null`), `experts`
+(`status` lifecycle, `price_per_15_min`, `currency`, `payout_account_name`,
+`payout_account_number` — no more `is_approved`/`session_rate`/`session_duration_minutes`),
+`expert_availability` (per-date windows), `expert_google_tokens` (service-role
+write, expert can read own row), `expert_profile_views` (service-role only, no
+RLS policies at all), `bookings`, `payment_proofs`, `expert_payouts`, `reviews`.
+All have RLS enabled. View `expert_public_profiles` exposes only name/avatar
+for approved experts (intentionally security-definer — flagged ERROR by the
+linter but scoped to 3 non-sensitive columns, filtered to `status = 'approved'`;
+accepted tradeoff, do not "fix" by loosening `profiles` RLS).
+`experts.category_id`'s FK is `on delete set null`, so deleting a category
+never fails or cascades.
 
 Booking status flow: `pending_payment` → `payment_submitted` (client submits
 proof) → `confirmed` (admin verifies) → `completed` (expert/admin marks it) /

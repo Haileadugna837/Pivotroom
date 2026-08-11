@@ -1,7 +1,13 @@
-import { getUnpaidPayouts } from "@/features/admin/server/queries";
-import { UnpaidPayoutsList } from "@/features/admin/components/unpaid-payouts-list";
+import { getPayoutsForAdmin, type PayoutTab } from "@/features/admin/server/queries";
+import { PayoutsList } from "@/features/admin/components/payouts-list";
 
-export default async function AdminPayoutsPage() {
+const VALID_TABS: PayoutTab[] = ["all", "unpaid", "paid"];
+
+export default async function AdminPayoutsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
       <div className="mx-auto max-w-4xl px-6 py-10">
@@ -13,12 +19,15 @@ export default async function AdminPayoutsPage() {
     );
   }
 
-  const payouts = await getUnpaidPayouts();
+  const { tab } = await searchParams;
+  const activeTab: PayoutTab = VALID_TABS.includes(tab as PayoutTab) ? (tab as PayoutTab) : "unpaid";
+
+  const payouts = await getPayoutsForAdmin(activeTab);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="mb-6 text-xl font-semibold">Unpaid Expert Payouts</h1>
-      <UnpaidPayoutsList payouts={payouts} />
+      <h1 className="mb-6 text-xl font-semibold">Payouts</h1>
+      <PayoutsList payouts={payouts} activeTab={activeTab} />
     </div>
   );
 }

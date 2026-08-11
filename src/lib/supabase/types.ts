@@ -130,6 +130,32 @@ export type Database = {
           },
         ]
       }
+      expert_profile_views: {
+        Row: {
+          expert_id: string
+          id: string
+          viewed_at: string
+        }
+        Insert: {
+          expert_id: string
+          id?: string
+          viewed_at?: string
+        }
+        Update: {
+          expert_id?: string
+          id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_profile_views_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_google_tokens: {
         Row: {
           access_token: string | null
@@ -215,8 +241,10 @@ export type Database = {
           currency: string
           headline: string | null
           id: string
-          is_approved: boolean
+          payout_account_name: string | null
+          payout_account_number: string | null
           price_per_15_min: number | null
+          status: string
         }
         Insert: {
           bio?: string | null
@@ -225,8 +253,10 @@ export type Database = {
           currency?: string
           headline?: string | null
           id: string
-          is_approved?: boolean
+          payout_account_name?: string | null
+          payout_account_number?: string | null
           price_per_15_min?: number | null
+          status?: string
         }
         Update: {
           bio?: string | null
@@ -235,8 +265,10 @@ export type Database = {
           currency?: string
           headline?: string | null
           id?: string
-          is_approved?: boolean
+          payout_account_name?: string | null
+          payout_account_number?: string | null
           price_per_15_min?: number | null
+          status?: string
         }
         Relationships: [
           {

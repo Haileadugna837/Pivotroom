@@ -16,10 +16,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const items: SidebarItem[] = [{ href: "/dashboard", label: "My Bookings" }];
 
-  if (expertProfile?.is_approved) {
+  if (expertProfile?.status === "approved") {
     items.push(
       { href: "/dashboard/expert/bookings", label: "Expert Bookings" },
       { href: "/dashboard/expert/availability", label: "Availability" },
+      { href: "/dashboard/expert/payments", label: "Payments" },
       { href: "/dashboard/expert/profile", label: "Expert Profile" },
     );
   } else {

@@ -12,7 +12,7 @@ export default async function ExpertBookingsPage() {
   if (!user) redirect("/login");
 
   const expertProfile = await getMyExpertProfile(user.id);
-  if (!expertProfile?.is_approved) redirect("/dashboard");
+  if (expertProfile?.status !== "approved") redirect("/dashboard");
 
   const bookings = await getMyBookingsAsExpert();
 

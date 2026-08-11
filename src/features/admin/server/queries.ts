@@ -1,13 +1,22 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-export async function getPendingExperts() {
+export type ExpertTab = "all" | "pending" | "approved" | "rejected" | "suspended";
+
+export async function getExpertsForAdmin(tab: ExpertTab) {
   const admin = createAdminClient();
-  const { data: experts, error } = await admin
+  let query = admin
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, categories(name), created_at")
-    .eq("is_approved", false)
+    .select(
+      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, categories(name), created_at",
+    )
     .order("created_at", { ascending: true });
+
+  if (tab !== "all") {
+    query = query.eq("status", tab);
+  }
+
+  const { data: experts, error } = await query;
   if (error) throw error;
   if (!experts.length) return [];
 
@@ -21,6 +30,27 @@ export async function getPendingExperts() {
   const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
 
   return experts.map((e) => ({ ...e, profile: profileById.get(e.id) ?? null }));
+}
+
+export async function getExpertByIdForAdmin(id: string) {
+  const admin = createAdminClient();
+  const { data: expert, error } = await admin
+    .from("experts")
+    .select(
+      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number",
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!expert) return null;
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("full_name, email")
+    .eq("id", id)
+    .maybeSingle();
+
+  return { ...expert, profile: profile ?? null };
 }
 
 async function attachNames<T extends { bookings: { client_id: string; expert_id: string } | null }>(
@@ -117,15 +147,75 @@ export async function getCategoriesForAdmin() {
   return data;
 }
 
-export async function getUnpaidPayouts() {
+export type PayoutTab = "all" | "unpaid" | "paid";
+
+export async function getPayoutsForAdmin(tab: PayoutTab) {
   const admin = createAdminClient();
-  const { data: payouts, error } = await admin
+  let query = admin
     .from("expert_payouts")
     .select(
-      "id, booking_id, amount, status, created_at, bookings(id, client_id, expert_id, start_time, end_time, currency)",
+      "id, booking_id, amount, status, paid_at, created_at, bookings(id, client_id, expert_id, start_time, end_time, currency)",
     )
-    .eq("status", "unpaid")
     .order("created_at", { ascending: true });
+
+  if (tab !== "all") {
+    query = query.eq("status", tab);
+  }
+
+  const { data: payouts, error } = await query;
   if (error) throw error;
-  return attachNames(payouts);
+
+  const withNames = await attachNames(payouts);
+
+  const expertIds = Array.from(
+    new Set(withNames.map((p) => p.bookings?.expert_id).filter((id): id is string => Boolean(id))),
+  );
+  const { data: experts } = await admin
+    .from("experts")
+    .select("id, payout_account_name, payout_account_number")
+    .in("id", expertIds.length > 0 ? expertIds : [""]);
+  const payoutInfoByExpertId = new Map((experts ?? []).map((e) => [e.id, e]));
+
+  return withNames.map((p) => ({
+    ...p,
+    expertPayoutInfo: p.bookings ? (payoutInfoByExpertId.get(p.bookings.expert_id) ?? null) : null,
+  }));
+}
+
+export async function getDashboardMetrics() {
+  const admin = createAdminClient();
+
+  const [
+    { count: totalExperts },
+    { count: approvedExperts },
+    { count: pendingExperts },
+    { count: rejectedExperts },
+    { count: suspendedExperts },
+    { count: totalProfiles },
+    { count: totalViews },
+  ] = await Promise.all([
+    admin.from("experts").select("id", { count: "exact", head: true }),
+    admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "approved"),
+    admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "pending"),
+    admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "rejected"),
+    admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "suspended"),
+    admin.from("profiles").select("id", { count: "exact", head: true }),
+    admin.from("expert_profile_views").select("id", { count: "exact", head: true }),
+  ]);
+
+  const experts = totalExperts ?? 0;
+  const profiles = totalProfiles ?? 0;
+  const views = totalViews ?? 0;
+  const approved = approvedExperts ?? 0;
+
+  return {
+    totalExperts: experts,
+    approvedExperts: approved,
+    pendingExperts: pendingExperts ?? 0,
+    rejectedExperts: rejectedExperts ?? 0,
+    suspendedExperts: suspendedExperts ?? 0,
+    totalClients: Math.max(profiles - experts, 0),
+    totalProfileViews: views,
+    avgViewsPerExpert: approved > 0 ? views / approved : 0,
+  };
 }

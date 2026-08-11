@@ -1,21 +1,21 @@
-import { applyAsExpert } from "@/features/experts/server/actions";
+import { updateExpertAsAdmin } from "@/features/admin/server/actions";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
-type ApplyFormProps = {
+type ExpertEditFormProps = {
+  expertId: string;
   categories: Category[];
-  initialValues?: {
+  initialValues: {
     headline: string | null;
     bio: string | null;
     category_id: string | null;
     price_per_15_min: number | null;
-    payout_account_name?: string | null;
-    payout_account_number?: string | null;
-  } | null;
+    payout_account_name: string | null;
+    payout_account_number: string | null;
+  };
 };
 
-export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
-  const isEditing = Boolean(initialValues);
+export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEditFormProps) {
   const topLevel = categories.filter((c) => !c.parent_id);
   const childrenByParent = new Map<string, Category[]>();
   categories
@@ -27,26 +27,27 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
     });
 
   return (
-    <form action={applyAsExpert} className="flex flex-col gap-3">
+    <form action={updateExpertAsAdmin} className="flex flex-col gap-3">
+      <input type="hidden" name="expert_id" value={expertId} />
       <input
         name="headline"
         required
-        defaultValue={initialValues?.headline ?? ""}
-        placeholder="Headline (e.g. Senior Product Manager)"
+        defaultValue={initialValues.headline ?? ""}
+        placeholder="Headline"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
       <textarea
         name="bio"
         required
         rows={4}
-        defaultValue={initialValues?.bio ?? ""}
-        placeholder="Short bio"
+        defaultValue={initialValues.bio ?? ""}
+        placeholder="Bio"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
       <select
         name="category_id"
         required
-        defaultValue={initialValues?.category_id ?? ""}
+        defaultValue={initialValues.category_id ?? ""}
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       >
         <option value="">Select a category</option>
@@ -69,40 +70,30 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
           min="0"
           step="0.01"
           required
-          defaultValue={initialValues?.price_per_15_min ?? undefined}
-          placeholder="e.g. 75"
+          defaultValue={initialValues.price_per_15_min ?? undefined}
           className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
       </label>
-      <p className="text-xs text-black/50 dark:text-white/50">
-        Clients book in 15/30/45/60-minute sessions; the price scales automatically
-        from this per-15-minute rate.
-      </p>
-
       <div className="mt-2 flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/15">
         <p className="text-sm font-medium">Payout bank account</p>
-        <p className="text-xs text-black/50 dark:text-white/50">
-          Where admin sends your payout after a session is completed.
-        </p>
         <input
           name="payout_account_name"
-          defaultValue={initialValues?.payout_account_name ?? ""}
+          defaultValue={initialValues.payout_account_name ?? ""}
           placeholder="Account holder name"
           className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
         <input
           name="payout_account_number"
-          defaultValue={initialValues?.payout_account_number ?? ""}
+          defaultValue={initialValues.payout_account_number ?? ""}
           placeholder="Account number"
           className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
       </div>
-
       <button
         type="submit"
         className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
       >
-        {isEditing ? "Save changes" : "Submit application"}
+        Save changes
       </button>
     </form>
   );

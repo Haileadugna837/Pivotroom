@@ -18,28 +18,58 @@ async function requireAdmin() {
   return user;
 }
 
-export async function approveExpert(formData: FormData) {
+async function setExpertStatus(formData: FormData, status: "approved" | "rejected" | "suspended") {
   await requireAdmin();
   const expertId = String(formData.get("expert_id") ?? "");
   if (!expertId) throw new Error("Missing expert_id");
 
   const admin = createAdminClient();
-  const { error } = await admin.from("experts").update({ is_approved: true }).eq("id", expertId);
+  const { error } = await admin.from("experts").update({ status }).eq("id", expertId);
   if (error) throw error;
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/experts");
+}
+
+export async function approveExpert(formData: FormData) {
+  await setExpertStatus(formData, "approved");
 }
 
 export async function rejectExpert(formData: FormData) {
+  await setExpertStatus(formData, "rejected");
+}
+
+export async function suspendExpert(formData: FormData) {
+  await setExpertStatus(formData, "suspended");
+}
+
+export async function updateExpertAsAdmin(formData: FormData) {
   await requireAdmin();
   const expertId = String(formData.get("expert_id") ?? "");
   if (!expertId) throw new Error("Missing expert_id");
 
+  const headline = String(formData.get("headline") ?? "").trim();
+  const bio = String(formData.get("bio") ?? "").trim();
+  const categoryId = String(formData.get("category_id") ?? "") || null;
+  const pricePer15Min = Number(formData.get("price_per_15_min"));
+  const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
+  const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
+
   const admin = createAdminClient();
-  const { error } = await admin.from("experts").delete().eq("id", expertId);
+  const { error } = await admin
+    .from("experts")
+    .update({
+      headline,
+      bio,
+      category_id: categoryId,
+      price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
+      payout_account_name: payoutAccountName,
+      payout_account_number: payoutAccountNumber,
+    })
+    .eq("id", expertId);
   if (error) throw error;
 
-  revalidatePath("/admin");
+  revalidatePath("/admin/experts");
+  revalidatePath(`/admin/experts/${expertId}`);
 }
 
 export async function verifyPayment(formData: FormData) {

@@ -15,6 +15,8 @@ export async function applyAsExpert(formData: FormData) {
   const bio = String(formData.get("bio") ?? "").trim();
   const categoryId = String(formData.get("category_id") ?? "") || null;
   const pricePer15Min = Number(formData.get("price_per_15_min"));
+  const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
+  const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
 
   const { error } = await supabase.from("experts").upsert({
     id: user.id,
@@ -23,6 +25,8 @@ export async function applyAsExpert(formData: FormData) {
     category_id: categoryId,
     price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
     currency: "ETB",
+    payout_account_name: payoutAccountName,
+    payout_account_number: payoutAccountNumber,
   });
 
   if (error) throw error;

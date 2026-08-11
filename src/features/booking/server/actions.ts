@@ -34,7 +34,7 @@ export async function createBooking(formData: FormData) {
     .from("experts")
     .select("price_per_15_min, currency")
     .eq("id", expertId)
-    .eq("is_approved", true)
+    .eq("status", "approved")
     .maybeSingle();
   if (expertError) throw expertError;
   if (!expert) throw new Error("Expert not found");

@@ -4,7 +4,8 @@ import { isAdminEmail } from "@/lib/admin";
 import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
 
 const items: SidebarItem[] = [
-  { href: "/admin", label: "Pending Experts" },
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/experts", label: "Experts" },
   { href: "/admin/bookings", label: "Bookings" },
   { href: "/admin/payments", label: "Payments" },
   { href: "/admin/payouts", label: "Payouts" },

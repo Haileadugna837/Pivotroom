@@ -4,6 +4,13 @@ import { getMyExpertProfileFull } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
 import { ApplyForm } from "@/features/experts/components/apply-form";
 
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Pending review",
+  approved: "Approved",
+  rejected: "Rejected",
+  suspended: "Suspended",
+};
+
 export default async function ExpertProfilePage() {
   const supabase = await createClient();
   const {
@@ -23,7 +30,7 @@ export default async function ExpertProfilePage() {
       </h1>
       {expertProfile && (
         <p className="mb-6 text-sm text-black/50 dark:text-white/50">
-          Status: {expertProfile.is_approved ? "Approved" : "Pending review"}
+          Status: {STATUS_LABEL[expertProfile.status] ?? expertProfile.status}
         </p>
       )}
       <ApplyForm categories={categories} initialValues={expertProfile} />
