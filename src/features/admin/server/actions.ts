@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
 import { createBookingEventWithMeet } from "@/lib/google/calendar";
+import { notifyBookingConfirmed, notifyPaymentRejected } from "@/features/notifications/server/send";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -72,18 +73,18 @@ export async function verifyPayment(formData: FormData) {
     .eq("expert_id", expertId)
     .maybeSingle();
 
-  if (tokenRow?.refresh_token) {
-    const { data: expertProfile } = await admin
-      .from("profiles")
-      .select("email")
-      .eq("id", expertId)
-      .maybeSingle();
-    const { data: clientProfile } = await admin
-      .from("profiles")
-      .select("email")
-      .eq("id", clientId)
-      .maybeSingle();
+  const { data: expertProfile } = await admin
+    .from("profiles")
+    .select("email")
+    .eq("id", expertId)
+    .maybeSingle();
+  const { data: clientProfile } = await admin
+    .from("profiles")
+    .select("email")
+    .eq("id", clientId)
+    .maybeSingle();
 
+  if (tokenRow?.refresh_token) {
     const attendeeEmails = [expertProfile?.email, clientProfile?.email].filter(
       (e): e is string => Boolean(e),
     );
@@ -120,6 +121,13 @@ export async function verifyPayment(formData: FormData) {
   });
   if (payoutError) throw payoutError;
 
+  await notifyBookingConfirmed({
+    clientEmail: clientProfile?.email ?? null,
+    expertEmail: expertProfile?.email ?? null,
+    startTime,
+    meetLink,
+  });
+
   revalidatePath("/admin");
 }
 
@@ -150,6 +158,17 @@ export async function rejectPayment(formData: FormData) {
     .eq("id", bookingId);
   if (bookingError) throw bookingError;
 
+  const { data: booking } = await admin
+    .from("bookings")
+    .select("client_id")
+    .eq("id", bookingId)
+    .maybeSingle();
+  const { data: clientProfile } = booking
+    ? await admin.from("profiles").select("email").eq("id", booking.client_id).maybeSingle()
+    : { data: null };
+
+  await notifyPaymentRejected({ clientEmail: clientProfile?.email ?? null, reason: adminNote });
+
   revalidatePath("/admin");
 }
 
@@ -166,4 +185,16 @@ export async function markPayoutPaid(formData: FormData) {
   if (error) throw error;
 
   revalidatePath("/admin");
+}
+
+export async function markBookingCompletedAsAdmin(formData: FormData) {
+  await requireAdmin();
+  const bookingId = String(formData.get("booking_id") ?? "");
+  if (!bookingId) throw new Error("Missing booking_id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("bookings").update({ status: "completed" }).eq("id", bookingId);
+  if (error) throw error;
+
+  revalidatePath(`/bookings/${bookingId}`);
 }

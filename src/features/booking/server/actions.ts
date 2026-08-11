@@ -1,7 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { isSlotAvailable } from "./availability";
 
 export async function createBooking(formData: FormData) {
   const supabase = await createClient();
@@ -23,6 +25,19 @@ export async function createBooking(formData: FormData) {
   const start = new Date(startTime);
   const end = new Date(start.getTime() + durationMinutes * 60_000);
 
+  if (start.getTime() <= Date.now()) {
+    redirect(`/experts/${expertId}?error=${encodeURIComponent("Pick a time in the future.")}`);
+  }
+
+  const { available, reason } = await isSlotAvailable({
+    expertId,
+    startTime: start.toISOString(),
+    endTime: end.toISOString(),
+  });
+  if (!available) {
+    redirect(`/experts/${expertId}?error=${encodeURIComponent(reason ?? "That time is unavailable.")}`);
+  }
+
   const { data: booking, error } = await supabase
     .from("bookings")
     .insert({
@@ -39,4 +54,23 @@ export async function createBooking(formData: FormData) {
   if (error) throw error;
 
   redirect(`/bookings/${booking.id}`);
+}
+
+export async function markBookingCompletedAsExpert(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const bookingId = String(formData.get("booking_id") ?? "");
+  if (!bookingId) throw new Error("Missing booking_id");
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({ status: "completed" })
+    .eq("id", bookingId);
+  if (error) throw error;
+
+  revalidatePath(`/bookings/${bookingId}`);
 }

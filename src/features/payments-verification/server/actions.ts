@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { notifyAdminPaymentSubmitted } from "@/features/notifications/server/send";
 
 export async function submitPaymentProof(formData: FormData) {
   const supabase = await createClient();
@@ -32,6 +33,8 @@ export async function submitPaymentProof(formData: FormData) {
     .update({ status: "payment_submitted" })
     .eq("id", bookingId);
   if (updateError) throw updateError;
+
+  await notifyAdminPaymentSubmitted(bookingId);
 
   revalidatePath(`/bookings/${bookingId}`);
 }

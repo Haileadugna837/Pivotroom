@@ -5,7 +5,7 @@ export async function getBookingForClient(bookingId: string) {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, expert_id, start_time, end_time, status, price, currency, meet_link, payment_proofs(status, transaction_id, payer_name, payment_date, admin_note)",
+      "id, client_id, expert_id, start_time, end_time, status, price, currency, meet_link, payment_proofs(status, transaction_id, payer_name, payment_date, admin_note)",
     )
     .eq("id", bookingId)
     .maybeSingle();

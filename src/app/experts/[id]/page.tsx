@@ -2,15 +2,22 @@ import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getApprovedExpertById } from "@/features/experts/server/queries";
 import { BookingForm } from "@/features/booking/components/booking-form";
+import { getReviewsForExpert } from "@/features/reviews/server/queries";
+import { ReviewList } from "@/features/reviews/components/review-list";
 
 export default async function ExpertDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
   const expert = await getApprovedExpertById(id);
   if (!expert) notFound();
+
+  const { reviews, average, count } = await getReviewsForExpert(id);
 
   const supabase = await createClient();
   const {
@@ -37,6 +44,11 @@ export default async function ExpertDetailPage({
 
       <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
         <h2 className="mb-3 text-sm font-medium">Book a session</h2>
+        {error && (
+          <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
+            {error}
+          </p>
+        )}
         {user ? (
           <BookingForm
             expertId={expert.id}
@@ -52,6 +64,11 @@ export default async function ExpertDetailPage({
             to book a session.
           </p>
         )}
+      </div>
+
+      <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
+        <h2 className="mb-3 text-sm font-medium">Reviews</h2>
+        <ReviewList reviews={reviews} average={average} count={count} />
       </div>
     </div>
   );
