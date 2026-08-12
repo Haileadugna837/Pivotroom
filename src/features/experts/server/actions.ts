@@ -2,8 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { uploadExpertPhoto } from "./photo";
 
-export async function applyAsExpert(formData: FormData) {
+export type ApplyExpertState = { error?: string };
+
+export async function applyAsExpert(
+  _prevState: ApplyExpertState,
+  formData: FormData,
+): Promise<ApplyExpertState> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -41,26 +47,17 @@ export async function applyAsExpert(formData: FormData) {
 
   const photo = formData.get("photo");
   if (photo instanceof File && photo.size > 0) {
-    if (photo.size > 5 * 1024 * 1024) {
-      throw new Error("Photo must be under 5MB");
+    try {
+      record.photo_url = await uploadExpertPhoto(supabase.storage, user.id, photo);
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : "Photo upload failed." };
     }
-    const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
-    const path = `${user.id}/photo.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("expert-photos")
-      .upload(path, photo, { upsert: true, contentType: photo.type });
-    if (uploadError) throw uploadError;
-
-    const {
-      data: { publicUrl },
-    } = supabase.storage.from("expert-photos").getPublicUrl(path);
-    record.photo_url = `${publicUrl}?t=${Date.now()}`;
   }
 
   const { error } = await supabase.from("experts").upsert(record);
-
-  if (error) throw error;
+  if (error) {
+    return { error: `Failed to save profile: ${error.message}` };
+  }
 
   redirect("/dashboard?applied=1");
 }

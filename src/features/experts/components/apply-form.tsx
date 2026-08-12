@@ -1,4 +1,8 @@
-import { applyAsExpert } from "@/features/experts/server/actions";
+"use client";
+
+import { useActionState } from "react";
+import { applyAsExpert, type ApplyExpertState } from "@/features/experts/server/actions";
+import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
@@ -15,8 +19,12 @@ type ApplyFormProps = {
   } | null;
 };
 
+const initialState: ApplyExpertState = {};
+
 export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
+  const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
+
   const topLevel = categories.filter((c) => !c.parent_id);
   const childrenByParent = new Map<string, Category[]>();
   categories
@@ -28,27 +36,9 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
     });
 
   return (
-    <form action={applyAsExpert} className="flex flex-col gap-3">
-      <label className="text-sm">
-        Profile photo
-        {initialValues?.photo_url && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={initialValues.photo_url}
-            alt=""
-            className="mt-1 mb-2 h-40 w-32 rounded-md object-cover"
-          />
-        )}
-        <input
-          name="photo"
-          type="file"
-          accept="image/png,image/jpeg,image/webp"
-          className="mt-1 block w-full text-sm"
-        />
-      </label>
-      <p className="-mt-2 text-xs text-black/50 dark:text-white/50">
-        A clear portrait photo, shown on your public listing. Up to 5MB.
-      </p>
+    <form action={formAction} className="flex flex-col gap-3">
+      <PhotoUploadField initialPhotoUrl={initialValues?.photo_url} />
+
       <input
         name="headline"
         required
@@ -119,11 +109,14 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
         />
       </div>
 
+      {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+
       <button
         type="submit"
-        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        disabled={pending}
+        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
       >
-        {isEditing ? "Save changes" : "Submit application"}
+        {pending ? "Saving…" : isEditing ? "Save changes" : "Submit application"}
       </button>
     </form>
   );

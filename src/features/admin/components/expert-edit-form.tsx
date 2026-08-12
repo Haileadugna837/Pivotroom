@@ -1,4 +1,8 @@
-import { updateExpertAsAdmin } from "@/features/admin/server/actions";
+"use client";
+
+import { useActionState } from "react";
+import { updateExpertAsAdmin, type UpdateExpertState } from "@/features/admin/server/actions";
+import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
@@ -12,10 +16,15 @@ type ExpertEditFormProps = {
     price_per_15_min: number | null;
     payout_account_name: string | null;
     payout_account_number: string | null;
+    photo_url?: string | null;
   };
 };
 
+const initialState: UpdateExpertState = {};
+
 export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEditFormProps) {
+  const [state, formAction, pending] = useActionState(updateExpertAsAdmin, initialState);
+
   const topLevel = categories.filter((c) => !c.parent_id);
   const childrenByParent = new Map<string, Category[]>();
   categories
@@ -27,8 +36,11 @@ export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEd
     });
 
   return (
-    <form action={updateExpertAsAdmin} className="flex flex-col gap-3">
+    <form action={formAction} className="flex flex-col gap-3">
       <input type="hidden" name="expert_id" value={expertId} />
+
+      <PhotoUploadField initialPhotoUrl={initialValues.photo_url} />
+
       <input
         name="headline"
         required
@@ -89,11 +101,15 @@ export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEd
           className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
       </div>
+
+      {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+
       <button
         type="submit"
-        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        disabled={pending}
+        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
       >
-        Save changes
+        {pending ? "Saving…" : "Save changes"}
       </button>
     </form>
   );

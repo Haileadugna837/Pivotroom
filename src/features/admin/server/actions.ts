@@ -6,6 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
 import { createBookingEventWithMeet } from "@/lib/google/calendar";
 import { notifyBookingConfirmed, notifyPaymentRejected } from "@/features/notifications/server/send";
+import { uploadExpertPhoto } from "@/features/experts/server/photo";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -42,7 +43,12 @@ export async function suspendExpert(formData: FormData) {
   await setExpertStatus(formData, "suspended");
 }
 
-export async function updateExpertAsAdmin(formData: FormData) {
+export type UpdateExpertState = { error?: string };
+
+export async function updateExpertAsAdmin(
+  _prevState: UpdateExpertState,
+  formData: FormData,
+): Promise<UpdateExpertState> {
   await requireAdmin();
   const expertId = String(formData.get("expert_id") ?? "");
   if (!expertId) throw new Error("Missing expert_id");
@@ -55,21 +61,44 @@ export async function updateExpertAsAdmin(formData: FormData) {
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
 
   const admin = createAdminClient();
-  const { error } = await admin
-    .from("experts")
-    .update({
-      headline,
-      bio,
-      category_id: categoryId,
-      price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
-      payout_account_name: payoutAccountName,
-      payout_account_number: payoutAccountNumber,
-    })
-    .eq("id", expertId);
-  if (error) throw error;
+
+  const update: {
+    headline: string;
+    bio: string;
+    category_id: string | null;
+    price_per_15_min: number | null;
+    payout_account_name: string | null;
+    payout_account_number: string | null;
+    photo_url?: string;
+  } = {
+    headline,
+    bio,
+    category_id: categoryId,
+    price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
+    payout_account_name: payoutAccountName,
+    payout_account_number: payoutAccountNumber,
+  };
+
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    try {
+      // Uses the admin (service-role) storage client, which bypasses the
+      // owner-only storage RLS policy — admin can upload on behalf of any
+      // expert, not just their own path.
+      update.photo_url = await uploadExpertPhoto(admin.storage, expertId, photo);
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : "Photo upload failed." };
+    }
+  }
+
+  const { error } = await admin.from("experts").update(update).eq("id", expertId);
+  if (error) {
+    return { error: `Failed to save profile: ${error.message}` };
+  }
 
   revalidatePath("/admin/experts");
   revalidatePath(`/admin/experts/${expertId}`);
+  return {};
 }
 
 export async function verifyPayment(formData: FormData) {
