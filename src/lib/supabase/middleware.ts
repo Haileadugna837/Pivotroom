@@ -9,6 +9,19 @@ function trackPageView(request: NextRequest) {
     if (pathname.startsWith("/api/")) return;
     if (request.headers.get("next-router-prefetch")) return;
 
+    // Only count real browser navigations (typed URL, clicked <a>, hard
+    // refresh) — not the RSC "fetch" requests Next.js's client router fires
+    // for prefetch-adjacent revalidation, router.refresh() after a server
+    // action, or background re-fetches of the page you're already on. Those
+    // all share this same GET-without-prefetch-header shape, but browsers
+    // tag them with `Sec-Fetch-Dest: empty` (fetch/XHR) instead of
+    // `document` (a real navigation), which is what was inflating counts —
+    // the same path was getting counted several times per second from a
+    // single visit. Requests without this header at all (older browsers,
+    // some bots) are still counted rather than silently dropped.
+    const fetchDest = request.headers.get("sec-fetch-dest");
+    if (fetchDest && fetchDest !== "document") return;
+
     createAdminClient()
       .from("page_views")
       .insert({ path: pathname })

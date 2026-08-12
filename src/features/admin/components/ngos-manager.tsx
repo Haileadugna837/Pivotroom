@@ -1,24 +1,72 @@
-import { createNgo, deleteNgo } from "@/features/admin/server/actions";
+"use client";
 
-type Ngo = { id: string; name: string };
+import { useActionState, useState } from "react";
+import { createNgo, deleteNgo, type CreateNgoState } from "@/features/admin/server/actions";
+import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
+
+type Ngo = {
+  id: string;
+  name: string;
+  logo_url: string | null;
+  legal_license_url: string | null;
+  payout_account_name: string | null;
+  payout_account_number: string | null;
+};
+
+const initialState: CreateNgoState = {};
 
 export function NgosManager({ ngos }: { ngos: Ngo[] }) {
+  const [state, formAction, pending] = useActionState(createNgo, initialState);
+
   return (
-    <div className="flex flex-col gap-6">
-      <form action={createNgo} className="flex flex-wrap items-end gap-2">
+    <div className="flex flex-col gap-8">
+      <form action={formAction} className="flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/15">
+        <p className="text-sm font-medium">Add an NGO</p>
+
+        <PhotoUploadField name="logo" label="Logo" />
+
         <label className="text-sm">
-          NGO name
+          Name
           <input
             name="name"
             required
-            className="mt-1 block rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
           />
         </label>
+        <label className="text-sm">
+          Legal license link
+          <input
+            name="legal_license_url"
+            type="url"
+            placeholder="https://..."
+            className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          />
+        </label>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label className="text-sm">
+            Payout account name
+            <input
+              name="payout_account_name"
+              className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            />
+          </label>
+          <label className="text-sm">
+            Payout account number
+            <input
+              name="payout_account_number"
+              className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            />
+          </label>
+        </div>
+
+        {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+
         <button
           type="submit"
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+          disabled={pending}
+          className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
         >
-          Add
+          {pending ? "Adding…" : "Add NGO"}
         </button>
       </form>
 
@@ -27,21 +75,63 @@ export function NgosManager({ ngos }: { ngos: Ngo[] }) {
       ) : (
         <ul className="flex flex-col gap-2">
           {ngos.map((ngo) => (
-            <li
-              key={ngo.id}
-              className="flex items-center justify-between rounded-lg border border-black/10 px-3 py-2 text-sm dark:border-white/15"
-            >
-              <span>{ngo.name}</span>
-              <form action={deleteNgo}>
-                <input type="hidden" name="id" value={ngo.id} />
-                <button className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
-                  Remove
-                </button>
-              </form>
-            </li>
+            <NgoRow key={ngo.id} ngo={ngo} />
           ))}
         </ul>
       )}
     </div>
+  );
+}
+
+function NgoRow({ ngo }: { ngo: Ngo }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <li className="rounded-lg border border-black/10 dark:border-white/15">
+      <div className="flex items-center justify-between gap-3 px-3 py-2">
+        <div className="flex items-center gap-3">
+          {ngo.logo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={ngo.logo_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+          ) : (
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-xs font-medium text-black/40 dark:bg-white/10 dark:text-white/40">
+              {ngo.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+          <span className="text-sm font-medium">{ngo.name}</span>
+        </div>
+        <div className="flex items-center gap-3 text-sm">
+          <button
+            type="button"
+            onClick={() => setOpen((o) => !o)}
+            className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+          >
+            {open ? "Hide details" : "Details"}
+          </button>
+          <form action={deleteNgo}>
+            <input type="hidden" name="id" value={ngo.id} />
+            <button className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
+              Remove
+            </button>
+          </form>
+        </div>
+      </div>
+      {open && (
+        <div className="flex flex-col gap-1 border-t border-black/10 px-3 py-2.5 text-xs text-black/60 dark:border-white/15 dark:text-white/60">
+          <p>
+            Legal license:{" "}
+            {ngo.legal_license_url ? (
+              <a href={ngo.legal_license_url} target="_blank" rel="noopener noreferrer" className="underline">
+                {ngo.legal_license_url}
+              </a>
+            ) : (
+              "Not provided"
+            )}
+          </p>
+          <p>Payout account name: {ngo.payout_account_name ?? "Not provided"}</p>
+          <p>Payout account number: {ngo.payout_account_number ?? "Not provided"}</p>
+        </div>
+      )}
+    </li>
   );
 }

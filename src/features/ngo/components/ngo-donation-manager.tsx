@@ -7,13 +7,37 @@ import {
   type NgoAllocationState,
 } from "@/features/ngo/server/actions";
 
-type Ngo = { id: string; name: string };
-type Allocation = { id: string; ngo_id: string; percentage: number; ngos: { name: string } | null };
+type Ngo = { id: string; name: string; logo_url: string | null };
+type Allocation = {
+  id: string;
+  ngo_id: string;
+  percentage: number;
+  ngos: { name: string; logo_url: string | null } | null;
+};
 
 const initialState: NgoAllocationState = {};
 const ADMIN_EMAIL = "haile12adugna@gmail.com";
 
 const BAR_COLORS = ["bg-emerald-500", "bg-teal-500", "bg-cyan-500", "bg-lime-500", "bg-green-600"];
+
+function NgoAvatar({ name, logoUrl, size = 24 }: { name: string; logoUrl: string | null; size?: number }) {
+  return logoUrl ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={logoUrl}
+      alt=""
+      style={{ width: size, height: size }}
+      className="shrink-0 rounded-full object-cover"
+    />
+  ) : (
+    <span
+      style={{ width: size, height: size }}
+      className="flex shrink-0 items-center justify-center rounded-full bg-black/10 text-[10px] font-medium text-black/50 dark:bg-white/15 dark:text-white/50"
+    >
+      {name.charAt(0).toUpperCase()}
+    </span>
+  );
+}
 
 export function NgoDonationManager({ ngos, allocations }: { ngos: Ngo[]; allocations: Allocation[] }) {
   const [state, formAction, pending] = useActionState(addNgoAllocation, initialState);
@@ -57,6 +81,7 @@ export function NgoDonationManager({ ngos, allocations }: { ngos: Ngo[]; allocat
               <li key={allocation.id} className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2">
                   <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${BAR_COLORS[i % BAR_COLORS.length]}`} />
+                  <NgoAvatar name={allocation.ngos?.name ?? "NGO"} logoUrl={allocation.ngos?.logo_url ?? null} size={20} />
                   <span className="font-medium">{allocation.ngos?.name ?? "NGO"}</span>
                   <span className="text-black/50 dark:text-white/50">{allocation.percentage}%</span>
                 </span>
@@ -95,8 +120,9 @@ export function NgoDonationManager({ ngos, allocations }: { ngos: Ngo[]; allocat
                 key={ngo.id}
                 type="button"
                 onClick={() => setSelectedNgoId(ngo.id)}
-                className="rounded-full border border-black/10 px-3.5 py-2 text-sm hover:border-emerald-500 hover:text-emerald-600 dark:border-white/15 dark:hover:border-emerald-400 dark:hover:text-emerald-400"
+                className="flex items-center gap-2 rounded-full border border-black/10 py-2 pl-2 pr-3.5 text-sm hover:border-emerald-500 hover:text-emerald-600 dark:border-white/15 dark:hover:border-emerald-400 dark:hover:text-emerald-400"
               >
+                <NgoAvatar name={ngo.name} logoUrl={ngo.logo_url} />
                 {ngo.name}
               </button>
             ))}
@@ -118,7 +144,10 @@ export function NgoDonationManager({ ngos, allocations }: { ngos: Ngo[]; allocat
               Change NGO
             </button>
           </div>
-          <p className="text-sm font-medium">{selectedNgo.name}</p>
+          <p className="flex items-center gap-2 text-sm font-medium">
+            <NgoAvatar name={selectedNgo.name} logoUrl={selectedNgo.logo_url} />
+            {selectedNgo.name}
+          </p>
           <div className="flex items-center gap-2">
             <input
               name="percentage"

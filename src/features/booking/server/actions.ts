@@ -23,6 +23,17 @@ export async function createBooking(formData: FormData) {
     throw new Error("Missing or invalid booking details");
   }
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("account_status")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (profile && profile.account_status !== "active") {
+    redirect(
+      `/experts/${expertId}?error=${encodeURIComponent("Your account can't book sessions right now. Contact support if you think this is a mistake.")}`,
+    );
+  }
+
   const start = new Date(`${date}T${startTimeOfDay}:00`);
   const end = new Date(start.getTime() + durationMinutes * 60_000);
 

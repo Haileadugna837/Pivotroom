@@ -388,19 +388,98 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          legal_license_url: string | null
+          logo_url: string | null
           name: string
+          payout_account_name: string | null
+          payout_account_number: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          legal_license_url?: string | null
+          logo_url?: string | null
+          name: string
+          payout_account_name?: string | null
+          payout_account_number?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          legal_license_url?: string | null
+          logo_url?: string | null
+          name?: string
+          payout_account_name?: string | null
+          payout_account_number?: string | null
+        }
+        Relationships: []
+      }
+      nominations: {
+        Row: {
+          created_at: string
+          id: string
+          links: string[]
+          nominator_id: string
+          nominee_id: string
+          reason: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          links?: string[]
+          nominator_id: string
+          nominee_id: string
+          reason: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          links?: string[]
+          nominator_id?: string
+          nominee_id?: string
+          reason?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nominations_nominee_id_fkey"
+            columns: ["nominee_id"]
+            isOneToOne: false
+            referencedRelation: "nominees"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nominees: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          resolved_expert_id: string | null
+          status: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          resolved_expert_id?: string | null
+          status?: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          resolved_expert_id?: string | null
+          status?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "nominees_resolved_expert_id_fkey"
+            columns: ["resolved_expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       page_views: {
         Row: {
@@ -483,6 +562,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          account_status: string
           avatar_url: string | null
           created_at: string
           email: string
@@ -491,6 +571,7 @@ export type Database = {
           role: string
         }
         Insert: {
+          account_status?: string
           avatar_url?: string | null
           created_at?: string
           email: string
@@ -499,6 +580,7 @@ export type Database = {
           role?: string
         }
         Update: {
+          account_status?: string
           avatar_url?: string | null
           created_at?: string
           email?: string
@@ -515,6 +597,7 @@ export type Database = {
           comment: string | null
           created_at: string
           expert_id: string
+          hidden: boolean
           id: string
           rating: number
         }
@@ -524,6 +607,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           expert_id: string
+          hidden?: boolean
           id?: string
           rating: number
         }
@@ -533,6 +617,7 @@ export type Database = {
           comment?: string | null
           created_at?: string
           expert_id?: string
+          hidden?: boolean
           id?: string
           rating?: number
         }

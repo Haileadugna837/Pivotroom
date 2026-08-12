@@ -17,6 +17,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const items: SidebarItem[] = [
     { href: "/dashboard", label: "My Bookings" },
     { href: "/dashboard/wishlist", label: "Wishlist" },
+    { href: "/dashboard/nominations", label: "Nominations" },
   ];
 
   if (expertProfile?.status === "approved") {

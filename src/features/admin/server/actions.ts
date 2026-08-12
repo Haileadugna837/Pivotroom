@@ -7,6 +7,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { createBookingEventWithMeet } from "@/lib/google/calendar";
 import { notifyBookingConfirmed, notifyPaymentRejected } from "@/features/notifications/server/send";
 import { uploadExpertPhoto } from "@/features/experts/server/photo";
+import { uploadNgoLogo } from "@/features/ngo/server/logo";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -271,16 +272,46 @@ export async function deleteCategory(formData: FormData) {
   revalidatePath("/admin/categories");
 }
 
-export async function createNgo(formData: FormData) {
+export type CreateNgoState = { error?: string };
+
+export async function createNgo(
+  _prevState: CreateNgoState,
+  formData: FormData,
+): Promise<CreateNgoState> {
   await requireAdmin();
   const name = String(formData.get("name") ?? "").trim();
-  if (!name) throw new Error("Missing NGO name");
+  if (!name) return { error: "NGO name is required." };
+
+  const legalLicenseUrl = String(formData.get("legal_license_url") ?? "").trim() || null;
+  const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
+  const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
 
   const admin = createAdminClient();
-  const { error } = await admin.from("ngos").insert({ name });
-  if (error) throw error;
+  const { data: ngo, error } = await admin
+    .from("ngos")
+    .insert({
+      name,
+      legal_license_url: legalLicenseUrl,
+      payout_account_name: payoutAccountName,
+      payout_account_number: payoutAccountNumber,
+    })
+    .select("id")
+    .single();
+  if (error) return { error: `Failed to save NGO: ${error.message}` };
+
+  const logo = formData.get("logo");
+  if (logo instanceof File && logo.size > 0) {
+    try {
+      const logoUrl = await uploadNgoLogo(admin.storage, ngo.id, logo);
+      const { error: logoError } = await admin.from("ngos").update({ logo_url: logoUrl }).eq("id", ngo.id);
+      if (logoError) return { error: `Logo upload failed: ${logoError.message}` };
+    } catch (err) {
+      return { error: err instanceof Error ? err.message : "Logo upload failed." };
+    }
+  }
 
   revalidatePath("/admin/ngos");
+  return {};
 }
 
 export async function deleteNgo(formData: FormData) {
@@ -293,6 +324,101 @@ export async function deleteNgo(formData: FormData) {
   if (error) throw error;
 
   revalidatePath("/admin/ngos");
+}
+
+const ACCOUNT_STATUSES = ["active", "restricted", "suspended"] as const;
+type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
+
+export async function updateUserName(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const fullName = String(formData.get("full_name") ?? "").trim();
+  if (!id) throw new Error("Missing user id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("profiles").update({ full_name: fullName || null }).eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/users");
+}
+
+export async function setUserAccountStatus(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  if (!id) throw new Error("Missing user id");
+  if (!ACCOUNT_STATUSES.includes(status as AccountStatus)) throw new Error("Invalid status");
+  if (id === adminUser.id) throw new Error("You can't change your own account status.");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("profiles").update({ account_status: status }).eq("id", id);
+  if (error) throw error;
+
+  // "Suspended" also blocks sign-in at the auth layer, not just an app-side
+  // flag — anything less would let a suspended user keep using the site.
+  // "Restricted" is intentionally lighter: they can still sign in.
+  const { error: authError } = await admin.auth.admin.updateUserById(id, {
+    ban_duration: status === "suspended" ? "876000h" : "none",
+  });
+  if (authError) throw authError;
+
+  revalidatePath("/admin/users");
+}
+
+const NOMINEE_STATUSES = ["pending", "in_review", "added", "declined"] as const;
+type NomineeStatus = (typeof NOMINEE_STATUSES)[number];
+
+export async function setNomineeStatus(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const resolvedExpertId = String(formData.get("resolved_expert_id") ?? "") || null;
+  if (!id) throw new Error("Missing nominee id");
+  if (!NOMINEE_STATUSES.includes(status as NomineeStatus)) throw new Error("Invalid status");
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("nominees")
+    .update({ status, resolved_expert_id: status === "added" ? resolvedExpertId : null })
+    .eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/nominees");
+}
+
+export async function mergeNominee(formData: FormData) {
+  await requireAdmin();
+  const sourceId = String(formData.get("source_id") ?? "");
+  const targetId = String(formData.get("target_id") ?? "");
+  if (!sourceId || !targetId) throw new Error("Pick a nominee to merge into");
+  if (sourceId === targetId) throw new Error("Can't merge a nominee into itself");
+
+  const admin = createAdminClient();
+  const { error: moveError } = await admin
+    .from("nominations")
+    .update({ nominee_id: targetId })
+    .eq("nominee_id", sourceId);
+  if (moveError) throw moveError;
+
+  const { error: deleteError } = await admin.from("nominees").delete().eq("id", sourceId);
+  if (deleteError) throw deleteError;
+
+  revalidatePath("/admin/nominees");
+}
+
+export async function toggleReviewVisibility(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const expertId = String(formData.get("expert_id") ?? "");
+  const hidden = formData.get("hidden") === "true";
+  if (!id) throw new Error("Missing review id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("reviews").update({ hidden: !hidden }).eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/reviews");
+  if (expertId) revalidatePath(`/experts/${expertId}`);
 }
 
 export async function markBookingCompletedAsAdmin(formData: FormData) {

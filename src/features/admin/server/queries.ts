@@ -149,9 +149,89 @@ export async function getCategoriesForAdmin() {
 
 export async function getNgosForAdmin() {
   const admin = createAdminClient();
-  const { data, error } = await admin.from("ngos").select("id, name").order("name", { ascending: true });
+  const { data, error } = await admin
+    .from("ngos")
+    .select("id, name, logo_url, legal_license_url, payout_account_name, payout_account_number")
+    .order("name", { ascending: true });
   if (error) throw error;
   return data;
+}
+
+export async function getUsersForAdmin() {
+  const admin = createAdminClient();
+  const { data: profiles, error } = await admin
+    .from("profiles")
+    .select("id, email, full_name, account_status, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  if (!profiles.length) return [];
+
+  const { data: experts } = await admin.from("experts").select("id, status");
+  const expertStatusById = new Map((experts ?? []).map((e) => [e.id, e.status]));
+
+  return profiles.map((p) => ({
+    ...p,
+    expertStatus: expertStatusById.get(p.id) ?? null,
+  }));
+}
+
+export async function getNomineesForAdmin() {
+  const admin = createAdminClient();
+  const { data: nominees, error } = await admin
+    .from("nominees")
+    .select("id, name, status, resolved_expert_id, created_at")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  if (!nominees.length) return [];
+
+  const { data: nominations, error: nomError } = await admin
+    .from("nominations")
+    .select("id, nominee_id, nominator_id, reason, links, created_at");
+  if (nomError) throw nomError;
+
+  const nominatorIds = Array.from(new Set(nominations.map((n) => n.nominator_id)));
+  const { data: profiles } = await admin.from("profiles").select("id, full_name, email").in("id", nominatorIds);
+  const nominatorById = new Map((profiles ?? []).map((p) => [p.id, p.full_name || p.email]));
+
+  const nominationsByNomineeId = new Map<string, typeof nominations>();
+  for (const nom of nominations) {
+    const list = nominationsByNomineeId.get(nom.nominee_id) ?? [];
+    list.push(nom);
+    nominationsByNomineeId.set(nom.nominee_id, list);
+  }
+
+  return nominees
+    .map((nominee) => {
+      const list = nominationsByNomineeId.get(nominee.id) ?? [];
+      return {
+        ...nominee,
+        nominations: list
+          .map((n) => ({ ...n, nominatorName: nominatorById.get(n.nominator_id) ?? "Unknown" }))
+          .sort((a, b) => b.created_at.localeCompare(a.created_at)),
+        count: list.length,
+      };
+    })
+    .sort((a, b) => b.count - a.count);
+}
+
+export async function getReviewsForAdmin() {
+  const admin = createAdminClient();
+  const { data: reviews, error } = await admin
+    .from("reviews")
+    .select("id, rating, comment, hidden, created_at, client_id, expert_id")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  if (!reviews.length) return [];
+
+  const profileIds = Array.from(new Set(reviews.flatMap((r) => [r.client_id, r.expert_id])));
+  const { data: profiles } = await admin.from("profiles").select("id, full_name").in("id", profileIds);
+  const nameById = new Map((profiles ?? []).map((p) => [p.id, p.full_name]));
+
+  return reviews.map((r) => ({
+    ...r,
+    clientName: nameById.get(r.client_id) ?? "Unknown",
+    expertName: nameById.get(r.expert_id) ?? "Unknown",
+  }));
 }
 
 export type PayoutTab = "all" | "unpaid" | "paid";

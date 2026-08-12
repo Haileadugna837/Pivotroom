@@ -17,6 +17,7 @@ export async function getReviewsForExpert(expertId: string) {
     .from("reviews")
     .select("id, rating, comment, created_at")
     .eq("expert_id", expertId)
+    .eq("hidden", false)
     .order("created_at", { ascending: false });
   if (error) throw error;
 

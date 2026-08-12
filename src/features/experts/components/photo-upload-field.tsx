@@ -3,7 +3,17 @@
 import { useId, useRef, useState } from "react";
 import { compressImage } from "./compress-image";
 
-export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string | null }) {
+type PhotoUploadFieldProps = {
+  initialPhotoUrl?: string | null;
+  name?: string;
+  label?: string;
+};
+
+export function PhotoUploadField({
+  initialPhotoUrl,
+  name = "photo",
+  label = "Profile photo",
+}: PhotoUploadFieldProps) {
   const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(initialPhotoUrl ?? null);
@@ -44,7 +54,7 @@ export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string
 
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">Profile photo</p>
+      <p className="mb-2 text-sm font-medium">{label}</p>
       <div className="flex items-center gap-4">
         <div className="h-28 w-24 shrink-0 overflow-hidden rounded-md bg-black/5 dark:bg-white/10">
           {preview ? (
@@ -66,7 +76,7 @@ export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string
           <input
             ref={inputRef}
             id={inputId}
-            name="photo"
+            name={name}
             type="file"
             accept="image/png,image/jpeg,image/webp"
             onChange={handleChange}

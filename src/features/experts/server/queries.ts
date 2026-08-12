@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -71,14 +72,19 @@ export async function getApprovedExpertById(id: string) {
 
   // Fire-and-forget page view record for the admin metrics dashboard.
   // Uses the admin client since visitors (including anonymous ones) have
-  // no RLS access to this table by design.
-  createAdminClient()
-    .from("expert_profile_views")
-    .insert({ expert_id: id })
-    .then(
-      () => {},
-      () => {},
-    );
+  // no RLS access to this table by design. Only counted for real browser
+  // navigations (Sec-Fetch-Dest: document) — same fix as trackPageView()
+  // in middleware.ts, see the comment there for why this matters.
+  const fetchDest = (await headers()).get("sec-fetch-dest");
+  if (!fetchDest || fetchDest === "document") {
+    createAdminClient()
+      .from("expert_profile_views")
+      .insert({ expert_id: id })
+      .then(
+        () => {},
+        () => {},
+      );
+  }
 
   return { ...expert, profile: profile ?? null, availability, socialLinks };
 }
