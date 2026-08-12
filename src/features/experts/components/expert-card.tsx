@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
+import { VerifiedBadge } from "@/features/experts/components/verified-badge";
 
 type ExpertCardProps = {
   expertId: string;
@@ -13,6 +14,7 @@ type ExpertCardProps = {
   photoUrl: string | null;
   wishlisted: boolean;
   isSignedIn: boolean;
+  donatesToNgo?: boolean;
 };
 
 export function ExpertCard({
@@ -27,6 +29,7 @@ export function ExpertCard({
   photoUrl,
   wishlisted,
   isSignedIn,
+  donatesToNgo = false,
 }: ExpertCardProps) {
   return (
     <div className="relative flex flex-col gap-2">
@@ -48,16 +51,7 @@ export function ExpertCard({
         </div>
         <div className="flex items-center gap-1">
           <h3 className="font-medium">{fullName ?? "Expert"}</h3>
-          <svg width="14" height="14" viewBox="0 0 20 20" fill="none" aria-label="Approved expert">
-            <circle cx="10" cy="10" r="10" fill="currentColor" className="text-blue-500" />
-            <path
-              d="M6 10.5l2.5 2.5L14 7.5"
-              stroke="white"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <VerifiedBadge gold={donatesToNgo} />
         </div>
         <p className="text-sm font-medium">
           {pricePer15Min != null ? `${currency} ${pricePer15Min} • 15 min` : "Rate not set"}

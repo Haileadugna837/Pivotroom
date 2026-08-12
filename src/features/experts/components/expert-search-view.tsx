@@ -32,11 +32,13 @@ function matchesQuery(expert: SearchableExpert, words: string[]) {
 type ExpertSearchViewProps = {
   experts: SearchableExpert[];
   wishlistedIds: string[];
+  donatingIds: string[];
   isSignedIn: boolean;
 };
 
-export function ExpertSearchView({ experts, wishlistedIds, isSignedIn }: ExpertSearchViewProps) {
+export function ExpertSearchView({ experts, wishlistedIds, donatingIds, isSignedIn }: ExpertSearchViewProps) {
   const wishlistedSet = useMemo(() => new Set(wishlistedIds), [wishlistedIds]);
+  const donatingSet = useMemo(() => new Set(donatingIds), [donatingIds]);
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -108,6 +110,7 @@ export function ExpertSearchView({ experts, wishlistedIds, isSignedIn }: ExpertS
               photoUrl={expert.photo_url}
               wishlisted={wishlistedSet.has(expert.id)}
               isSignedIn={isSignedIn}
+              donatesToNgo={donatingSet.has(expert.id)}
             />
           ))}
         </div>

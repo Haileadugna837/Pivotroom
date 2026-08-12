@@ -8,6 +8,8 @@ import { SocialIcon } from "@/features/experts/components/social-icons";
 import { ShareButton } from "@/features/experts/components/share-button";
 import { isExpertWishlisted } from "@/features/wishlist/server/queries";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
+import { expertDonatesToNgo } from "@/features/ngo/server/queries";
+import { VerifiedBadge } from "@/features/experts/components/verified-badge";
 
 export default async function ExpertDetailPage({
   params,
@@ -27,7 +29,10 @@ export default async function ExpertDetailPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
-  const wishlisted = user ? await isExpertWishlisted(user.id, id) : false;
+  const [wishlisted, donatesToNgo] = await Promise.all([
+    user ? isExpertWishlisted(user.id, id) : Promise.resolve(false),
+    expertDonatesToNgo(id),
+  ]);
 
   const name = expert.profile?.full_name ?? "Expert";
 
@@ -53,16 +58,7 @@ export default async function ExpertDetailPage({
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <h1 className="text-2xl font-semibold">{name}</h1>
-          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-label="Approved expert">
-            <circle cx="10" cy="10" r="10" fill="currentColor" className="text-blue-500" />
-            <path
-              d="M6 10.5l2.5 2.5L14 7.5"
-              stroke="white"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
+          <VerifiedBadge gold={donatesToNgo} size={16} />
         </div>
         <ShareButton title={name} />
       </div>
@@ -93,10 +89,20 @@ export default async function ExpertDetailPage({
         </p>
       )}
 
-      {expert.categories?.name && (
-        <span className="mt-3 inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">
-          {expert.categories.name}
-        </span>
+      {(expert.categories?.name || donatesToNgo) && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {expert.categories?.name && (
+            <span className="inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">
+              {expert.categories.name}
+            </span>
+          )}
+          {donatesToNgo && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+              <VerifiedBadge gold size={12} />
+              Supports an NGO
+            </span>
+          )}
+        </div>
       )}
 
       {expert.bio && (

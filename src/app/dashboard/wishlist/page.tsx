@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyWishlistedExperts } from "@/features/wishlist/server/queries";
+import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
 
 export default async function WishlistPage() {
@@ -10,7 +11,10 @@ export default async function WishlistPage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const experts = await getMyWishlistedExperts(user.id);
+  const [experts, donatingIds] = await Promise.all([
+    getMyWishlistedExperts(user.id),
+    getExpertIdsWithNgoDonations(),
+  ]);
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-10">
@@ -35,6 +39,7 @@ export default async function WishlistPage() {
               photoUrl={expert.photo_url}
               wishlisted={true}
               isSignedIn={true}
+              donatesToNgo={donatingIds.has(expert.id)}
             />
           ))}
         </div>
