@@ -27,8 +27,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
       { href: "/dashboard/expert/payments", label: "Payments" },
       { href: "/dashboard/expert/profile", label: "Expert Profile" },
     );
-  } else {
-    items.push({ href: "/dashboard/expert/profile", label: "Become an Expert" });
+  } else if (expertProfile) {
+    // Has an expert row but not yet approved (pending/rejected/suspended) —
+    // let them view/manage their existing application. There's no open
+    // self-serve "Become an Expert" entry point anymore; new applications
+    // only start from an admin-sent invite link (see /become-an-expert).
+    items.push({ href: "/dashboard/expert/profile", label: "Expert Application" });
   }
 
   items.push({ href: "/dashboard/settings", label: "Settings" });

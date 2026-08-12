@@ -6,6 +6,7 @@ import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
 const items: SidebarItem[] = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/experts", label: "Experts" },
+  { href: "/admin/invites", label: "Expert Invites" },
   { href: "/admin/users", label: "Users" },
   { href: "/admin/bookings", label: "Bookings" },
   { href: "/admin/payments", label: "Payments" },

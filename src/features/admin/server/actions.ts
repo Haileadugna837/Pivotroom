@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
 import { createBookingEventWithMeet } from "@/lib/google/calendar";
-import { notifyBookingConfirmed, notifyPaymentRejected } from "@/features/notifications/server/send";
+import { notifyBookingConfirmed, notifyPaymentRejected, notifyExpertInvite } from "@/features/notifications/server/send";
 import { uploadExpertPhoto } from "@/features/experts/server/photo";
 import { uploadNgoLogo } from "@/features/ngo/server/logo";
 
@@ -363,6 +363,45 @@ export async function setUserAccountStatus(formData: FormData) {
   if (authError) throw authError;
 
   revalidatePath("/admin/users");
+}
+
+export type SendInviteState = { error?: string; success?: string };
+
+export async function sendExpertInvite(
+  _prevState: SendInviteState,
+  formData: FormData,
+): Promise<SendInviteState> {
+  const adminUser = await requireAdmin();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { error: "Enter a valid email address." };
+  }
+
+  const token = crypto.randomUUID();
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("expert_invites")
+    .insert({ email, token, invited_by: adminUser.id });
+  if (error) return { error: error.message };
+
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const inviteUrl = `${siteUrl}/become-an-expert?invite=${token}`;
+  await notifyExpertInvite({ email, inviteUrl });
+
+  revalidatePath("/admin/invites");
+  return { success: `Invite sent to ${email}.` };
+}
+
+export async function revokeExpertInvite(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing invite id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("expert_invites").delete().eq("id", id).eq("status", "pending");
+  if (error) throw error;
+
+  revalidatePath("/admin/invites");
 }
 
 const NOMINEE_STATUSES = ["pending", "in_review", "added", "declined"] as const;

@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { uploadExpertPhoto } from "./photo";
+import { markInviteCompleted } from "./invites";
 
 export type ApplyExpertState = { error?: string };
 
@@ -57,6 +58,11 @@ export async function applyAsExpert(
   const { error } = await supabase.from("experts").upsert(record);
   if (error) {
     return { error: `Failed to save profile: ${error.message}` };
+  }
+
+  const inviteToken = String(formData.get("invite_token") ?? "");
+  if (inviteToken) {
+    await markInviteCompleted(inviteToken);
   }
 
   redirect("/dashboard?applied=1");

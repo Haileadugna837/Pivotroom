@@ -3,6 +3,16 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ExpertTab = "all" | "pending" | "approved" | "rejected" | "suspended";
 
+export async function getInvitesForAdmin() {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("expert_invites")
+    .select("id, email, status, created_at, used_at, completed_at")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
 export async function getExpertsForAdmin(tab: ExpertTab) {
   const admin = createAdminClient();
   let query = admin

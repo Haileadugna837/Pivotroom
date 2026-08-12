@@ -2,6 +2,14 @@ import "server-only";
 import { sendEmail } from "./client";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
+export async function notifyExpertInvite({ email, inviteUrl }: { email: string; inviteUrl: string }) {
+  await sendEmail({
+    to: email,
+    subject: "You're invited to become an expert on Pivotroom.africa",
+    html: `<p>You've been personally invited to apply as an expert on Pivotroom.africa.</p><p><a href="${inviteUrl}">Get started</a></p><p>If the button doesn't work, copy this link into your browser:</p><p>${inviteUrl}</p>`,
+  });
+}
+
 export async function notifyAdminPaymentSubmitted(bookingId: string) {
   await sendEmail({
     to: ADMIN_EMAILS,

@@ -18,12 +18,13 @@ type ApplyFormProps = {
     photo_url?: string | null;
   } | null;
   extraSlot?: React.ReactNode;
+  inviteToken?: string;
 };
 
 const initialState: ApplyExpertState = {};
 const FORM_ID = "apply-expert-form";
 
-export function ApplyForm({ categories, initialValues, extraSlot }: ApplyFormProps) {
+export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
   const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
 
@@ -40,6 +41,7 @@ export function ApplyForm({ categories, initialValues, extraSlot }: ApplyFormPro
   return (
     <div className="flex flex-col gap-3">
       <form id={FORM_ID} action={formAction} className="flex flex-col gap-3">
+      {inviteToken && <input type="hidden" name="invite_token" value={inviteToken} />}
       <PhotoUploadField initialPhotoUrl={initialValues?.photo_url} />
 
       <input

@@ -171,6 +171,39 @@ export type Database = {
           },
         ]
       }
+      expert_invites: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          invited_by: string | null
+          status: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          invited_by?: string | null
+          status?: string
+          token: string
+          used_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          invited_by?: string | null
+          status?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: []
+      }
       expert_ngo_allocations: {
         Row: {
           created_at: string
