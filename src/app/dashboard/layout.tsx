@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { getMyExpertProfile } from "@/features/experts/server/self";
 import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
+
+export const metadata: Metadata = {
+  title: { template: "%s | My Account", default: "My Account" },
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();

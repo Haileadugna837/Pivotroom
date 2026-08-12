@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
 import { NominateForm } from "@/features/nominations/components/nominate-form";
+
+export const metadata: Metadata = {
+  title: "Nominate an expert",
+  description: "Nominate someone you know to become a Pivotroom.africa expert.",
+};
 
 export default async function NominatePage() {
   const user = await getUser();

@@ -1,9 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { getInviteByToken, markInviteUsed } from "@/features/experts/server/invites";
 import { getMyExpertProfile } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
 import { ApplyForm } from "@/features/experts/components/apply-form";
+
+export const metadata: Metadata = {
+  title: "Apply as an expert",
+  robots: { index: false, follow: false },
+};
 
 export default async function BecomeAnExpertApplyPage({
   searchParams,

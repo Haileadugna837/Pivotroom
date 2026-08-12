@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { approveExpert, rejectExpert, suspendExpert } from "@/features/admin/server/actions";
+import { approveExpert, rejectExpert, suspendExpert, approveExpertsBulk } from "@/features/admin/server/actions";
 import type { ExpertTab } from "@/features/admin/server/queries";
+
+const BULK_FORM_ID = "bulk-approve-experts";
 
 type Expert = {
   id: string;
@@ -89,11 +91,32 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
       {experts.length === 0 ? (
         <p className="text-sm text-black/50 dark:text-white/50">No experts in this view.</p>
       ) : (
-        <ul className="flex flex-col gap-3">
+        <>
+          {activeTab === "pending" && (
+            <form id={BULK_FORM_ID} action={approveExpertsBulk} className="mb-3">
+              <button
+                type="submit"
+                className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+              >
+                Approve selected
+              </button>
+            </form>
+          )}
+          <ul className="flex flex-col gap-3">
           {experts.map((e) => (
             <li key={e.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex gap-3">
+                  {activeTab === "pending" && (
+                    <input
+                      type="checkbox"
+                      form={BULK_FORM_ID}
+                      name="expert_ids"
+                      value={e.id}
+                      aria-label={`Select ${e.profile?.full_name ?? "expert"}`}
+                      className="mt-1 h-4 w-4 shrink-0"
+                    />
+                  )}
                   {e.photo_url ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
@@ -126,7 +149,8 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
               </div>
             </li>
           ))}
-        </ul>
+          </ul>
+        </>
       )}
     </div>
   );

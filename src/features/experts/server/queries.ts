@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -32,7 +33,7 @@ export async function getApprovedExperts() {
   }));
 }
 
-export async function getApprovedExpertById(id: string) {
+export const getApprovedExpertById = cache(async (id: string) => {
   const supabase = await createClient();
 
   const { data: expert, error } = await supabase
@@ -87,4 +88,4 @@ export async function getApprovedExpertById(id: string) {
   }
 
   return { ...expert, profile: profile ?? null, availability, socialLinks };
-}
+});

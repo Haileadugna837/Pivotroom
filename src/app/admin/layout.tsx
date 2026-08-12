@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
+
+export const metadata: Metadata = {
+  title: { template: "%s | Admin", default: "Admin" },
+  robots: { index: false, follow: false },
+};
 
 const items: SidebarItem[] = [
   { href: "/admin", label: "Dashboard" },
@@ -15,6 +21,7 @@ const items: SidebarItem[] = [
   { href: "/admin/nominees", label: "Nominations" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/ngos", label: "NGOs" },
+  { href: "/admin/audit-log", label: "Audit Log" },
   { href: "/admin/settings", label: "Settings" },
   { href: "/dashboard", label: "My Account" },
 ];

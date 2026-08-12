@@ -14,9 +14,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Pivotroom.africa",
-  description: "1:1 expert marketplace",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Pivotroom.africa — Book time with African experts",
+    template: "%s | Pivotroom.africa",
+  },
+  description: "Book 1:1 sessions with vetted African experts across every field.",
+  openGraph: {
+    siteName: "Pivotroom.africa",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

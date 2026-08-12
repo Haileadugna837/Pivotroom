@@ -1,9 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
 import { getApprovedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
+
+export const metadata: Metadata = {
+  title: "Find an expert",
+  description: "Browse vetted African experts and book a 1:1 session.",
+};
 
 export default async function ExpertsPage() {
   const [experts, user] = await Promise.all([getApprovedExperts(), getUser()]);

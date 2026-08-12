@@ -1,6 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { LoginForm } from "@/features/auth/components/login-form";
 import { GoogleButton } from "@/features/auth/components/google-button";
+
+export const metadata: Metadata = {
+  title: "Sign in",
+};
 
 export default async function LoginPage({
   searchParams,
@@ -19,6 +24,11 @@ export default async function LoginPage({
         <div className="h-px flex-1 bg-black/10 dark:bg-white/15" />
       </div>
       <LoginForm next={next} />
+      <p className="text-sm text-black/60 dark:text-white/60">
+        <Link href="/forgot-password" className="underline">
+          Forgot password?
+        </Link>
+      </p>
       <p className="text-sm text-black/60 dark:text-white/60">
         No account?{" "}
         <Link href={next ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} className="underline">

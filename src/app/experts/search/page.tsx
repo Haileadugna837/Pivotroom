@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
 import { getApprovedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertSearchView } from "@/features/experts/components/expert-search-view";
+
+export const metadata: Metadata = {
+  title: "Search experts",
+  description: "Search and filter African experts by category.",
+};
 
 export default async function ExpertSearchPage() {
   const [experts, user] = await Promise.all([getApprovedExperts(), getUser()]);

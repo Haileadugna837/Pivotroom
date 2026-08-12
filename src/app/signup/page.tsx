@@ -1,6 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { SignupForm } from "@/features/auth/components/signup-form";
 import { GoogleButton } from "@/features/auth/components/google-button";
+
+export const metadata: Metadata = {
+  title: "Create your account",
+};
 
 export default async function SignupPage({
   searchParams,

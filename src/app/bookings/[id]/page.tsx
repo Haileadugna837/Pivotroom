@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
@@ -12,6 +13,11 @@ import { PaymentInstructions } from "@/features/payments-verification/components
 import { getReviewForBooking } from "@/features/reviews/server/queries";
 import { ReviewForm } from "@/features/reviews/components/review-form";
 
+export const metadata: Metadata = {
+  title: "Booking details",
+  robots: { index: false, follow: false },
+};
+
 const STATUS_LABEL: Record<string, string> = {
   pending_payment: "Awaiting payment",
   payment_submitted: "Payment submitted — pending admin verification",
@@ -23,13 +29,20 @@ const STATUS_LABEL: Record<string, string> = {
 
 export default async function BookingDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const { id } = await params;
+  const { error } = await searchParams;
   const [user, booking] = await Promise.all([getUser(), getBookingForClient(id)]);
   if (!user) redirect(`/login?next=/bookings/${id}`);
   if (!booking) notFound();
+
+  const canCancelConfirmed =
+    booking.status === "confirmed" &&
+    new Date(booking.start_time).getTime() > Date.now() + 2 * 60 * 60 * 1000;
 
   const proof = Array.isArray(booking.payment_proofs)
     ? booking.payment_proofs[0]
@@ -44,6 +57,11 @@ export default async function BookingDetailPage({
   return (
     <div className="mx-auto max-w-lg px-4 py-10">
       <h1 className="text-xl font-semibold">Booking</h1>
+      {error && (
+        <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
+          {error}
+        </p>
+      )}
       <dl className="mt-4 space-y-2 text-sm">
         {isClient && booking.expertName && (
           <div className="flex justify-between">
@@ -98,6 +116,24 @@ export default async function BookingDetailPage({
         >
           Join Google Meet
         </a>
+      )}
+
+      {isClient && canCancelConfirmed && (
+        <form action={cancelBooking} className="mt-3">
+          <input type="hidden" name="booking_id" value={booking.id} />
+          <button
+            type="submit"
+            className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
+          >
+            Cancel this booking
+          </button>
+        </form>
+      )}
+      {isClient && booking.status === "confirmed" && !canCancelConfirmed && (
+        <p className="mt-3 text-xs text-black/50 dark:text-white/50">
+          This session starts within 2 hours, so it can no longer be cancelled here — use Contact
+          Us in the footer if something&apos;s come up.
+        </p>
       )}
 
       {booking.status === "confirmed" &&

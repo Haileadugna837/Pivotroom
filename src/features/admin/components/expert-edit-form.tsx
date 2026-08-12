@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { updateExpertAsAdmin, type UpdateExpertState } from "@/features/admin/server/actions";
 import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
+import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
@@ -17,6 +18,7 @@ type ExpertEditFormProps = {
     payout_account_name: string | null;
     payout_account_number: string | null;
     photo_url?: string | null;
+    timezone?: string | null;
   };
 };
 
@@ -85,6 +87,21 @@ export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEd
           defaultValue={initialValues.price_per_15_min ?? undefined}
           className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
         />
+      </label>
+      <label className="text-sm">
+        Timezone
+        <select
+          name="timezone"
+          required
+          defaultValue={initialValues.timezone ?? DEFAULT_TIMEZONE}
+          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        >
+          {TIMEZONE_OPTIONS.map((tz) => (
+            <option key={tz.value} value={tz.value}>
+              {tz.label}
+            </option>
+          ))}
+        </select>
       </label>
       <div className="mt-2 flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/15">
         <p className="text-sm font-medium">Payout bank account</p>

@@ -1,9 +1,12 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadExpertPhoto } from "./photo";
 import { markInviteCompleted } from "./invites";
+import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 export type ApplyExpertState = { error?: string };
 
@@ -24,6 +27,10 @@ export async function applyAsExpert(
   const pricePer15Min = Number(formData.get("price_per_15_min"));
   const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
+  const timezoneInput = String(formData.get("timezone") ?? "");
+  const timezone = TIMEZONE_OPTIONS.some((t) => t.value === timezoneInput)
+    ? timezoneInput
+    : DEFAULT_TIMEZONE;
 
   const record: {
     id: string;
@@ -34,6 +41,7 @@ export async function applyAsExpert(
     currency: string;
     payout_account_name: string | null;
     payout_account_number: string | null;
+    timezone: string;
     photo_url?: string;
   } = {
     id: user.id,
@@ -44,6 +52,7 @@ export async function applyAsExpert(
     currency: "ETB",
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
+    timezone,
   };
 
   const photo = formData.get("photo");
@@ -66,4 +75,20 @@ export async function applyAsExpert(
   }
 
   redirect("/dashboard?applied=1");
+}
+
+export async function disconnectGoogleCalendar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  // expert_google_tokens only has a self-read RLS policy (writes go through
+  // the OAuth callback via the admin client) — same admin client here.
+  const admin = createAdminClient();
+  const { error } = await admin.from("expert_google_tokens").delete().eq("expert_id", user.id);
+  if (error) throw error;
+
+  revalidatePath("/dashboard/expert/availability");
 }

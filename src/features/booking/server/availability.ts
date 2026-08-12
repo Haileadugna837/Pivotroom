@@ -1,16 +1,9 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getFreeBusy } from "@/lib/google/calendar";
+import { isStillBlocking } from "./availability-rules";
 
 const ACTIVE_STATUSES = ["pending_payment", "payment_submitted", "confirmed"];
-
-// A booking is created as "pending_payment" the instant someone picks a
-// slot, before they've actually paid — if they abandon it (close the tab,
-// never submit proof), that row would otherwise block the slot forever with
-// no way for anyone to know why. Give it a window to actually be paid for;
-// past that, it no longer counts as occupying the slot. payment_submitted
-// and confirmed always still block — those represent a real commitment.
-const PENDING_PAYMENT_TTL_MINUTES = 30;
 
 // Internal check only — never expose the underlying rows to callers, just
 // the boolean. Uses the admin client because a client booking one expert
@@ -36,10 +29,7 @@ export async function isSlotAvailable({
 
   if (error) throw error;
 
-  const ttlCutoff = Date.now() - PENDING_PAYMENT_TTL_MINUTES * 60_000;
-  const stillBlocking = (overlapping ?? []).some(
-    (b) => b.status !== "pending_payment" || new Date(b.created_at).getTime() > ttlCutoff,
-  );
+  const stillBlocking = (overlapping ?? []).some((b) => isStillBlocking(b));
   if (stillBlocking) {
     return { available: false, reason: "That time overlaps another booking." };
   }
