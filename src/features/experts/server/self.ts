@@ -16,7 +16,7 @@ export async function getMyExpertProfileFull(userId: string) {
   const { data, error } = await supabase
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, status, payout_account_name, payout_account_number",
+      "id, headline, bio, category_id, price_per_15_min, status, payout_account_name, payout_account_number, photo_url",
     )
     .eq("id", userId)
     .maybeSingle();

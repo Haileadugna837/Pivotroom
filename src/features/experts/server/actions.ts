@@ -18,7 +18,17 @@ export async function applyAsExpert(formData: FormData) {
   const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
 
-  const { error } = await supabase.from("experts").upsert({
+  const record: {
+    id: string;
+    headline: string;
+    bio: string;
+    category_id: string | null;
+    price_per_15_min: number | null;
+    currency: string;
+    payout_account_name: string | null;
+    payout_account_number: string | null;
+    photo_url?: string;
+  } = {
     id: user.id,
     headline,
     bio,
@@ -27,7 +37,28 @@ export async function applyAsExpert(formData: FormData) {
     currency: "ETB",
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
-  });
+  };
+
+  const photo = formData.get("photo");
+  if (photo instanceof File && photo.size > 0) {
+    if (photo.size > 5 * 1024 * 1024) {
+      throw new Error("Photo must be under 5MB");
+    }
+    const ext = photo.type === "image/png" ? "png" : photo.type === "image/webp" ? "webp" : "jpg";
+    const path = `${user.id}/photo.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("expert-photos")
+      .upload(path, photo, { upsert: true, contentType: photo.type });
+    if (uploadError) throw uploadError;
+
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from("expert-photos").getPublicUrl(path);
+    record.photo_url = `${publicUrl}?t=${Date.now()}`;
+  }
+
+  const { error } = await supabase.from("experts").upsert(record);
 
   if (error) throw error;
 

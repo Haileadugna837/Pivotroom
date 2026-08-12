@@ -8,7 +8,7 @@ export async function getExpertsForAdmin(tab: ExpertTab) {
   let query = admin
     .from("experts")
     .select(
-      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, categories(name), created_at",
+      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, categories(name), created_at",
     )
     .order("created_at", { ascending: true });
 
@@ -37,7 +37,7 @@ export async function getExpertByIdForAdmin(id: string) {
   const { data: expert, error } = await admin
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number",
+      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url",
     )
     .eq("id", id)
     .maybeSingle();
@@ -192,7 +192,8 @@ export async function getDashboardMetrics() {
     { count: rejectedExperts },
     { count: suspendedExperts },
     { count: totalProfiles },
-    { count: totalViews },
+    { count: expertProfileViews },
+    { count: totalWebsiteViews },
   ] = await Promise.all([
     admin.from("experts").select("id", { count: "exact", head: true }),
     admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "approved"),
@@ -201,11 +202,13 @@ export async function getDashboardMetrics() {
     admin.from("experts").select("id", { count: "exact", head: true }).eq("status", "suspended"),
     admin.from("profiles").select("id", { count: "exact", head: true }),
     admin.from("expert_profile_views").select("id", { count: "exact", head: true }),
+    admin.from("page_views").select("id", { count: "exact", head: true }),
   ]);
 
   const experts = totalExperts ?? 0;
   const profiles = totalProfiles ?? 0;
-  const views = totalViews ?? 0;
+  const expertViews = expertProfileViews ?? 0;
+  const websiteViews = totalWebsiteViews ?? 0;
   const approved = approvedExperts ?? 0;
 
   return {
@@ -215,7 +218,7 @@ export async function getDashboardMetrics() {
     rejectedExperts: rejectedExperts ?? 0,
     suspendedExperts: suspendedExperts ?? 0,
     totalClients: Math.max(profiles - experts, 0),
-    totalProfileViews: views,
-    avgViewsPerExpert: approved > 0 ? views / approved : 0,
+    totalWebsiteViews: websiteViews,
+    avgViewsPerExpert: approved > 0 ? expertViews / approved : 0,
   };
 }

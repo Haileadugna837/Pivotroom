@@ -156,6 +156,24 @@ export type Database = {
           },
         ]
       }
+      page_views: {
+        Row: {
+          id: string
+          path: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          path: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          path?: string
+          viewed_at?: string
+        }
+        Relationships: []
+      }
       expert_google_tokens: {
         Row: {
           access_token: string | null
@@ -243,6 +261,7 @@ export type Database = {
           id: string
           payout_account_name: string | null
           payout_account_number: string | null
+          photo_url: string | null
           price_per_15_min: number | null
           status: string
         }
@@ -255,6 +274,7 @@ export type Database = {
           id: string
           payout_account_name?: string | null
           payout_account_number?: string | null
+          photo_url?: string | null
           price_per_15_min?: number | null
           status?: string
         }
@@ -267,6 +287,7 @@ export type Database = {
           id?: string
           payout_account_name?: string | null
           payout_account_number?: string | null
+          photo_url?: string | null
           price_per_15_min?: number | null
           status?: string
         }

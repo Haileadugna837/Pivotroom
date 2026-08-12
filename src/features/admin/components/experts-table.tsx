@@ -10,6 +10,7 @@ type Expert = {
   status: string;
   categories: { name: string } | null;
   created_at: string;
+  photo_url: string | null;
   profile: { full_name: string | null; email: string } | null;
 };
 
@@ -92,7 +93,20 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
           {experts.map((e) => (
             <li key={e.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
               <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+                <div className="flex gap-3">
+                  {e.photo_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={e.photo_url}
+                      alt=""
+                      className="h-16 w-12 shrink-0 rounded-md object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-16 w-12 shrink-0 items-center justify-center rounded-md bg-black/5 text-sm font-medium text-black/30 dark:bg-white/10 dark:text-white/30">
+                      {(e.profile?.full_name ?? "?").charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div>
                   <p className="font-medium">{e.profile?.full_name ?? e.profile?.email ?? e.id}</p>
                   <p className="text-black/50 dark:text-white/50">{e.profile?.email}</p>
                   {e.categories?.name && (
@@ -106,6 +120,7 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
                     {" · "}
                     {e.status}
                   </p>
+                  </div>
                 </div>
                 <ActionsForStatus expertId={e.id} status={e.status} />
               </div>

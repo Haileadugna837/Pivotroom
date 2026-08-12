@@ -18,8 +18,10 @@ the tree.
 | **Admin account area** — Dashboard (metrics), Experts (all/pending/approved/rejected/suspended), Bookings (all/pending/confirmed/completed/cancelled/expired), Payments, Payouts (all/unpaid/paid), Categories, Settings | `src/app/admin/layout.tsx` (sidebar), `src/app/admin/{page,experts,bookings,payments,payouts,categories,settings}` | built |
 | Expert status lifecycle: pending → approved / rejected / suspended, re-approvable from rejected or suspended | `experts.status`, `src/features/admin/server/actions.ts` (`approveExpert`/`rejectExpert`/`suspendExpert`), `src/features/admin/components/experts-table.tsx` | built |
 | Admin edit of any expert's profile fields (not just their own) | `src/app/admin/experts/[id]/page.tsx`, `src/features/admin/components/expert-edit-form.tsx`, `updateExpertAsAdmin` | built |
-| Admin metrics dashboard (expert counts by status, clients, expert profile views, avg views/expert) | `getDashboardMetrics` in `src/features/admin/server/queries.ts`, `src/features/admin/components/metric-card.tsx` | built |
-| Expert profile page view tracking | `expert_profile_views` table, insert in `getApprovedExpertById` | built |
+| Admin metrics dashboard (expert counts by status, clients, total website views, avg expert-profile views/expert) | `getDashboardMetrics` in `src/features/admin/server/queries.ts`, `src/features/admin/components/metric-card.tsx` | built |
+| Site-wide page view tracking (all pages) | `page_views` table, insert in `src/lib/supabase/middleware.ts` | built |
+| Expert profile page view tracking (used only for the avg-per-expert stat) | `expert_profile_views` table, insert in `getApprovedExpertById` | built |
+| Expert profile photo upload (portrait, Supabase Storage) | `expert-photos` storage bucket, upload in `applyAsExpert`, portrait card grid on `/experts` and `/experts/[id]` | built |
 | Category/sub-category management (2-level: parent + children) | `src/features/admin/components/categories-manager.tsx`, `createCategory`/`deleteCategory` | built |
 | Expert directory, public profile page, reviews display | `src/features/experts/`, `src/app/experts/` | built |
 | Expert availability windows (per-date, not weekly recurring) | `src/features/booking/components/availability-manager.tsx`, `src/features/booking/server/availability-actions.ts` | built |
@@ -55,7 +57,10 @@ the tree.
 - Payout bank account: experts add `payout_account_name`/`payout_account_number` on their profile form (`/dashboard/expert/profile`), covered by their existing self-update RLS policy. Admin sees these on `/admin/payouts` inside each row's "Details" disclosure — that's literally where admin gets the account to send money to. Admin can also edit these directly per-expert via `/admin/experts/[id]`.
 - Payouts got their own `all`/`unpaid`/`paid` tabs (`?tab=`, defaults to `unpaid`) — `getPayoutsForAdmin(tab)`. Paid rows show a "Paid on {date}" badge instead of the "Mark paid" button.
 - Expert-facing read-only payments view at `/dashboard/expert/payments`: for each of their bookings, shows the client name, price, payment-proof status (pending/verified/rejected), and payout status (unpaid/paid + paid date). No "mark paid" control for experts — explicitly decided to keep payout confirmation admin-only so it stays a trustworthy record of who's actually been paid, not a self-report. Needed a new RLS policy (`payment_proofs: expert read own bookings`) since experts previously had no read access to payment_proofs at all.
-- Admin dashboard metrics (`/admin`, now the sidebar's first item) are deliberately simple, computed via `count(*, {head:true})` queries, no analytics service: total experts + per-status breakdown, "clients" (defined as `profiles count - experts count`, i.e. registered users who never applied to be an expert — not a maintained `role` column, since that field isn't actually used anywhere else), total expert-profile-page views (`expert_profile_views`, one row inserted per `/experts/[id]` render, fire-and-forget via the admin client so anonymous visitors don't need any RLS grant), and views ÷ approved-expert-count for the average. This is expert-profile-page traffic specifically, not site-wide analytics — labeled that way on the cards to avoid overclaiming.
+- Admin dashboard metrics (`/admin`, now the sidebar's first item) are deliberately simple, computed via `count(*, {head:true})` queries, no analytics service: total experts + per-status breakdown, "clients" (defined as `profiles count - experts count`, i.e. registered users who never applied to be an expert — not a maintained `role` column, since that field isn't actually used anywhere else), **total website views** (`page_views`, one row inserted per real page navigation across the whole site — see below), and expert-profile views ÷ approved-expert-count for the "avg views per expert" stat (that one specifically still tracks `expert_profile_views`, i.e. `/experts/[id]` traffic only, since an average only makes sense against expert-page traffic).
+- Site-wide view tracking lives in `trackPageView()` inside `src/lib/supabase/middleware.ts` (runs on every request `updateSession` handles, i.e. everything the root `middleware.ts` matcher covers — already excludes `_next/static`, `_next/image`, favicon, image files). Skips non-GET requests, `/api/*`, and requests carrying the `next-router-prefetch` header (so prefetches don't inflate the count); everything else — including client-side soft navigations, which do send a real request — counts as a view. Insert is fire-and-forget via the admin (service-role) client, since this needs to work for anonymous visitors with zero RLS grants. This is a best-effort approximation, not a real analytics pipeline — good enough for a rough traffic sense, not for anything precision-dependent.
+- Expert profile photos: new `expert-photos` Supabase Storage bucket (public read, so listing pages don't need signed URLs), objects stored at `{expert_id}/photo.{ext}` (upsert on re-upload, so old photos don't pile up as orphaned objects). `storage.objects` RLS restricts insert/update/delete to the path's owner folder matching `auth.uid()`; public read comes from the bucket being marked `public = true`, not from an RLS policy. Uploaded via a `<input type="file">` in `ApplyForm`, handled directly inside `applyAsExpert` (Next.js server actions accept `File` objects in `FormData` natively — no separate upload endpoint needed). 5MB cap, jpg/png/webp only. `experts.photo_url` stores the public URL with a `?t=` cache-busting query param appended on each upload (same storage path, so without this the browser/CDN would keep serving the old cached image). No photo upload wired into the *admin* edit form — intentionally expert-self-serve only for now; admin's edit page and experts-table just display the current photo read-only.
+- `/experts` and `/experts/[id]` were redesigned around the uploaded photo: `/experts` is now a responsive 2/3/4-column grid of portrait (`aspect-[3/4]`) photo cards (`ExpertCard`) — name + a small checkmark badge (all listed experts are `status = 'approved'`, so this is unconditional, not a separate "verified" flag), price as "ETB X • 15 min", category chip overlaid top-left on the photo, headline/bio truncated to two lines. Experts without a photo fall back to a plain initial-letter placeholder tile, no broken-image icon. `/experts/[id]` shows the same portrait image above the existing detail content. All images are plain `<img>` tags (not `next/image`) since Supabase Storage URLs live on their own domain and this avoids `next.config.ts` remote-pattern config for an MVP.
 
 ## Deployment
 
@@ -70,16 +75,17 @@ the tree.
 Tables: `profiles` (auto-created on signup via trigger), `categories` (now with
 `parent_id` for one level of sub-categories, `on delete set null`), `experts`
 (`status` lifecycle, `price_per_15_min`, `currency`, `payout_account_name`,
-`payout_account_number` — no more `is_approved`/`session_rate`/`session_duration_minutes`),
+`payout_account_number`, `photo_url` — no more `is_approved`/`session_rate`/`session_duration_minutes`),
 `expert_availability` (per-date windows), `expert_google_tokens` (service-role
-write, expert can read own row), `expert_profile_views` (service-role only, no
-RLS policies at all), `bookings`, `payment_proofs`, `expert_payouts`, `reviews`.
-All have RLS enabled. View `expert_public_profiles` exposes only name/avatar
-for approved experts (intentionally security-definer — flagged ERROR by the
-linter but scoped to 3 non-sensitive columns, filtered to `status = 'approved'`;
-accepted tradeoff, do not "fix" by loosening `profiles` RLS).
+write, expert can read own row), `expert_profile_views` and `page_views`
+(both service-role only, no RLS policies at all), `bookings`, `payment_proofs`,
+`expert_payouts`, `reviews`. All have RLS enabled. View `expert_public_profiles`
+exposes only name/avatar for approved experts (intentionally security-definer —
+flagged ERROR by the linter but scoped to 3 non-sensitive columns, filtered to
+`status = 'approved'`; accepted tradeoff, do not "fix" by loosening `profiles` RLS).
 `experts.category_id`'s FK is `on delete set null`, so deleting a category
-never fails or cascades.
+never fails or cascades. Storage bucket `expert-photos` (public read; owner-only
+write via `storage.objects` RLS keyed on the `{expert_id}/...` path prefix).
 
 Booking status flow: `pending_payment` → `payment_submitted` (client submits
 proof) → `confirmed` (admin verifies) → `completed` (expert/admin marks it) /

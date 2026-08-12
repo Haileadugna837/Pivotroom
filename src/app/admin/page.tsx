@@ -25,7 +25,7 @@ export default async function AdminDashboardPage() {
         <MetricCard label="Rejected experts" value={metrics.rejectedExperts} />
         <MetricCard label="Suspended experts" value={metrics.suspendedExperts} />
         <MetricCard label="Clients" value={metrics.totalClients} />
-        <MetricCard label="Expert profile views" value={metrics.totalProfileViews} />
+        <MetricCard label="Total website views" value={metrics.totalWebsiteViews} />
         <MetricCard label="Avg. views per expert" value={metrics.avgViewsPerExpert.toFixed(1)} />
       </div>
     </div>

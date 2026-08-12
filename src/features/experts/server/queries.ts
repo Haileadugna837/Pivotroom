@@ -6,7 +6,7 @@ export async function getApprovedExperts() {
 
   const { data: experts, error: expertsError } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, categories(name)")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url, categories(name)")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
@@ -36,7 +36,7 @@ export async function getApprovedExpertById(id: string) {
 
   const { data: expert, error } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, categories(name)")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url, categories(name)")
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();

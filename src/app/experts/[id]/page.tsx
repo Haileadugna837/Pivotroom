@@ -26,6 +26,20 @@ export default async function ExpertDetailPage({
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="relative mb-4 aspect-[3/4] w-full max-w-xs overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
+        {expert.photo_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={expert.photo_url}
+            alt={expert.profile?.full_name ?? "Expert"}
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-5xl font-semibold text-black/20 dark:text-white/20">
+            {(expert.profile?.full_name ?? "?").charAt(0).toUpperCase()}
+          </div>
+        )}
+      </div>
       <h1 className="text-xl font-semibold">{expert.profile?.full_name ?? "Expert"}</h1>
       {expert.categories?.name && (
         <span className="mt-1 inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">

@@ -11,6 +11,7 @@ type ApplyFormProps = {
     price_per_15_min: number | null;
     payout_account_name?: string | null;
     payout_account_number?: string | null;
+    photo_url?: string | null;
   } | null;
 };
 
@@ -28,6 +29,26 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
 
   return (
     <form action={applyAsExpert} className="flex flex-col gap-3">
+      <label className="text-sm">
+        Profile photo
+        {initialValues?.photo_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={initialValues.photo_url}
+            alt=""
+            className="mt-1 mb-2 h-40 w-32 rounded-md object-cover"
+          />
+        )}
+        <input
+          name="photo"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          className="mt-1 block w-full text-sm"
+        />
+      </label>
+      <p className="-mt-2 text-xs text-black/50 dark:text-white/50">
+        A clear portrait photo, shown on your public listing. Up to 5MB.
+      </p>
       <input
         name="headline"
         required
