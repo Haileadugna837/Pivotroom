@@ -104,6 +104,28 @@ function fromMinutesOfDay(totalMinutes: number) {
   return `${h}:${m}`;
 }
 
+export async function cancelBooking(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const bookingId = String(formData.get("booking_id") ?? "");
+  if (!bookingId) throw new Error("Missing booking_id");
+
+  const { error } = await supabase
+    .from("bookings")
+    .update({ status: "cancelled" })
+    .eq("id", bookingId)
+    .eq("client_id", user.id)
+    .eq("status", "pending_payment");
+  if (error) throw error;
+
+  revalidatePath(`/bookings/${bookingId}`);
+  revalidatePath("/dashboard");
+}
+
 export async function markBookingCompletedAsExpert(formData: FormData) {
   const supabase = await createClient();
   const {

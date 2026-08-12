@@ -4,6 +4,7 @@ import { isAdminEmail } from "@/lib/admin";
 import { getBookingForClient } from "@/features/booking/server/queries";
 import {
   markBookingCompletedAsExpert,
+  cancelBooking,
 } from "@/features/booking/server/actions";
 import { markBookingCompletedAsAdmin } from "@/features/admin/server/actions";
 import { PaymentProofForm } from "@/features/payments-verification/components/payment-proof-form";
@@ -126,6 +127,17 @@ export default async function BookingDetailPage({
           <h2 className="mb-2 text-sm font-medium">Pay for this session</h2>
           <PaymentInstructions price={booking.price} currency={booking.currency} />
           <PaymentProofForm bookingId={booking.id} />
+          {isClient && (
+            <form action={cancelBooking} className="mt-4">
+              <input type="hidden" name="booking_id" value={booking.id} />
+              <button
+                type="submit"
+                className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
+              >
+                Cancel this booking
+              </button>
+            </form>
+          )}
         </div>
       )}
 
