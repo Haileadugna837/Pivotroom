@@ -1,12 +1,11 @@
 import { notFound, redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getApprovedExpertById } from "@/features/experts/server/queries";
-import { BookingForm } from "@/features/booking/components/booking-form";
+import { BookingLauncher } from "@/features/booking/components/booking-launcher";
 import { getReviewsForExpert } from "@/features/reviews/server/queries";
 import { ReviewList } from "@/features/reviews/components/review-list";
 import { SocialIcon } from "@/features/experts/components/social-icons";
 import { ShareButton } from "@/features/experts/components/share-button";
-import { MobileBookingBar } from "@/features/experts/components/mobile-booking-bar";
 
 export default async function ExpertDetailPage({
   params,
@@ -101,40 +100,22 @@ export default async function ExpertDetailPage({
           : "Rate not set"}
       </p>
 
-      <div id="book-a-session" className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-        <h2 className="mb-3 text-sm font-medium">Book a session</h2>
-        {error && (
-          <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
-        {user ? (
-          <BookingForm
-            expertId={expert.id}
-            pricePer15Min={expert.price_per_15_min}
-            currency={expert.currency}
-            availability={expert.availability}
-          />
-        ) : (
-          <p className="text-sm">
-            <a href={`/login?next=/experts/${expert.id}`} className="underline">
-              Sign in
-            </a>{" "}
-            to book a session.
-          </p>
-        )}
-      </div>
+      <BookingLauncher
+        expertId={expert.id}
+        pricePer15Min={expert.price_per_15_min}
+        currency={expert.currency}
+        availability={expert.availability}
+        average={average}
+        count={count}
+        isSignedIn={Boolean(user)}
+        loginHref={`/login?next=/experts/${expert.id}`}
+        error={error}
+      />
 
       <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
         <h2 className="mb-3 text-sm font-medium">Reviews</h2>
         <ReviewList reviews={reviews} average={average} count={count} />
       </div>
-
-      <MobileBookingBar
-        price={expert.price_per_15_min}
-        currency={expert.currency}
-        targetId="book-a-session"
-      />
     </div>
   );
 }

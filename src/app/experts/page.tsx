@@ -29,6 +29,17 @@ export default async function ExpertsPage() {
           ))}
         </div>
       )}
+
+      <Link
+        href="/experts/search"
+        aria-label="Search experts"
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-foreground text-background shadow-lg"
+      >
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+          <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.8" />
+          <path d="M18 18l-4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      </Link>
     </div>
   );
 }
