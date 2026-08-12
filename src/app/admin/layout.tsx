@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { SidebarLayout, type SidebarItem } from "@/components/sidebar";
 
@@ -20,10 +20,7 @@ const items: SidebarItem[] = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user || !isAdminEmail(user.email)) redirect("/");
 

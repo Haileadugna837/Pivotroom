@@ -1,17 +1,13 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getApprovedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
 
 export default async function ExpertsPage() {
-  const experts = await getApprovedExperts();
+  const [experts, user] = await Promise.all([getApprovedExperts(), getUser()]);
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
   const [wishlistedIds, donatingIds] = await Promise.all([
     user ? getWishlistedExpertIds(user.id) : Promise.resolve(new Set<string>()),
     getExpertIdsWithNgoDonations(),

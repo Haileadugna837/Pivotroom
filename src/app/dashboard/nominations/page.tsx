@@ -1,13 +1,10 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getMyNominations } from "@/features/nominations/server/queries";
 import { MyNominationsList } from "@/features/nominations/components/my-nominations-list";
 
 export default async function MyNominationsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
   const nominations = await getMyNominations(user.id);

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getMyExpertProfileFull, getMySocialLinks } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
 import { getAllNgos, getMyNgoAllocations } from "@/features/ngo/server/queries";
@@ -15,10 +15,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default async function ExpertProfilePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
   const expertProfile = await getMyExpertProfileFull(user.id);

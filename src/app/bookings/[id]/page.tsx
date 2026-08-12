@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { getBookingForClient } from "@/features/booking/server/queries";
 import {
@@ -26,13 +26,8 @@ export default async function BookingDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const [user, booking] = await Promise.all([getUser(), getBookingForClient(id)]);
   if (!user) redirect(`/login?next=/bookings/${id}`);
-
-  const booking = await getBookingForClient(id);
   if (!booking) notFound();
 
   const proof = Array.isArray(booking.payment_proofs)

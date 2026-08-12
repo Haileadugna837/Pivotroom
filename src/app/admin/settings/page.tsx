@@ -1,23 +1,28 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import { AccountSettingsForms } from "@/features/auth/components/account-settings-forms";
+import { ProfileHeader } from "@/components/profile-header";
 
 export default async function AdminSettingsPage() {
+  const user = await getUser();
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+
+  const { data: profile } = user
+    ? await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle()
+    : { data: null };
 
   const hasPasswordIdentity = user?.identities?.some((i) => i.provider === "email") ?? false;
 
   return (
     <div className="mx-auto max-w-lg px-6 py-10">
-      <h1 className="text-xl font-semibold">Admin Settings</h1>
-      <dl className="mt-6 space-y-3 text-sm">
-        <div>
-          <dt className="text-black/50 dark:text-white/50">Admin email</dt>
-          <dd className="mt-0.5">{user?.email}</dd>
-        </div>
-      </dl>
+      <h1 className="mb-6 text-xl font-semibold">Admin Settings</h1>
+      {user && (
+        <ProfileHeader
+          name={profile?.full_name ?? ""}
+          email={user.email ?? ""}
+          joinedAt={user.created_at}
+          roleLabel="Admin"
+        />
+      )}
       <AccountSettingsForms currentEmail={user?.email ?? ""} hasPasswordIdentity={hasPasswordIdentity} />
     </div>
   );

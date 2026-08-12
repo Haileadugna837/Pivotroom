@@ -1,12 +1,10 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 
 export async function getMyPaymentsAsExpert() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) return [];
 
+  const supabase = await createClient();
   const { data: bookings, error } = await supabase
     .from("bookings")
     .select(

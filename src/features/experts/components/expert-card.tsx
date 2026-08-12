@@ -43,11 +43,6 @@ export function ExpertCard({
               {(fullName ?? "?").charAt(0).toUpperCase()}
             </div>
           )}
-          {categoryName && (
-            <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium text-black">
-              {categoryName}
-            </span>
-          )}
         </div>
         <div className="flex items-center gap-1">
           <h3 className="font-medium">{fullName ?? "Expert"}</h3>

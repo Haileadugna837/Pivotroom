@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getInviteByToken, markInviteUsed } from "@/features/experts/server/invites";
 import { getMyExpertProfile } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
@@ -17,10 +17,7 @@ export default async function BecomeAnExpertApplyPage({
   if (!invite) redirect("/become-an-expert");
   if (invite.status === "completed") redirect("/dashboard/expert/profile");
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
 
   if (!user) {
     redirect(`/login?next=${encodeURIComponent(`/become-an-expert/apply?invite=${token}`)}`);

@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 
 export async function getBookingForClient(bookingId: string) {
   const supabase = await createClient();
@@ -26,12 +26,10 @@ export async function getBookingForClient(bookingId: string) {
 }
 
 export async function getMyBookingsAsClient() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) return [];
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("bookings")
     .select("id, expert_id, start_time, status, price, currency")
@@ -54,12 +52,10 @@ export async function getMyBookingsAsClient() {
 }
 
 export async function getMyAvailability() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) return [];
 
+  const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
   const { data, error } = await supabase
     .from("expert_availability")
@@ -74,12 +70,10 @@ export async function getMyAvailability() {
 }
 
 export async function getMyBookingsAsExpert() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) return [];
 
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("bookings")
     .select("id, client_id, start_time, status, price, currency, meet_link")

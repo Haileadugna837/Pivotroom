@@ -1,14 +1,11 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getMyExpertProfile } from "@/features/experts/server/self";
 import { getMyPaymentsAsExpert } from "@/features/payments-verification/server/queries";
 import { MyPaymentsList } from "@/features/payments-verification/components/my-payments-list";
 
 export default async function ExpertPaymentsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
   const expertProfile = await getMyExpertProfile(user.id);

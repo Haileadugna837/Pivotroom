@@ -1,14 +1,11 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { getUser } from "@/lib/supabase/server";
 import { getMyExpertProfile } from "@/features/experts/server/self";
 import { getMyBookingsAsExpert } from "@/features/booking/server/queries";
 import { BookingsList } from "@/features/booking/components/bookings-list";
 
 export default async function ExpertBookingsPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
   const expertProfile = await getMyExpertProfile(user.id);
