@@ -1,9 +1,17 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 import { getApprovedExperts } from "@/features/experts/server/queries";
+import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
 
 export default async function ExpertsPage() {
   const experts = await getApprovedExperts();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const wishlistedIds = user ? await getWishlistedExpertIds(user.id) : new Set<string>();
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -15,17 +23,20 @@ export default async function ExpertsPage() {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {experts.map((expert) => (
-            <Link key={expert.id} href={`/experts/${expert.id}`}>
-              <ExpertCard
-                headline={expert.headline}
-                bio={expert.bio}
-                pricePer15Min={expert.price_per_15_min}
-                currency={expert.currency}
-                categoryName={expert.categories?.name ?? null}
-                fullName={expert.profile?.full_name ?? null}
-                photoUrl={expert.photo_url}
-              />
-            </Link>
+            <ExpertCard
+              key={expert.id}
+              expertId={expert.id}
+              href={`/experts/${expert.id}`}
+              headline={expert.headline}
+              bio={expert.bio}
+              pricePer15Min={expert.price_per_15_min}
+              currency={expert.currency}
+              categoryName={expert.categories?.name ?? null}
+              fullName={expert.profile?.full_name ?? null}
+              photoUrl={expert.photo_url}
+              wishlisted={wishlistedIds.has(expert.id)}
+              isSignedIn={Boolean(user)}
+            />
           ))}
         </div>
       )}

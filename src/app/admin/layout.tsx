@@ -10,6 +10,7 @@ const items: SidebarItem[] = [
   { href: "/admin/payments", label: "Payments" },
   { href: "/admin/payouts", label: "Payouts" },
   { href: "/admin/categories", label: "Categories" },
+  { href: "/admin/ngos", label: "NGOs" },
   { href: "/admin/settings", label: "Settings" },
   { href: "/dashboard", label: "My Account" },
 ];

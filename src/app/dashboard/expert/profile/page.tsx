@@ -2,8 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getMyExpertProfileFull, getMySocialLinks } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
+import { getAllNgos, getMyNgoAllocations } from "@/features/ngo/server/queries";
 import { ApplyForm } from "@/features/experts/components/apply-form";
 import { SocialLinksManager } from "@/features/experts/components/social-links-manager";
+import { NgoDonationManager } from "@/features/ngo/components/ngo-donation-manager";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Pending review",
@@ -19,10 +21,12 @@ export default async function ExpertProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [expertProfile, categories, socialLinks] = await Promise.all([
+  const [expertProfile, categories, socialLinks, ngos, ngoAllocations] = await Promise.all([
     getMyExpertProfileFull(user.id),
     getCategories(),
     getMySocialLinks(user.id),
+    getAllNgos(),
+    getMyNgoAllocations(user.id),
   ]);
 
   return (
@@ -38,7 +42,16 @@ export default async function ExpertProfilePage() {
       <ApplyForm
         categories={categories}
         initialValues={expertProfile}
-        socialLinksSlot={expertProfile ? <SocialLinksManager links={socialLinks} /> : undefined}
+        extraSlot={
+          expertProfile ? (
+            <div className="flex flex-col gap-6">
+              <SocialLinksManager links={socialLinks} />
+              <div className="border-t border-black/10 pt-6 dark:border-white/15">
+                <NgoDonationManager ngos={ngos} allocations={ngoAllocations} />
+              </div>
+            </div>
+          ) : undefined
+        }
       />
       {!expertProfile && (
         <p className="mt-4 text-xs text-black/50 dark:text-white/50">

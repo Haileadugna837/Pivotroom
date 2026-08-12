@@ -6,6 +6,8 @@ import { getReviewsForExpert } from "@/features/reviews/server/queries";
 import { ReviewList } from "@/features/reviews/components/review-list";
 import { SocialIcon } from "@/features/experts/components/social-icons";
 import { ShareButton } from "@/features/experts/components/share-button";
+import { isExpertWishlisted } from "@/features/wishlist/server/queries";
+import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
 
 export default async function ExpertDetailPage({
   params,
@@ -25,6 +27,7 @@ export default async function ExpertDetailPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const wishlisted = user ? await isExpertWishlisted(user.id, id) : false;
 
   const name = expert.profile?.full_name ?? "Expert";
 
@@ -39,6 +42,12 @@ export default async function ExpertDetailPage({
             {name.charAt(0).toUpperCase()}
           </div>
         )}
+        <WishlistHeartButton
+          expertId={expert.id}
+          initialWishlisted={wishlisted}
+          isSignedIn={Boolean(user)}
+          className="absolute right-3 top-3"
+        />
       </div>
 
       <div className="mt-4 flex items-center justify-between">

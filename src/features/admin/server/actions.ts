@@ -271,6 +271,30 @@ export async function deleteCategory(formData: FormData) {
   revalidatePath("/admin/categories");
 }
 
+export async function createNgo(formData: FormData) {
+  await requireAdmin();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) throw new Error("Missing NGO name");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("ngos").insert({ name });
+  if (error) throw error;
+
+  revalidatePath("/admin/ngos");
+}
+
+export async function deleteNgo(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing NGO id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("ngos").delete().eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/ngos");
+}
+
 export async function markBookingCompletedAsAdmin(formData: FormData) {
   await requireAdmin();
   const bookingId = String(formData.get("booking_id") ?? "");

@@ -14,7 +14,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const expertProfile = await getMyExpertProfile(user.id);
 
-  const items: SidebarItem[] = [{ href: "/dashboard", label: "My Bookings" }];
+  const items: SidebarItem[] = [
+    { href: "/dashboard", label: "My Bookings" },
+    { href: "/dashboard/wishlist", label: "Wishlist" },
+  ];
 
   if (expertProfile?.status === "approved") {
     items.push(

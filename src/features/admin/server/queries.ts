@@ -147,6 +147,13 @@ export async function getCategoriesForAdmin() {
   return data;
 }
 
+export async function getNgosForAdmin() {
+  const admin = createAdminClient();
+  const { data, error } = await admin.from("ngos").select("id, name").order("name", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
 export type PayoutTab = "all" | "unpaid" | "paid";
 
 export async function getPayoutsForAdmin(tab: PayoutTab) {

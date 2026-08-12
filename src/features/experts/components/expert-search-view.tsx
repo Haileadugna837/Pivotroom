@@ -29,7 +29,14 @@ function matchesQuery(expert: SearchableExpert, words: string[]) {
   return words.every((word) => haystack.includes(word));
 }
 
-export function ExpertSearchView({ experts }: { experts: SearchableExpert[] }) {
+type ExpertSearchViewProps = {
+  experts: SearchableExpert[];
+  wishlistedIds: string[];
+  isSignedIn: boolean;
+};
+
+export function ExpertSearchView({ experts, wishlistedIds, isSignedIn }: ExpertSearchViewProps) {
+  const wishlistedSet = useMemo(() => new Set(wishlistedIds), [wishlistedIds]);
   const [query, setQuery] = useState("");
 
   const results = useMemo(() => {
@@ -88,17 +95,20 @@ export function ExpertSearchView({ experts }: { experts: SearchableExpert[] }) {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {results.map((expert) => (
-            <Link key={expert.id} href={`/experts/${expert.id}`}>
-              <ExpertCard
-                headline={expert.headline}
-                bio={expert.bio}
-                pricePer15Min={expert.price_per_15_min}
-                currency={expert.currency}
-                categoryName={expert.categories?.name ?? null}
-                fullName={expert.profile?.full_name ?? null}
-                photoUrl={expert.photo_url}
-              />
-            </Link>
+            <ExpertCard
+              key={expert.id}
+              expertId={expert.id}
+              href={`/experts/${expert.id}`}
+              headline={expert.headline}
+              bio={expert.bio}
+              pricePer15Min={expert.price_per_15_min}
+              currency={expert.currency}
+              categoryName={expert.categories?.name ?? null}
+              fullName={expert.profile?.full_name ?? null}
+              photoUrl={expert.photo_url}
+              wishlisted={wishlistedSet.has(expert.id)}
+              isSignedIn={isSignedIn}
+            />
           ))}
         </div>
       )}

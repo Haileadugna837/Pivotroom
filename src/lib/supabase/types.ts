@@ -7,6 +7,8 @@ export type Json =
   | Json[]
 
 export type Database = {
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.15"
   }
@@ -53,6 +55,13 @@ export type Database = {
           status?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bookings_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "expert_public_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookings_client_id_fkey"
             columns: ["client_id"]
@@ -130,6 +139,129 @@ export type Database = {
           },
         ]
       }
+      expert_google_tokens: {
+        Row: {
+          access_token: string | null
+          expert_id: string
+          expiry: string | null
+          refresh_token: string
+          updated_at: string
+        }
+        Insert: {
+          access_token?: string | null
+          expert_id: string
+          expiry?: string | null
+          refresh_token: string
+          updated_at?: string
+        }
+        Update: {
+          access_token?: string | null
+          expert_id?: string
+          expiry?: string | null
+          refresh_token?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_google_tokens_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: true
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_ngo_allocations: {
+        Row: {
+          created_at: string
+          expert_id: string
+          id: string
+          ngo_id: string
+          percentage: number
+        }
+        Insert: {
+          created_at?: string
+          expert_id: string
+          id?: string
+          ngo_id: string
+          percentage: number
+        }
+        Update: {
+          created_at?: string
+          expert_id?: string
+          id?: string
+          ngo_id?: string
+          percentage?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_ngo_allocations_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_ngo_allocations_ngo_id_fkey"
+            columns: ["ngo_id"]
+            isOneToOne: false
+            referencedRelation: "ngos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_payouts: {
+        Row: {
+          amount: number | null
+          booking_id: string
+          created_at: string
+          id: string
+          paid_at: string | null
+          paid_by: string | null
+          status: string
+        }
+        Insert: {
+          amount?: number | null
+          booking_id: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          paid_by?: string | null
+          status?: string
+        }
+        Update: {
+          amount?: number | null
+          booking_id?: string
+          created_at?: string
+          id?: string
+          paid_at?: string | null
+          paid_by?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_payouts_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_payouts_paid_by_fkey"
+            columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "expert_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_payouts_paid_by_fkey"
+            columns: ["paid_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_profile_views: {
         Row: {
           expert_id: string
@@ -188,101 +320,6 @@ export type Database = {
           },
         ]
       }
-      page_views: {
-        Row: {
-          id: string
-          path: string
-          viewed_at: string
-        }
-        Insert: {
-          id?: string
-          path: string
-          viewed_at?: string
-        }
-        Update: {
-          id?: string
-          path?: string
-          viewed_at?: string
-        }
-        Relationships: []
-      }
-      expert_google_tokens: {
-        Row: {
-          access_token: string | null
-          expert_id: string
-          expiry: string | null
-          refresh_token: string
-          updated_at: string
-        }
-        Insert: {
-          access_token?: string | null
-          expert_id: string
-          expiry?: string | null
-          refresh_token: string
-          updated_at?: string
-        }
-        Update: {
-          access_token?: string | null
-          expert_id?: string
-          expiry?: string | null
-          refresh_token?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expert_google_tokens_expert_id_fkey"
-            columns: ["expert_id"]
-            isOneToOne: true
-            referencedRelation: "experts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      expert_payouts: {
-        Row: {
-          amount: number | null
-          booking_id: string
-          created_at: string
-          id: string
-          paid_at: string | null
-          paid_by: string | null
-          status: string
-        }
-        Insert: {
-          amount?: number | null
-          booking_id: string
-          created_at?: string
-          id?: string
-          paid_at?: string | null
-          paid_by?: string | null
-          status?: string
-        }
-        Update: {
-          amount?: number | null
-          booking_id?: string
-          created_at?: string
-          id?: string
-          paid_at?: string | null
-          paid_by?: string | null
-          status?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "expert_payouts_booking_id_fkey"
-            columns: ["booking_id"]
-            isOneToOne: true
-            referencedRelation: "bookings"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "expert_payouts_paid_by_fkey"
-            columns: ["paid_by"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       experts: {
         Row: {
           bio: string | null
@@ -335,10 +372,53 @@ export type Database = {
             foreignKeyName: "experts_id_fkey"
             columns: ["id"]
             isOneToOne: true
+            referencedRelation: "expert_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experts_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
+      }
+      ngos: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      page_views: {
+        Row: {
+          id: string
+          path: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          path: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          path?: string
+          viewed_at?: string
+        }
+        Relationships: []
       }
       payment_proofs: {
         Row: {
@@ -383,6 +463,13 @@ export type Database = {
             columns: ["booking_id"]
             isOneToOne: true
             referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_proofs_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "expert_public_profiles"
             referencedColumns: ["id"]
           },
           {
@@ -461,11 +548,47 @@ export type Database = {
             foreignKeyName: "reviews_client_id_fkey"
             columns: ["client_id"]
             isOneToOne: false
+            referencedRelation: "expert_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reviews_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "reviews_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      wishlists: {
+        Row: {
+          created_at: string
+          expert_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expert_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expert_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wishlists_expert_id_fkey"
             columns: ["expert_id"]
             isOneToOne: false
             referencedRelation: "experts"
@@ -495,3 +618,126 @@ export type Database = {
     }
   }
 }
+
+type DatabaseWithoutInternals = Omit<Database, "__InternalSupabase">
+
+type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
+
+export type Tables<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R
+    }
+    ? R
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
+
+export type TablesInsert<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Insert: infer I
+    }
+    ? I
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
+
+export type TablesUpdate<
+  DefaultSchemaTableNameOrOptions extends
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
+  TableName extends DefaultSchemaTableNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
+> = DefaultSchemaTableNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
+      Update: infer U
+    }
+    ? U
+    : never
+  : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
+
+export type Enums<
+  DefaultSchemaEnumNameOrOptions extends
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
+  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
+> = DefaultSchemaEnumNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
+  : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
+
+export type CompositeTypes<
+  PublicCompositeTypeNameOrOptions extends
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
+  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+    schema: keyof DatabaseWithoutInternals
+  }
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
+> = PublicCompositeTypeNameOrOptions extends {
+  schema: keyof DatabaseWithoutInternals
+}
+  ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
+  : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
+
+export const Constants = {
+  public: {
+    Enums: {},
+  },
+} as const

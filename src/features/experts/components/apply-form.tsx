@@ -17,13 +17,13 @@ type ApplyFormProps = {
     payout_account_number?: string | null;
     photo_url?: string | null;
   } | null;
-  socialLinksSlot?: React.ReactNode;
+  extraSlot?: React.ReactNode;
 };
 
 const initialState: ApplyExpertState = {};
 const FORM_ID = "apply-expert-form";
 
-export function ApplyForm({ categories, initialValues, socialLinksSlot }: ApplyFormProps) {
+export function ApplyForm({ categories, initialValues, extraSlot }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
   const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
 
@@ -115,8 +115,8 @@ export function ApplyForm({ categories, initialValues, socialLinksSlot }: ApplyF
       {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
       </form>
 
-      {socialLinksSlot && (
-        <div className="border-t border-black/10 pt-4 dark:border-white/15">{socialLinksSlot}</div>
+      {extraSlot && (
+        <div className="border-t border-black/10 pt-4 dark:border-white/15">{extraSlot}</div>
       )}
 
       <button
