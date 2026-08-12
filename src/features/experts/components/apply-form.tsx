@@ -17,11 +17,13 @@ type ApplyFormProps = {
     payout_account_number?: string | null;
     photo_url?: string | null;
   } | null;
+  socialLinksSlot?: React.ReactNode;
 };
 
 const initialState: ApplyExpertState = {};
+const FORM_ID = "apply-expert-form";
 
-export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
+export function ApplyForm({ categories, initialValues, socialLinksSlot }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
   const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
 
@@ -36,7 +38,8 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
     });
 
   return (
-    <form action={formAction} className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3">
+      <form id={FORM_ID} action={formAction} className="flex flex-col gap-3">
       <PhotoUploadField initialPhotoUrl={initialValues?.photo_url} />
 
       <input
@@ -110,14 +113,20 @@ export function ApplyForm({ categories, initialValues }: ApplyFormProps) {
       </div>
 
       {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+      </form>
+
+      {socialLinksSlot && (
+        <div className="border-t border-black/10 pt-4 dark:border-white/15">{socialLinksSlot}</div>
+      )}
 
       <button
         type="submit"
+        form={FORM_ID}
         disabled={pending}
         className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
       >
         {pending ? "Saving…" : isEditing ? "Save changes" : "Submit application"}
       </button>
-    </form>
+    </div>
   );
 }

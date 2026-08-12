@@ -6,6 +6,7 @@ import { getReviewsForExpert } from "@/features/reviews/server/queries";
 import { ReviewList } from "@/features/reviews/components/review-list";
 import { SocialIcon } from "@/features/experts/components/social-icons";
 import { ShareButton } from "@/features/experts/components/share-button";
+import { MobileBookingBar } from "@/features/experts/components/mobile-booking-bar";
 
 export default async function ExpertDetailPage({
   params,
@@ -29,7 +30,7 @@ export default async function ExpertDetailPage({
   const name = expert.profile?.full_name ?? "Expert";
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-10">
+    <div className="mx-auto max-w-lg px-4 py-10 pb-24 md:pb-10">
       <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
         {expert.photo_url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -100,7 +101,7 @@ export default async function ExpertDetailPage({
           : "Rate not set"}
       </p>
 
-      <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
+      <div id="book-a-session" className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
         <h2 className="mb-3 text-sm font-medium">Book a session</h2>
         {error && (
           <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
@@ -128,6 +129,12 @@ export default async function ExpertDetailPage({
         <h2 className="mb-3 text-sm font-medium">Reviews</h2>
         <ReviewList reviews={reviews} average={average} count={count} />
       </div>
+
+      <MobileBookingBar
+        price={expert.price_per_15_min}
+        currency={expert.currency}
+        targetId="book-a-session"
+      />
     </div>
   );
 }

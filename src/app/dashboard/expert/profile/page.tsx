@@ -35,17 +35,15 @@ export default async function ExpertProfilePage() {
           Status: {STATUS_LABEL[expertProfile.status] ?? expertProfile.status}
         </p>
       )}
-      <ApplyForm categories={categories} initialValues={expertProfile} />
+      <ApplyForm
+        categories={categories}
+        initialValues={expertProfile}
+        socialLinksSlot={expertProfile ? <SocialLinksManager links={socialLinks} /> : undefined}
+      />
       {!expertProfile && (
         <p className="mt-4 text-xs text-black/50 dark:text-white/50">
           Your profile will be reviewed by an admin before it appears publicly.
         </p>
-      )}
-
-      {expertProfile && (
-        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-          <SocialLinksManager links={socialLinks} />
-        </div>
       )}
     </div>
   );
