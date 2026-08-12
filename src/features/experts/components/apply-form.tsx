@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { applyAsExpert, type ApplyExpertState } from "@/features/experts/server/actions";
 import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
+import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
@@ -16,6 +17,7 @@ type ApplyFormProps = {
     payout_account_name?: string | null;
     payout_account_number?: string | null;
     photo_url?: string | null;
+    timezone?: string | null;
   } | null;
   extraSlot?: React.ReactNode;
   inviteToken?: string;
@@ -93,6 +95,26 @@ export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }:
       <p className="text-xs text-black/50 dark:text-white/50">
         Clients book in 15/30/45/60-minute sessions; the price scales automatically
         from this per-15-minute rate.
+      </p>
+
+      <label className="text-sm">
+        Your timezone
+        <select
+          name="timezone"
+          required
+          defaultValue={initialValues?.timezone ?? DEFAULT_TIMEZONE}
+          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        >
+          {TIMEZONE_OPTIONS.map((tz) => (
+            <option key={tz.value} value={tz.value}>
+              {tz.label}
+            </option>
+          ))}
+        </select>
+      </label>
+      <p className="text-xs text-black/50 dark:text-white/50">
+        The times you set under Availability are in this timezone — this is what keeps a booking
+        at the time you actually meant, no matter where a client is booking from.
       </p>
 
       <div className="mt-2 flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/15">

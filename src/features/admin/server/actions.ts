@@ -5,9 +5,15 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
 import { createBookingEventWithMeet } from "@/lib/google/calendar";
-import { notifyBookingConfirmed, notifyPaymentRejected, notifyExpertInvite } from "@/features/notifications/server/send";
+import {
+  notifyBookingConfirmed,
+  notifyPaymentRejected,
+  notifyExpertInvite,
+  notifyNominationStatusChanged,
+} from "@/features/notifications/server/send";
 import { uploadExpertPhoto } from "@/features/experts/server/photo";
 import { uploadNgoLogo } from "@/features/ngo/server/logo";
+import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -20,14 +26,46 @@ async function requireAdmin() {
   return user;
 }
 
+async function logAdminAction(
+  admin: ReturnType<typeof createAdminClient>,
+  {
+    adminId,
+    action,
+    targetTable,
+    targetId,
+    details,
+  }: {
+    adminId: string;
+    action: string;
+    targetTable: string;
+    targetId?: string | null;
+    details?: Record<string, unknown>;
+  },
+) {
+  await admin.from("admin_audit_log").insert({
+    admin_id: adminId,
+    action,
+    target_table: targetTable,
+    target_id: targetId ?? null,
+    details: details ? JSON.parse(JSON.stringify(details)) : null,
+  });
+}
+
 async function setExpertStatus(formData: FormData, status: "approved" | "rejected" | "suspended") {
-  await requireAdmin();
+  const adminUser = await requireAdmin();
   const expertId = String(formData.get("expert_id") ?? "");
   if (!expertId) throw new Error("Missing expert_id");
 
   const admin = createAdminClient();
   const { error } = await admin.from("experts").update({ status }).eq("id", expertId);
   if (error) throw error;
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: `expert_status_${status}`,
+    targetTable: "experts",
+    targetId: expertId,
+  });
 
   revalidatePath("/admin/experts");
 }
@@ -42,6 +80,25 @@ export async function rejectExpert(formData: FormData) {
 
 export async function suspendExpert(formData: FormData) {
   await setExpertStatus(formData, "suspended");
+}
+
+export async function approveExpertsBulk(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const expertIds = formData.getAll("expert_ids").map(String).filter(Boolean);
+  if (expertIds.length === 0) return;
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("experts").update({ status: "approved" }).in("id", expertIds);
+  if (error) throw error;
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "expert_status_approved_bulk",
+    targetTable: "experts",
+    details: { expert_ids: expertIds },
+  });
+
+  revalidatePath("/admin/experts");
 }
 
 export type UpdateExpertState = { error?: string };
@@ -60,6 +117,10 @@ export async function updateExpertAsAdmin(
   const pricePer15Min = Number(formData.get("price_per_15_min"));
   const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
+  const timezoneInput = String(formData.get("timezone") ?? "");
+  const timezone = TIMEZONE_OPTIONS.some((t) => t.value === timezoneInput)
+    ? timezoneInput
+    : DEFAULT_TIMEZONE;
 
   const admin = createAdminClient();
 
@@ -70,6 +131,7 @@ export async function updateExpertAsAdmin(
     price_per_15_min: number | null;
     payout_account_name: string | null;
     payout_account_number: string | null;
+    timezone: string;
     photo_url?: string;
   } = {
     headline,
@@ -78,6 +140,7 @@ export async function updateExpertAsAdmin(
     price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
+    timezone,
   };
 
   const photo = formData.get("photo");
@@ -102,23 +165,26 @@ export async function updateExpertAsAdmin(
   return {};
 }
 
-export async function verifyPayment(formData: FormData) {
-  const adminUser = await requireAdmin();
-  const proofId = String(formData.get("proof_id") ?? "");
-  const bookingId = String(formData.get("booking_id") ?? "");
-  const expertId = String(formData.get("expert_id") ?? "");
-  const clientId = String(formData.get("client_id") ?? "");
-  const startTime = String(formData.get("start_time") ?? "");
-  const endTime = String(formData.get("end_time") ?? "");
-  const price = formData.get("price");
+type VerifyPaymentParams = {
+  proofId: string;
+  bookingId: string;
+  expertId: string;
+  clientId: string;
+  startTime: string;
+  endTime: string;
+  price: string | number | null;
+};
 
+async function verifyOnePayment(
+  admin: ReturnType<typeof createAdminClient>,
+  adminUserId: string,
+  { proofId, bookingId, expertId, clientId, startTime, endTime, price }: VerifyPaymentParams,
+) {
   if (!proofId || !bookingId || !expertId) throw new Error("Missing verification details");
-
-  const admin = createAdminClient();
 
   const { error: proofError } = await admin
     .from("payment_proofs")
-    .update({ status: "verified", reviewed_by: adminUser.id, reviewed_at: new Date().toISOString() })
+    .update({ status: "verified", reviewed_by: adminUserId, reviewed_at: new Date().toISOString() })
     .eq("id", proofId);
   if (proofError) throw proofError;
 
@@ -188,7 +254,59 @@ export async function verifyPayment(formData: FormData) {
     meetLink,
   });
 
+  await logAdminAction(admin, {
+    adminId: adminUserId,
+    action: "payment_verified",
+    targetTable: "payment_proofs",
+    targetId: proofId,
+    details: { booking_id: bookingId },
+  });
+}
+
+export async function verifyPayment(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const admin = createAdminClient();
+
+  await verifyOnePayment(admin, adminUser.id, {
+    proofId: String(formData.get("proof_id") ?? ""),
+    bookingId: String(formData.get("booking_id") ?? ""),
+    expertId: String(formData.get("expert_id") ?? ""),
+    clientId: String(formData.get("client_id") ?? ""),
+    startTime: String(formData.get("start_time") ?? ""),
+    endTime: String(formData.get("end_time") ?? ""),
+    price: formData.get("price") as string | null,
+  });
+
   revalidatePath("/admin");
+  revalidatePath("/admin/payments");
+}
+
+export async function verifyPaymentsBulk(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const admin = createAdminClient();
+
+  const items = formData
+    .getAll("proof_items")
+    .map((raw) => {
+      try {
+        return JSON.parse(String(raw)) as VerifyPaymentParams;
+      } catch {
+        return null;
+      }
+    })
+    .filter((item): item is VerifyPaymentParams => item != null);
+
+  for (const item of items) {
+    try {
+      await verifyOnePayment(admin, adminUser.id, item);
+    } catch {
+      // Best-effort — one bad row (e.g. already reviewed) shouldn't stop
+      // the rest of the batch from going through.
+    }
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/payments");
 }
 
 export async function rejectPayment(formData: FormData) {
@@ -229,6 +347,14 @@ export async function rejectPayment(formData: FormData) {
 
   await notifyPaymentRejected({ clientEmail: clientProfile?.email ?? null, reason: adminNote });
 
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "payment_rejected",
+    targetTable: "payment_proofs",
+    targetId: proofId,
+    details: { booking_id: bookingId, admin_note: adminNote },
+  });
+
   revalidatePath("/admin");
 }
 
@@ -243,6 +369,13 @@ export async function markPayoutPaid(formData: FormData) {
     .update({ status: "paid", paid_at: new Date().toISOString(), paid_by: adminUser.id })
     .eq("id", payoutId);
   if (error) throw error;
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "payout_marked_paid",
+    targetTable: "expert_payouts",
+    targetId: payoutId,
+  });
 
   revalidatePath("/admin");
 }
@@ -362,6 +495,13 @@ export async function setUserAccountStatus(formData: FormData) {
   });
   if (authError) throw authError;
 
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: `account_status_${status}`,
+    targetTable: "profiles",
+    targetId: id,
+  });
+
   revalidatePath("/admin/users");
 }
 
@@ -416,11 +556,25 @@ export async function setNomineeStatus(formData: FormData) {
   if (!NOMINEE_STATUSES.includes(status as NomineeStatus)) throw new Error("Invalid status");
 
   const admin = createAdminClient();
+
+  const { data: nominee } = await admin.from("nominees").select("name, status").eq("id", id).maybeSingle();
+  const statusChanged = nominee != null && nominee.status !== status;
+
   const { error } = await admin
     .from("nominees")
     .update({ status, resolved_expert_id: status === "added" ? resolvedExpertId : null })
     .eq("id", id);
   if (error) throw error;
+
+  if (statusChanged && nominee) {
+    const { data: nominations } = await admin.from("nominations").select("nominator_id").eq("nominee_id", id);
+    const nominatorIds = Array.from(new Set((nominations ?? []).map((n) => n.nominator_id)));
+    if (nominatorIds.length > 0) {
+      const { data: profiles } = await admin.from("profiles").select("email").in("id", nominatorIds);
+      const emails = (profiles ?? []).map((p) => p.email).filter(Boolean);
+      await notifyNominationStatusChanged({ emails, nomineeName: nominee.name, status });
+    }
+  }
 
   revalidatePath("/admin/nominees");
 }

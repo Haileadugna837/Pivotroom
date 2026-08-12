@@ -1,5 +1,11 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { getInviteByToken } from "@/features/experts/server/invites";
+
+export const metadata: Metadata = {
+  title: "Become an expert",
+  description: "Apply to become an expert on Pivotroom.africa.",
+};
 
 export default async function BecomeAnExpertPage({
   searchParams,

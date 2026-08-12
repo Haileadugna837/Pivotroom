@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
 import { getApprovedExpertById } from "@/features/experts/server/queries";
 import { BookingLauncher } from "@/features/booking/components/booking-launcher";
@@ -10,6 +11,29 @@ import { isExpertWishlisted } from "@/features/wishlist/server/queries";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
 import { expertDonatesToNgo } from "@/features/ngo/server/queries";
 import { VerifiedBadge } from "@/features/experts/components/verified-badge";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const expert = await getApprovedExpertById(id);
+  if (!expert) return { title: "Expert not found" };
+
+  const name = expert.profile?.full_name ?? "Expert";
+  const description = expert.headline ?? `Book a 1:1 session with ${name} on Pivotroom.africa.`;
+
+  return {
+    title: name,
+    description,
+    openGraph: {
+      title: name,
+      description,
+      images: expert.photo_url ? [{ url: expert.photo_url }] : undefined,
+    },
+  };
+}
 
 export default async function ExpertDetailPage({
   params,

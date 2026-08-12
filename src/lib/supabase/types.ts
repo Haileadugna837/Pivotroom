@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_audit_log: {
+        Row: {
+          action: string
+          admin_id: string | null
+          created_at: string
+          details: Json | null
+          id: string
+          target_id: string | null
+          target_table: string
+        }
+        Insert: {
+          action: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_table: string
+        }
+        Update: {
+          action?: string
+          admin_id?: string | null
+          created_at?: string
+          details?: Json | null
+          id?: string
+          target_id?: string | null
+          target_table?: string
+        }
+        Relationships: []
+      }
       bookings: {
         Row: {
           calendar_event_id: string | null
@@ -366,6 +396,7 @@ export type Database = {
           photo_url: string | null
           price_per_15_min: number | null
           status: string
+          timezone: string
         }
         Insert: {
           bio?: string | null
@@ -379,6 +410,7 @@ export type Database = {
           photo_url?: string | null
           price_per_15_min?: number | null
           status?: string
+          timezone?: string
         }
         Update: {
           bio?: string | null
@@ -392,6 +424,7 @@ export type Database = {
           photo_url?: string | null
           price_per_15_min?: number | null
           status?: string
+          timezone?: string
         }
         Relationships: [
           {

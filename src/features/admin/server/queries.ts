@@ -47,7 +47,7 @@ export async function getExpertByIdForAdmin(id: string) {
   const { data: expert, error } = await admin
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url",
+      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, timezone",
     )
     .eq("id", id)
     .maybeSingle();
@@ -276,6 +276,29 @@ export async function getPayoutsForAdmin(tab: PayoutTab) {
   return withNames.map((p) => ({
     ...p,
     expertPayoutInfo: p.bookings ? (payoutInfoByExpertId.get(p.bookings.expert_id) ?? null) : null,
+  }));
+}
+
+export async function getAuditLogForAdmin(limit = 100) {
+  const admin = createAdminClient();
+  const { data: entries, error } = await admin
+    .from("admin_audit_log")
+    .select("id, admin_id, action, target_table, target_id, details, created_at")
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  if (!entries.length) return [];
+
+  const adminIds = Array.from(new Set(entries.map((e) => e.admin_id).filter((id): id is string => Boolean(id))));
+  const { data: profiles } = await admin
+    .from("profiles")
+    .select("id, full_name, email")
+    .in("id", adminIds.length > 0 ? adminIds : [""]);
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+
+  return entries.map((e) => ({
+    ...e,
+    adminProfile: e.admin_id ? (profileById.get(e.admin_id) ?? null) : null,
   }));
 }
 

@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isSlotAvailable, isWithinAvailabilityWindow } from "./availability";
+import { zonedWallTimeToUtc } from "./timezone";
 
 const ALLOWED_DURATIONS = [15, 30, 45, 60];
 
@@ -34,21 +35,25 @@ export async function createBooking(formData: FormData) {
     );
   }
 
-  const start = new Date(`${date}T${startTimeOfDay}:00`);
-  const end = new Date(start.getTime() + durationMinutes * 60_000);
-
-  if (start.getTime() <= Date.now()) {
-    redirect(`/experts/${expertId}?error=${encodeURIComponent("Pick a time in the future.")}`);
-  }
-
   const { data: expert, error: expertError } = await supabase
     .from("experts")
-    .select("price_per_15_min, currency")
+    .select("price_per_15_min, currency, timezone")
     .eq("id", expertId)
     .eq("status", "approved")
     .maybeSingle();
   if (expertError) throw expertError;
   if (!expert) throw new Error("Expert not found");
+
+  // The date/start_time the client picked describe the expert's declared
+  // availability window in the expert's own local time — they must be
+  // converted using the expert's timezone, not the server's, or every
+  // booking silently shifts by however many hours apart the two are.
+  const start = zonedWallTimeToUtc(date, `${startTimeOfDay}:00`, expert.timezone);
+  const end = new Date(start.getTime() + durationMinutes * 60_000);
+
+  if (start.getTime() <= Date.now()) {
+    redirect(`/experts/${expertId}?error=${encodeURIComponent("Pick a time in the future.")}`);
+  }
 
   const withinWindow = await isWithinAvailabilityWindow({
     expertId,
@@ -114,13 +119,26 @@ export async function cancelBooking(formData: FormData) {
   const bookingId = String(formData.get("booking_id") ?? "");
   if (!bookingId) throw new Error("Missing booking_id");
 
-  const { error } = await supabase
+  // Two separate RLS policies decide whether this is actually allowed —
+  // pending_payment bookings can always be cancelled, confirmed ones only
+  // more than 2 hours before start_time. RLS just silently excludes rows
+  // that don't qualify rather than erroring, so a 0-row result means
+  // "not allowed right now," not a real failure.
+  const { data, error } = await supabase
     .from("bookings")
     .update({ status: "cancelled" })
     .eq("id", bookingId)
     .eq("client_id", user.id)
-    .eq("status", "pending_payment");
+    .select("id");
   if (error) throw error;
+
+  if (!data || data.length === 0) {
+    redirect(
+      `/bookings/${bookingId}?error=${encodeURIComponent(
+        "This booking can't be cancelled right now — confirmed sessions can only be cancelled more than 2 hours before they start.",
+      )}`,
+    );
+  }
 
   revalidatePath(`/bookings/${bookingId}`);
   revalidatePath("/dashboard");

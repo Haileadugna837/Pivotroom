@@ -3,6 +3,8 @@ import { getUser } from "@/lib/supabase/server";
 import { getMyExpertProfile, hasConnectedGoogleCalendar } from "@/features/experts/server/self";
 import { getMyAvailability } from "@/features/booking/server/queries";
 import { AvailabilityManager } from "@/features/booking/components/availability-manager";
+import { disconnectGoogleCalendar } from "@/features/experts/server/actions";
+import { TIMEZONE_OPTIONS } from "@/lib/timezones";
 
 export default async function ExpertAvailabilityPage() {
   const user = await getUser();
@@ -16,11 +18,21 @@ export default async function ExpertAvailabilityPage() {
     getMyAvailability(),
   ]);
 
+  const timezoneLabel =
+    TIMEZONE_OPTIONS.find((tz) => tz.value === expertProfile.timezone)?.label ?? expertProfile.timezone;
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-10">
       <h1 className="text-xl font-semibold">Availability</h1>
+      <p className="mt-1 text-sm text-black/50 dark:text-white/50">
+        Times below are in your timezone — {timezoneLabel}. Change it on your{" "}
+        <a href="/dashboard/expert/profile" className="underline">
+          profile
+        </a>
+        .
+      </p>
 
-      <div className="mt-4">
+      <div className="mt-4 flex items-center gap-3">
         {!calendarConnected ? (
           <a
             href="/api/integrations/google/connect"
@@ -29,7 +41,14 @@ export default async function ExpertAvailabilityPage() {
             Connect Google Calendar
           </a>
         ) : (
-          <p className="text-sm text-black/60 dark:text-white/60">Google Calendar connected.</p>
+          <>
+            <p className="text-sm text-black/60 dark:text-white/60">Google Calendar connected.</p>
+            <form action={disconnectGoogleCalendar}>
+              <button type="submit" className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white">
+                Disconnect
+              </button>
+            </form>
+          </>
         )}
       </div>
 

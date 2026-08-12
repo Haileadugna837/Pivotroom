@@ -2,6 +2,32 @@ import "server-only";
 import { sendEmail } from "./client";
 import { ADMIN_EMAILS } from "@/lib/admin";
 
+const NOMINEE_STATUS_LABEL: Record<string, string> = {
+  pending: "Submitted",
+  in_review: "In review",
+  added: "Added as an expert",
+  declined: "Not selected",
+};
+
+export async function notifyNominationStatusChanged({
+  emails,
+  nomineeName,
+  status,
+}: {
+  emails: string[];
+  nomineeName: string;
+  status: string;
+}) {
+  if (emails.length === 0) return;
+
+  const label = NOMINEE_STATUS_LABEL[status] ?? status;
+  await sendEmail({
+    to: emails,
+    subject: `Update on your nomination for ${nomineeName}`,
+    html: `<p>Your nomination for <strong>${nomineeName}</strong> has a new status: <strong>${label}</strong>.</p><p>See it in your <a href="${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/dashboard/nominations">Pivotroom dashboard</a>.</p>`,
+  });
+}
+
 export async function notifyExpertInvite({ email, inviteUrl }: { email: string; inviteUrl: string }) {
   await sendEmail({
     to: email,

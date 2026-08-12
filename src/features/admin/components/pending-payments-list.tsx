@@ -1,4 +1,6 @@
-import { verifyPayment, rejectPayment } from "@/features/admin/server/actions";
+import { verifyPayment, rejectPayment, verifyPaymentsBulk } from "@/features/admin/server/actions";
+
+const BULK_FORM_ID = "bulk-verify-payments";
 
 type Profile = { full_name: string | null; email: string } | null;
 
@@ -27,11 +29,39 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
   }
 
   return (
-    <ul className="flex flex-col gap-3">
+    <>
+      <form id={BULK_FORM_ID} action={verifyPaymentsBulk} className="mb-3">
+        <button
+          type="submit"
+          className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+        >
+          Verify &amp; confirm selected
+        </button>
+      </form>
+      <ul className="flex flex-col gap-3">
       {proofs.map((p) => {
         const booking = p.bookings;
+        const bulkItem = JSON.stringify({
+          proofId: p.id,
+          bookingId: p.booking_id,
+          expertId: booking?.expert_id ?? "",
+          clientId: booking?.client_id ?? "",
+          startTime: booking?.start_time ?? "",
+          endTime: booking?.end_time ?? "",
+          price: booking?.price ?? null,
+        });
         return (
           <li key={p.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <div className="flex items-start gap-2">
+              <input
+                type="checkbox"
+                form={BULK_FORM_ID}
+                name="proof_items"
+                value={bulkItem}
+                aria-label={`Select payment from ${p.clientProfile?.full_name ?? "client"}`}
+                className="mt-1 h-4 w-4 shrink-0"
+              />
+              <div className="min-w-0 flex-1">
             <p className="font-medium">
               {p.expertProfile?.full_name ?? "Unknown expert"} ← {p.clientProfile?.full_name ?? "Unknown client"}
             </p>
@@ -66,9 +96,12 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
                 </button>
               </form>
             </div>
+              </div>
+            </div>
           </li>
         );
       })}
-    </ul>
+      </ul>
+    </>
   );
 }
