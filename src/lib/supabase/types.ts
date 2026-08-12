@@ -156,6 +156,38 @@ export type Database = {
           },
         ]
       }
+      expert_social_links: {
+        Row: {
+          created_at: string
+          expert_id: string
+          id: string
+          platform: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          expert_id: string
+          id?: string
+          platform: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          expert_id?: string
+          id?: string
+          platform?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_social_links_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_views: {
         Row: {
           id: string

@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { getMyExpertProfileFull } from "@/features/experts/server/self";
+import { getMyExpertProfileFull, getMySocialLinks } from "@/features/experts/server/self";
 import { getCategories } from "@/features/experts/server/categories";
 import { ApplyForm } from "@/features/experts/components/apply-form";
+import { SocialLinksManager } from "@/features/experts/components/social-links-manager";
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Pending review",
@@ -18,9 +19,10 @@ export default async function ExpertProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [expertProfile, categories] = await Promise.all([
+  const [expertProfile, categories, socialLinks] = await Promise.all([
     getMyExpertProfileFull(user.id),
     getCategories(),
+    getMySocialLinks(user.id),
   ]);
 
   return (
@@ -38,6 +40,12 @@ export default async function ExpertProfilePage() {
         <p className="mt-4 text-xs text-black/50 dark:text-white/50">
           Your profile will be reviewed by an admin before it appears publicly.
         </p>
+      )}
+
+      {expertProfile && (
+        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
+          <SocialLinksManager links={socialLinks} />
+        </div>
       )}
     </div>
   );

@@ -1,17 +1,45 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { compressImage } from "./compress-image";
 
 export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string | null }) {
   const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(initialPhotoUrl ?? null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+  async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setFileName(file.name);
+
+    setError(null);
+    setBusy(true);
     setPreview(URL.createObjectURL(file));
+
+    try {
+      const compressed = await compressImage(file);
+
+      // Swap the input's FileList for the compressed version, so the
+      // actual form submission uploads the small file, not the original.
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(compressed);
+      if (inputRef.current) inputRef.current.files = dataTransfer.files;
+
+      setPreview(URL.createObjectURL(compressed));
+      setFileName(`${compressed.name} (${Math.round(compressed.size / 1024)}KB)`);
+    } catch {
+      // Compression unsupported/failed (rare) — fall back to the original
+      // file as selected; server-side size validation still applies.
+      setFileName(file.name);
+      if (file.size > 5 * 1024 * 1024) {
+        setError("Couldn't process this image and it's over 5MB — try a smaller photo.");
+      }
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -36,6 +64,7 @@ export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string
             {preview ? "Change photo" : "Upload photo"}
           </label>
           <input
+            ref={inputRef}
             id={inputId}
             name="photo"
             type="file"
@@ -43,8 +72,12 @@ export function PhotoUploadField({ initialPhotoUrl }: { initialPhotoUrl?: string
             onChange={handleChange}
             className="sr-only"
           />
-          {fileName && <p className="text-xs text-black/50 dark:text-white/50">{fileName}</p>}
-          <p className="text-xs text-black/50 dark:text-white/50">JPG, PNG, or WEBP. Up to 5MB.</p>
+          {busy && <p className="text-xs text-black/50 dark:text-white/50">Processing…</p>}
+          {!busy && fileName && (
+            <p className="text-xs text-black/50 dark:text-white/50">{fileName}</p>
+          )}
+          {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+          <p className="text-xs text-black/50 dark:text-white/50">JPG, PNG, or WEBP.</p>
         </div>
       </div>
     </div>

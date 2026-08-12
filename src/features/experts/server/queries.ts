@@ -61,13 +61,24 @@ export async function getApprovedExpertById(id: string) {
 
   if (availabilityError) throw availabilityError;
 
+  const { data: socialLinks, error: socialLinksError } = await supabase
+    .from("expert_social_links")
+    .select("id, platform, url")
+    .eq("expert_id", id)
+    .order("created_at", { ascending: true });
+
+  if (socialLinksError) throw socialLinksError;
+
   // Fire-and-forget page view record for the admin metrics dashboard.
   // Uses the admin client since visitors (including anonymous ones) have
   // no RLS access to this table by design.
   createAdminClient()
     .from("expert_profile_views")
     .insert({ expert_id: id })
-    .then(() => {});
+    .then(
+      () => {},
+      () => {},
+    );
 
-  return { ...expert, profile: profile ?? null, availability };
+  return { ...expert, profile: profile ?? null, availability, socialLinks };
 }

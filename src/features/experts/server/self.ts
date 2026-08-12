@@ -24,6 +24,17 @@ export async function getMyExpertProfileFull(userId: string) {
   return data;
 }
 
+export async function getMySocialLinks(userId: string) {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("expert_social_links")
+    .select("id, platform, url")
+    .eq("expert_id", userId)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
 export async function hasConnectedGoogleCalendar(userId: string) {
   const supabase = await createClient();
   const { data } = await supabase
