@@ -5,6 +5,7 @@ import { getApprovedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
+import { FeaturedExpertCard } from "@/features/experts/components/featured-expert-card";
 
 export const metadata: Metadata = {
   title: "Find an expert",
@@ -19,8 +20,39 @@ export default async function ExpertsPage() {
     getExpertIdsWithNgoDonations(),
   ]);
 
+  const featured = experts.slice(0, 10);
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      {featured.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-xl font-semibold">
+            Top Experts.{" "}
+            <span className="font-normal text-black/50 dark:text-white/50">
+              Access to the best experts has never been easier
+            </span>
+          </h2>
+          <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+            {featured.map((expert) => (
+              <FeaturedExpertCard
+                key={expert.id}
+                expertId={expert.id}
+                href={`/experts/${expert.id}`}
+                fullName={expert.profile?.full_name ?? null}
+                photoUrl={expert.photo_url}
+                headline={expert.headline}
+                bio={expert.bio}
+                pricePer15Min={expert.price_per_15_min}
+                currency={expert.currency}
+                wishlisted={wishlistedIds.has(expert.id)}
+                isSignedIn={Boolean(user)}
+                donatesToNgo={donatingIds.has(expert.id)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
       <h1 className="mb-6 text-xl font-semibold">Find an expert</h1>
       {experts.length === 0 ? (
         <p className="text-sm text-black/60 dark:text-white/60">
