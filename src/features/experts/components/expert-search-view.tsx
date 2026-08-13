@@ -3,31 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { ExpertCard } from "@/features/experts/components/expert-card";
-
-type SearchableExpert = {
-  id: string;
-  headline: string | null;
-  bio: string | null;
-  price_per_15_min: number | null;
-  currency: string;
-  photo_url: string | null;
-  categories: { name: string } | null;
-  profile: { full_name: string | null } | null;
-};
-
-function matchesQuery(expert: SearchableExpert, words: string[]) {
-  const haystack = [
-    expert.profile?.full_name,
-    expert.headline,
-    expert.bio,
-    expert.categories?.name,
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .toLowerCase();
-
-  return words.every((word) => haystack.includes(word));
-}
+import { matchesExpertQuery, type SearchableExpert } from "@/features/experts/lib/search-match";
 
 type ExpertSearchViewProps = {
   experts: SearchableExpert[];
@@ -51,7 +27,7 @@ export function ExpertSearchView({
   const results = useMemo(() => {
     const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
     if (words.length === 0) return experts;
-    return experts.filter((e) => matchesQuery(e, words));
+    return experts.filter((e) => matchesExpertQuery(e, words));
   }, [experts, query]);
 
   return (

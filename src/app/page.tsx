@@ -1,14 +1,19 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
-import { getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
+import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
+import { HeroSearch } from "@/features/experts/components/hero-search";
 
 export default async function Home() {
-  const [user, categoryGroups] = await Promise.all([getUser(), getCategoriesWithFeaturedExperts()]);
+  const [user, categoryGroups, searchableExperts] = await Promise.all([
+    getUser(),
+    getCategoriesWithFeaturedExperts(),
+    getApprovedExperts(),
+  ]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
     user ? getWishlistedExpertIds(user.id) : Promise.resolve(new Set<string>()),
@@ -26,28 +31,7 @@ export default async function Home() {
           <p className="mx-auto mt-3 max-w-md text-white/70">
             Find the right expert, book a time, and get real advice on a call.
           </p>
-          <form
-            action="/experts/search"
-            method="GET"
-            className="mx-auto mt-6 flex max-w-md items-center gap-2 rounded-full bg-white p-1.5 pl-4"
-          >
-            <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0 text-black/40">
-              <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.7" />
-              <path d="M18 18l-4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
-            </svg>
-            <input
-              type="text"
-              name="q"
-              placeholder="Search experts"
-              className="flex-1 bg-transparent py-2 text-sm text-black outline-none placeholder:text-black/40"
-            />
-            <button
-              type="submit"
-              className="rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-            >
-              Search
-            </button>
-          </form>
+          <HeroSearch experts={searchableExperts} />
         </div>
       </div>
 
