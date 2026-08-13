@@ -33,7 +33,7 @@ export async function getApprovedExperts() {
   }));
 }
 
-export async function getCategoriesWithFeaturedExperts(minExperts = 3, perCategory = 8) {
+export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCategory = 8) {
   const supabase = await createClient();
 
   const { data: categories, error: catError } = await supabase
