@@ -33,6 +33,63 @@ export async function getApprovedExperts() {
   }));
 }
 
+export async function getCategoriesWithFeaturedExperts(minExperts = 3, perCategory = 8) {
+  const supabase = await createClient();
+
+  const { data: categories, error: catError } = await supabase
+    .from("categories")
+    .select("id, name, parent_id")
+    .order("name");
+  if (catError) throw catError;
+  if (!categories.length) return [];
+
+  const { data: experts, error: expertsError } = await supabase
+    .from("experts")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url, category_id")
+    .eq("status", "approved")
+    .order("created_at", { ascending: false });
+  if (expertsError) throw expertsError;
+  if (!experts.length) return [];
+
+  const { data: publicProfiles, error: profilesError } = await supabase
+    .from("expert_public_profiles")
+    .select("id, full_name, avatar_url")
+    .in(
+      "id",
+      experts.map((e) => e.id),
+    );
+  if (profilesError) throw profilesError;
+  const profileById = new Map(publicProfiles.map((p) => [p.id, p]));
+
+  const topLevelById = new Map(categories.filter((c) => !c.parent_id).map((c) => [c.id, c]));
+  const parentIdByChildId = new Map(
+    categories.filter((c) => c.parent_id).map((c) => [c.id, c.parent_id as string]),
+  );
+
+  function resolveTopLevelId(categoryId: string | null) {
+    if (!categoryId) return null;
+    if (topLevelById.has(categoryId)) return categoryId;
+    return parentIdByChildId.get(categoryId) ?? null;
+  }
+
+  const expertsByTopCategory = new Map<string, typeof experts>();
+  for (const expert of experts) {
+    const topId = resolveTopLevelId(expert.category_id);
+    if (!topId) continue;
+    const list = expertsByTopCategory.get(topId) ?? [];
+    list.push(expert);
+    expertsByTopCategory.set(topId, list);
+  }
+
+  return Array.from(expertsByTopCategory.entries())
+    .filter(([, list]) => list.length >= minExperts)
+    .map(([categoryId, list]) => ({
+      category: topLevelById.get(categoryId)!,
+      experts: list.slice(0, perCategory).map((e) => ({ ...e, profile: profileById.get(e.id) ?? null })),
+    }))
+    .sort((a, b) => b.experts.length - a.experts.length);
+}
+
 export const getApprovedExpertById = cache(async (id: string) => {
   const supabase = await createClient();
 

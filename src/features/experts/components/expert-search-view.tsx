@@ -34,12 +34,19 @@ type ExpertSearchViewProps = {
   wishlistedIds: string[];
   donatingIds: string[];
   isSignedIn: boolean;
+  initialQuery?: string;
 };
 
-export function ExpertSearchView({ experts, wishlistedIds, donatingIds, isSignedIn }: ExpertSearchViewProps) {
+export function ExpertSearchView({
+  experts,
+  wishlistedIds,
+  donatingIds,
+  isSignedIn,
+  initialQuery = "",
+}: ExpertSearchViewProps) {
   const wishlistedSet = useMemo(() => new Set(wishlistedIds), [wishlistedIds]);
   const donatingSet = useMemo(() => new Set(donatingIds), [donatingIds]);
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
 
   const results = useMemo(() => {
     const words = query.trim().toLowerCase().split(/\s+/).filter(Boolean);
