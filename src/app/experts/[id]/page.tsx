@@ -66,7 +66,7 @@ export default async function ExpertDetailPage({
     <div className="mx-auto max-w-5xl px-4 py-10 pb-24 md:pb-10">
       <div className="md:grid md:grid-cols-[1fr_380px] md:items-start md:gap-10">
         <div className="mx-auto w-full max-w-lg md:col-start-1 md:row-start-1 md:mx-0">
-          <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
+          <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 md:aspect-[4/5] dark:bg-white/10">
             {expert.photo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={expert.photo_url} alt={name} className="h-full w-full object-cover" />
