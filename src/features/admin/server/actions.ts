@@ -14,6 +14,7 @@ import {
 import { uploadExpertPhoto } from "@/features/experts/server/photo";
 import { uploadNgoLogo } from "@/features/ngo/server/logo";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
+import { parseLines } from "@/lib/text";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -121,6 +122,8 @@ export async function updateExpertAsAdmin(
   const timezone = TIMEZONE_OPTIONS.some((t) => t.value === timezoneInput)
     ? timezoneInput
     : DEFAULT_TIMEZONE;
+  const expectations = parseLines(String(formData.get("expectations") ?? ""), 6);
+  const exampleQuestions = parseLines(String(formData.get("example_questions") ?? ""), 6);
 
   const admin = createAdminClient();
 
@@ -132,6 +135,8 @@ export async function updateExpertAsAdmin(
     payout_account_name: string | null;
     payout_account_number: string | null;
     timezone: string;
+    expectations: string[] | null;
+    example_questions: string[] | null;
     photo_url?: string;
   } = {
     headline,
@@ -141,6 +146,8 @@ export async function updateExpertAsAdmin(
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
     timezone,
+    expectations: expectations.length > 0 ? expectations : null,
+    example_questions: exampleQuestions.length > 0 ? exampleQuestions : null,
   };
 
   const photo = formData.get("photo");

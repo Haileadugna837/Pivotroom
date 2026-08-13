@@ -19,6 +19,8 @@ type ExpertEditFormProps = {
     payout_account_number: string | null;
     photo_url?: string | null;
     timezone?: string | null;
+    expectations?: string[] | null;
+    example_questions?: string[] | null;
   };
 };
 
@@ -103,6 +105,27 @@ export function ExpertEditForm({ expertId, categories, initialValues }: ExpertEd
           ))}
         </select>
       </label>
+      <div className="mt-2 flex flex-col gap-2 border-t border-black/10 pt-4 dark:border-white/15">
+        <label className="text-sm">
+          What to expect (one per line)
+          <textarea
+            name="expectations"
+            rows={4}
+            defaultValue={(initialValues.expectations ?? []).join("\n")}
+            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          />
+        </label>
+        <label className="text-sm">
+          Example questions (one per line)
+          <textarea
+            name="example_questions"
+            rows={4}
+            defaultValue={(initialValues.example_questions ?? []).join("\n")}
+            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          />
+        </label>
+      </div>
+
       <div className="mt-2 flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/15">
         <p className="text-sm font-medium">Payout bank account</p>
         <input

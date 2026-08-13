@@ -47,7 +47,7 @@ export async function getExpertByIdForAdmin(id: string) {
   const { data: expert, error } = await admin
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, timezone",
+      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, timezone, expectations, example_questions",
     )
     .eq("id", id)
     .maybeSingle();
