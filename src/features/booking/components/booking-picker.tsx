@@ -38,15 +38,10 @@ function clockParts(totalMinutes: number) {
   return { h12, m, period };
 }
 
-function formatSlotLabel(startMinutes: number, durationMinutes: number) {
-  const start = clockParts(startMinutes);
-  const end = clockParts(startMinutes + durationMinutes);
-  const startStr = start.m === 0 ? `${start.h12}` : `${start.h12}:${start.m.toString().padStart(2, "0")}`;
-  const endStr = end.m === 0 ? `${end.h12}` : `${end.h12}:${end.m.toString().padStart(2, "0")}`;
-  if (start.period === end.period) {
-    return `${startStr}-${endStr}${end.period}`;
-  }
-  return `${startStr}${start.period}-${endStr}${end.period}`;
+function formatTimeLabel(totalMinutes: number) {
+  const { h12, m, period } = clockParts(totalMinutes);
+  const mm = m.toString().padStart(2, "0");
+  return `${h12}:${mm} ${period === "a" ? "AM" : "PM"}`;
 }
 
 function formatDateHeader(dateStr: string) {
@@ -140,7 +135,7 @@ export function BookingPicker({
                         onClick={() => setSelection({ date, startMinutes: t })}
                         className={`${buttonBase} ${active ? buttonActive : buttonInactive}`}
                       >
-                        {formatSlotLabel(t, duration)}
+                        {formatTimeLabel(t)}
                       </button>
                     );
                   })}
