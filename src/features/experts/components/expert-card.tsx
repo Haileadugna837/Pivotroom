@@ -32,8 +32,8 @@ export function ExpertCard({
   donatesToNgo = false,
 }: ExpertCardProps) {
   return (
-    <div className="relative flex flex-col gap-2">
-      <Link href={href} className="contents">
+    <div className="group relative flex flex-col gap-2">
+      <Link href={`${href}?openBooking=1`} className="contents">
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
@@ -43,6 +43,11 @@ export function ExpertCard({
               {(fullName ?? "?").charAt(0).toUpperCase()}
             </div>
           )}
+          <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-150 group-hover:bg-black/20 group-hover:opacity-100">
+            <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black shadow">
+              See times
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <h3 className="font-medium">{fullName ?? "Expert"}</h3>

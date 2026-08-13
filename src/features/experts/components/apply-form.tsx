@@ -18,6 +18,8 @@ type ApplyFormProps = {
     payout_account_number?: string | null;
     photo_url?: string | null;
     timezone?: string | null;
+    expectations?: string[] | null;
+    example_questions?: string[] | null;
   } | null;
   extraSlot?: React.ReactNode;
   inviteToken?: string;
@@ -116,6 +118,29 @@ export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }:
         The times you set under Availability are in this timezone — this is what keeps a booking
         at the time you actually meant, no matter where a client is booking from.
       </p>
+
+      <div className="mt-2 flex flex-col gap-2 border-t border-black/10 pt-4 dark:border-white/15">
+        <label className="text-sm">
+          What to expect (one per line, shown on your profile)
+          <textarea
+            name="expectations"
+            rows={4}
+            defaultValue={(initialValues?.expectations ?? []).join("\n")}
+            placeholder={"Ask three or more questions\nAdvice tailored to your situation\nFollow-up notes after the call"}
+            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          />
+        </label>
+        <label className="text-sm">
+          Example questions clients might ask (one per line)
+          <textarea
+            name="example_questions"
+            rows={4}
+            defaultValue={(initialValues?.example_questions ?? []).join("\n")}
+            placeholder={"What should I focus on first?\nHow do I get started?"}
+            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          />
+        </label>
+      </div>
 
       <div className="mt-2 flex flex-col gap-3 border-t border-black/10 pt-4 dark:border-white/15">
         <p className="text-sm font-medium">Payout bank account</p>

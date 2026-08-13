@@ -7,6 +7,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadExpertPhoto } from "./photo";
 import { markInviteCompleted } from "./invites";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
+import { parseLines } from "@/lib/text";
 
 export type ApplyExpertState = { error?: string };
 
@@ -31,6 +32,8 @@ export async function applyAsExpert(
   const timezone = TIMEZONE_OPTIONS.some((t) => t.value === timezoneInput)
     ? timezoneInput
     : DEFAULT_TIMEZONE;
+  const expectations = parseLines(String(formData.get("expectations") ?? ""), 6);
+  const exampleQuestions = parseLines(String(formData.get("example_questions") ?? ""), 6);
 
   const record: {
     id: string;
@@ -42,6 +45,8 @@ export async function applyAsExpert(
     payout_account_name: string | null;
     payout_account_number: string | null;
     timezone: string;
+    expectations: string[] | null;
+    example_questions: string[] | null;
     photo_url?: string;
   } = {
     id: user.id,
@@ -53,6 +58,8 @@ export async function applyAsExpert(
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
     timezone,
+    expectations: expectations.length > 0 ? expectations : null,
+    example_questions: exampleQuestions.length > 0 ? exampleQuestions : null,
   };
 
   const photo = formData.get("photo");

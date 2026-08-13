@@ -11,6 +11,8 @@ import { isExpertWishlisted } from "@/features/wishlist/server/queries";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
 import { expertDonatesToNgo } from "@/features/ngo/server/queries";
 import { VerifiedBadge } from "@/features/experts/components/verified-badge";
+import { WhatToExpect } from "@/features/experts/components/what-to-expect";
+import { HowItWorksFaq } from "@/features/experts/components/how-it-works-faq";
 
 export async function generateMetadata({
   params,
@@ -57,6 +59,8 @@ export default async function ExpertDetailPage({
 
   const name = expert.profile?.full_name ?? "Expert";
   const loginHref = `/login?next=${encodeURIComponent(`/experts/${expert.id}?openBooking=1`)}`;
+  const expectations = expert.expectations ?? [];
+  const exampleQuestions = expert.example_questions ?? [];
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 pb-24 md:pb-10">
@@ -121,6 +125,12 @@ export default async function ExpertDetailPage({
             <p className="mt-3 text-base text-black/70 dark:text-white/70">{expert.bio}</p>
           )}
 
+          <WhatToExpect
+            expectations={expectations}
+            exampleQuestions={exampleQuestions}
+            className="mt-4 md:hidden"
+          />
+
           <p className="mt-4 text-lg font-semibold">
             {expert.price_per_15_min != null
               ? `${expert.currency} ${expert.price_per_15_min} • 15 min`
@@ -140,12 +150,20 @@ export default async function ExpertDetailPage({
           error={error}
           autoOpen={openBooking === "1"}
         />
+
+        <WhatToExpect
+          expectations={expectations}
+          exampleQuestions={exampleQuestions}
+          className="hidden md:col-start-2 md:block"
+        />
       </div>
 
       <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
         <h2 className="mb-3 text-sm font-medium">Reviews</h2>
         <ReviewList reviews={reviews} average={average} count={count} />
       </div>
+
+      <HowItWorksFaq />
     </div>
   );
 }

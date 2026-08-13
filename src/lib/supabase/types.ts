@@ -389,6 +389,8 @@ export type Database = {
           category_id: string | null
           created_at: string
           currency: string
+          example_questions: string[] | null
+          expectations: string[] | null
           headline: string | null
           id: string
           payout_account_name: string | null
@@ -403,6 +405,8 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           currency?: string
+          example_questions?: string[] | null
+          expectations?: string[] | null
           headline?: string | null
           id: string
           payout_account_name?: string | null
@@ -417,6 +421,8 @@ export type Database = {
           category_id?: string | null
           created_at?: string
           currency?: string
+          example_questions?: string[] | null
+          expectations?: string[] | null
           headline?: string | null
           id?: string
           payout_account_name?: string | null
