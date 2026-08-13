@@ -10,8 +10,12 @@ export const metadata: Metadata = {
   description: "Search and filter African experts by category.",
 };
 
-export default async function ExpertSearchPage() {
-  const [experts, user] = await Promise.all([getApprovedExperts(), getUser()]);
+export default async function ExpertSearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const [{ q }, experts, user] = await Promise.all([searchParams, getApprovedExperts(), getUser()]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
     user ? getWishlistedExpertIds(user.id) : Promise.resolve(new Set<string>()),
@@ -24,6 +28,7 @@ export default async function ExpertSearchPage() {
       wishlistedIds={Array.from(wishlistedIds)}
       donatingIds={Array.from(donatingIds)}
       isSignedIn={Boolean(user)}
+      initialQuery={q ?? ""}
     />
   );
 }
