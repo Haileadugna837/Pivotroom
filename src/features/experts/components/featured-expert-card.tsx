@@ -33,7 +33,7 @@ export function FeaturedExpertCard({
 
   return (
     <div className="group relative flex w-36 shrink-0 flex-col gap-1.5 sm:w-44">
-      <Link href={`${href}?openBooking=1`} className="contents">
+      <Link href={href} className="contents">
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
