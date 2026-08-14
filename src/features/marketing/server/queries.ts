@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 
-// Returns [] when the section is toggled off in /admin/featured-logos, so
+// Returns [] when the section is toggled off in /admin/settings, so
 // the homepage never has to know about the setting — an empty list already
 // means "render nothing" for FeaturedLogosStrip.
 export async function getFeaturedLogosForHome() {

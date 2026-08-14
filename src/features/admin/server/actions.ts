@@ -499,7 +499,7 @@ export async function addFeaturedLogo(
     .insert({ id: logoId, name, link_url: linkUrl, logo_url: logoUrl });
   if (error) return { error: `Failed to save logo: ${error.message}` };
 
-  revalidatePath("/admin/featured-logos");
+  revalidatePath("/admin/settings");
   revalidatePath("/");
   return {};
 }
@@ -513,7 +513,7 @@ export async function removeFeaturedLogo(formData: FormData) {
   const { error } = await admin.from("featured_logos").delete().eq("id", id);
   if (error) throw error;
 
-  revalidatePath("/admin/featured-logos");
+  revalidatePath("/admin/settings");
   revalidatePath("/");
 }
 
@@ -528,7 +528,7 @@ export async function setFeaturedLogosEnabled(formData: FormData) {
     .eq("id", 1);
   if (error) throw error;
 
-  revalidatePath("/admin/featured-logos");
+  revalidatePath("/admin/settings");
   revalidatePath("/");
 }
 

@@ -1,14 +1,22 @@
 import { createClient, getUser } from "@/lib/supabase/server";
 import { AccountSettingsForms } from "@/features/auth/components/account-settings-forms";
 import { ProfileHeader } from "@/components/profile-header";
+import { getFeaturedLogosForAdmin, getSiteSettingsForAdmin } from "@/features/admin/server/queries";
+import { FeaturedLogosManager } from "@/features/admin/components/featured-logos-manager";
 
 export default async function AdminSettingsPage() {
   const user = await getUser();
   const supabase = await createClient();
 
-  const { data: profile } = user
-    ? await supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle()
-    : { data: null };
+  const [{ data: profile }, logos, siteSettings] = await Promise.all([
+    user
+      ? supabase.from("profiles").select("full_name").eq("id", user.id).maybeSingle()
+      : Promise.resolve({ data: null }),
+    process.env.SUPABASE_SERVICE_ROLE_KEY ? getFeaturedLogosForAdmin() : Promise.resolve([]),
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+      ? getSiteSettingsForAdmin()
+      : Promise.resolve({ featured_logos_enabled: true }),
+  ]);
 
   const hasPasswordIdentity = user?.identities?.some((i) => i.provider === "email") ?? false;
 
@@ -24,6 +32,15 @@ export default async function AdminSettingsPage() {
         />
       )}
       <AccountSettingsForms currentEmail={user?.email ?? ""} hasPasswordIdentity={hasPasswordIdentity} />
+
+      <div className="mt-10 border-t border-black/10 pt-6 dark:border-white/15">
+        <h2 className="mb-2 text-sm font-medium">Homepage &quot;Featured on&quot; logos</h2>
+        <p className="mb-4 text-sm text-black/50 dark:text-white/50">
+          Shown under the hero search bar on the homepage. Hidden entirely until at least one logo is
+          added.
+        </p>
+        <FeaturedLogosManager logos={logos} enabled={siteSettings.featured_logos_enabled} />
+      </div>
     </div>
   );
 }
