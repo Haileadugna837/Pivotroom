@@ -172,6 +172,39 @@ export type Database = {
           },
         ]
       }
+      expert_categories: {
+        Row: {
+          category_id: string
+          created_at: string
+          expert_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          expert_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          expert_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_categories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_categories_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_google_tokens: {
         Row: {
           access_token: string | null
@@ -389,7 +422,6 @@ export type Database = {
       experts: {
         Row: {
           bio: string | null
-          category_id: string | null
           created_at: string
           currency: string
           example_questions: string[] | null
@@ -405,7 +437,6 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
-          category_id?: string | null
           created_at?: string
           currency?: string
           example_questions?: string[] | null
@@ -421,7 +452,6 @@ export type Database = {
         }
         Update: {
           bio?: string | null
-          category_id?: string | null
           created_at?: string
           currency?: string
           example_questions?: string[] | null
@@ -436,13 +466,6 @@ export type Database = {
           timezone?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "experts_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "experts_id_fkey"
             columns: ["id"]

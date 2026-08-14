@@ -86,7 +86,7 @@ export function HeroSearch({ experts }: { experts: SearchableExpert[] }) {
                       {expert.profile?.full_name ?? "Expert"}
                     </p>
                     <p className="truncate text-xs text-black/50 dark:text-white/50">
-                      {expert.headline ?? expert.categories?.name ?? ""}
+                      {expert.headline ?? expert.categories.map((c) => c.name).join(", ")}
                     </p>
                   </div>
                 </Link>

@@ -115,7 +115,10 @@ export async function updateExpertAsAdmin(
 
   const headline = String(formData.get("headline") ?? "").trim();
   const bio = String(formData.get("bio") ?? "").trim();
-  const categoryId = String(formData.get("category_id") ?? "") || null;
+  const categoryIds = formData.getAll("category_ids").map(String).filter(Boolean);
+  if (categoryIds.length === 0) {
+    return { error: "Select at least one category." };
+  }
   const pricePer15Min = Number(formData.get("price_per_15_min"));
   const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
@@ -131,7 +134,6 @@ export async function updateExpertAsAdmin(
   const update: {
     headline: string;
     bio: string;
-    category_id: string | null;
     price_per_15_min: number | null;
     payout_account_name: string | null;
     payout_account_number: string | null;
@@ -142,7 +144,6 @@ export async function updateExpertAsAdmin(
   } = {
     headline,
     bio,
-    category_id: categoryId,
     price_per_15_min: Number.isFinite(pricePer15Min) ? pricePer15Min : null,
     payout_account_name: payoutAccountName,
     payout_account_number: payoutAccountNumber,
@@ -166,6 +167,17 @@ export async function updateExpertAsAdmin(
   const { error } = await admin.from("experts").update(update).eq("id", expertId);
   if (error) {
     return { error: `Failed to save profile: ${error.message}` };
+  }
+
+  const { error: deleteError } = await admin.from("expert_categories").delete().eq("expert_id", expertId);
+  if (deleteError) {
+    return { error: `Failed to save categories: ${deleteError.message}` };
+  }
+  const { error: categoriesError } = await admin
+    .from("expert_categories")
+    .insert(categoryIds.map((categoryId) => ({ expert_id: expertId, category_id: categoryId })));
+  if (categoriesError) {
+    return { error: `Failed to save categories: ${categoriesError.message}` };
   }
 
   revalidatePath("/admin/experts");

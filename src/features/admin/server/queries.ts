@@ -18,7 +18,7 @@ export async function getExpertsForAdmin(tab: ExpertTab) {
   let query = admin
     .from("experts")
     .select(
-      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, categories(name), created_at",
+      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, created_at",
     )
     .order("created_at", { ascending: true });
 
@@ -30,16 +30,28 @@ export async function getExpertsForAdmin(tab: ExpertTab) {
   if (error) throw error;
   if (!experts.length) return [];
 
-  const { data: profiles } = await admin
-    .from("profiles")
-    .select("id, full_name, email")
-    .in(
-      "id",
-      experts.map((e) => e.id),
-    );
-  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+  const expertIds = experts.map((e) => e.id);
 
-  return experts.map((e) => ({ ...e, profile: profileById.get(e.id) ?? null }));
+  const [{ data: profiles }, { data: categoryRows, error: categoriesError }] = await Promise.all([
+    admin.from("profiles").select("id, full_name, email").in("id", expertIds),
+    admin.from("expert_categories").select("expert_id, categories(name)").in("expert_id", expertIds),
+  ]);
+  if (categoriesError) throw categoriesError;
+
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+  const categoryNamesByExpertId = new Map<string, string[]>();
+  for (const row of categoryRows ?? []) {
+    if (!row.categories?.name) continue;
+    const list = categoryNamesByExpertId.get(row.expert_id) ?? [];
+    list.push(row.categories.name);
+    categoryNamesByExpertId.set(row.expert_id, list);
+  }
+
+  return experts.map((e) => ({
+    ...e,
+    profile: profileById.get(e.id) ?? null,
+    categoryNames: categoryNamesByExpertId.get(e.id) ?? [],
+  }));
 }
 
 export async function getExpertByIdForAdmin(id: string) {
@@ -47,7 +59,7 @@ export async function getExpertByIdForAdmin(id: string) {
   const { data: expert, error } = await admin
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, timezone, expectations, example_questions",
+      "id, headline, bio, price_per_15_min, currency, status, payout_account_name, payout_account_number, photo_url, timezone, expectations, example_questions",
     )
     .eq("id", id)
     .maybeSingle();
@@ -60,7 +72,13 @@ export async function getExpertByIdForAdmin(id: string) {
     .eq("id", id)
     .maybeSingle();
 
-  return { ...expert, profile: profile ?? null };
+  const { data: categoryRows, error: categoriesError } = await admin
+    .from("expert_categories")
+    .select("category_id")
+    .eq("expert_id", id);
+  if (categoriesError) throw categoriesError;
+
+  return { ...expert, profile: profile ?? null, category_ids: categoryRows.map((c) => c.category_id) };
 }
 
 async function attachNames<T extends { bookings: { client_id: string; expert_id: string } | null }>(

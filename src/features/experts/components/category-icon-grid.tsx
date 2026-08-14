@@ -16,36 +16,27 @@ export function CategoryIconGrid({ categories }: { categories: CategoryDirectory
   if (categories.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 gap-x-6 gap-y-7 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
       {categories.map((category) => {
         const preview = category.subcategories.slice(0, PREVIEW_COUNT);
         const hasMore = category.subcategories.length > preview.length;
+        const previewText = preview.map((sub) => sub.name).join(", ") + (hasMore ? ", ..." : "");
         return (
-          <div key={category.id}>
-            <Link href={`/experts/category/${category.id}`} className="text-sm font-medium hover:underline">
-              {category.name}
-            </Link>
+          <Link
+            key={category.id}
+            href={`/experts/category/${category.id}`}
+            className="rounded-2xl border border-black/10 p-4 transition hover:border-black/20 hover:shadow-sm dark:border-white/15 dark:hover:border-white/25"
+          >
+            <span className="text-sm font-medium">{category.name}</span>
             <div className="mt-2 flex items-start gap-2.5">
               <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground text-background">
                 {getCategoryIcon(category.name)}
               </div>
-              {preview.length > 0 && (
-                <p className="text-xs leading-snug text-black/50 dark:text-white/50">
-                  {preview.map((sub, i) => (
-                    <span key={sub.id}>
-                      <Link
-                        href={`/experts/category/${category.id}?sub=${sub.id}`}
-                        className="hover:text-black hover:underline dark:hover:text-white"
-                      >
-                        {sub.name}
-                      </Link>
-                      {i < preview.length - 1 ? ", " : hasMore ? ", ..." : ""}
-                    </span>
-                  ))}
-                </p>
+              {previewText && (
+                <p className="text-xs leading-snug text-black/50 dark:text-white/50">{previewText}</p>
               )}
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>
