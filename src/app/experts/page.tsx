@@ -1,12 +1,16 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
-import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
+import {
+  getApprovedExperts,
+  getCategoriesWithFeaturedExperts,
+  getCategoryDirectory,
+} from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { getExpertRatingSummaries } from "@/features/reviews/server/queries";
 import { FeaturedExpertCard } from "@/features/experts/components/featured-expert-card";
-import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
+import { CategoryIconGrid } from "@/features/experts/components/category-icon-grid";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { SortBar } from "@/features/experts/components/sort-bar";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
@@ -25,9 +29,10 @@ export default async function ExpertsPage({
   const { sort: sortParam } = await searchParams;
   const sort = parseSortValue(sortParam);
 
-  const [experts, categoryGroups, user, ratings] = await Promise.all([
+  const [experts, categoryGroups, categoryDirectory, user, ratings] = await Promise.all([
     getApprovedExperts(),
     getCategoriesWithFeaturedExperts(1, 12),
+    getCategoryDirectory(),
     getUser(),
     getExpertRatingSummaries(),
   ]);
@@ -49,20 +54,14 @@ export default async function ExpertsPage({
         Get advice on a video call.
       </h1>
 
+      <div className="mb-10">
+        <CategoryIconGrid categories={categoryDirectory} />
+      </div>
+
       {experts.length === 0 ? (
         <p className="text-sm text-black/60 dark:text-white/60">No experts are listed yet.</p>
       ) : (
         <>
-          <div className="mb-6 flex flex-wrap items-center gap-2">
-            <Link
-              href="/experts"
-              className="shrink-0 rounded-full border border-black/10 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
-            >
-              All experts
-            </Link>
-            <CategoryPillNav categories={categoryGroups.map((g) => g.category)} />
-          </div>
-
           <SortBar />
 
           {topExperts.length > 0 && (
@@ -100,6 +99,7 @@ export default async function ExpertsPage({
                 key={group.category.id}
                 categoryId={group.category.id}
                 categoryName={group.category.name}
+                tagline={group.category.tagline}
                 experts={sortExpertsBy(group.experts, sort, ratings)}
                 wishlistedIds={wishlistedIds}
                 donatingIds={donatingIds}

@@ -38,7 +38,7 @@ export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCatego
 
   const { data: categories, error: catError } = await supabase
     .from("categories")
-    .select("id, name, parent_id")
+    .select("id, name, parent_id, tagline")
     .order("name");
   if (catError) throw catError;
   if (!categories.length) return [];
@@ -88,6 +88,34 @@ export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCatego
       experts: list.slice(0, perCategory).map((e) => ({ ...e, profile: profileById.get(e.id) ?? null })),
     }))
     .sort((a, b) => b.experts.length - a.experts.length);
+}
+
+export async function getCategoryDirectory() {
+  const supabase = await createClient();
+
+  const { data: categories, error } = await supabase
+    .from("categories")
+    .select("id, name, parent_id, tagline")
+    .order("name");
+  if (error) throw error;
+  if (!categories.length) return [];
+
+  const childrenByParentId = new Map<string, string[]>();
+  for (const c of categories) {
+    if (!c.parent_id) continue;
+    const list = childrenByParentId.get(c.parent_id) ?? [];
+    list.push(c.name);
+    childrenByParentId.set(c.parent_id, list);
+  }
+
+  return categories
+    .filter((c) => !c.parent_id)
+    .map((c) => ({
+      id: c.id,
+      name: c.name,
+      tagline: c.tagline,
+      subcategories: childrenByParentId.get(c.id) ?? [],
+    }));
 }
 
 export const getApprovedExpertById = cache(async (id: string) => {

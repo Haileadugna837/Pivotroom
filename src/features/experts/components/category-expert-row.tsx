@@ -14,6 +14,7 @@ type Expert = {
 type CategoryExpertRowProps = {
   categoryId: string;
   categoryName: string;
+  tagline?: string | null;
   experts: Expert[];
   wishlistedIds: Set<string>;
   donatingIds: Set<string>;
@@ -24,6 +25,7 @@ type CategoryExpertRowProps = {
 export function CategoryExpertRow({
   categoryId,
   categoryName,
+  tagline,
   experts,
   wishlistedIds,
   donatingIds,
@@ -36,7 +38,7 @@ export function CategoryExpertRow({
         <h2 className="text-xl font-semibold">
           {categoryName}.{" "}
           <span className="font-normal text-black/50 dark:text-white/50">
-            Connect with vetted {categoryName.toLowerCase()} experts over video.
+            {tagline ?? `Connect with vetted ${categoryName.toLowerCase()} experts over video.`}
           </span>
         </h2>
         {seeAllHref && (
