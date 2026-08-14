@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FeaturedExpertCard } from "@/features/experts/components/featured-expert-card";
 
 type Expert = {
@@ -17,6 +18,7 @@ type CategoryExpertRowProps = {
   wishlistedIds: Set<string>;
   donatingIds: Set<string>;
   isSignedIn: boolean;
+  seeAllHref?: string;
 };
 
 export function CategoryExpertRow({
@@ -26,15 +28,26 @@ export function CategoryExpertRow({
   wishlistedIds,
   donatingIds,
   isSignedIn,
+  seeAllHref,
 }: CategoryExpertRowProps) {
   return (
     <div id={`category-${categoryId}`} className="scroll-mt-20">
-      <h2 className="text-xl font-semibold">
-        {categoryName}.{" "}
-        <span className="font-normal text-black/50 dark:text-white/50">
-          Connect with vetted {categoryName.toLowerCase()} experts over video.
-        </span>
-      </h2>
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 className="text-xl font-semibold">
+          {categoryName}.{" "}
+          <span className="font-normal text-black/50 dark:text-white/50">
+            Connect with vetted {categoryName.toLowerCase()} experts over video.
+          </span>
+        </h2>
+        {seeAllHref && (
+          <Link
+            href={seeAllHref}
+            className="shrink-0 text-sm font-medium hover:underline"
+          >
+            See all →
+          </Link>
+        )}
+      </div>
       <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
         {experts.map((expert) => (
           <FeaturedExpertCard
