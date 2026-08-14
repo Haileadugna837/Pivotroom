@@ -9,25 +9,21 @@ export function HeaderClient({ isSignedIn }: { isSignedIn: boolean }) {
   const isHome = pathname === "/";
 
   if (isHome) {
-    // Overlaid on the homepage hero as its own floating bar — scrolls away
-    // with the page (absolute, not fixed) so it doesn't sit
-    // unreadable-white-on-white once the user scrolls past the dark hero
-    // into the light page below. Width matches the hero's own wrapper
-    // (max-w-[1600px], px-2/px-3) so the two read as one unit.
+    // Transparent, overlaid on the homepage hero — scrolls away with the
+    // page (absolute, not fixed) so it doesn't sit unreadable-white-on-white
+    // once the user scrolls past the dark hero into the light page below.
     return (
-      <header className="absolute inset-x-0 top-3 z-40 sm:top-4">
-        <div className="mx-auto max-w-[1600px] px-2 sm:px-3">
-          <div className="flex items-center justify-between rounded-2xl border border-white/10 bg-black/25 px-6 py-4 text-white backdrop-blur-sm sm:px-8">
-            <Link href="/" className="font-semibold">
-              Pivotroom.africa
+      <header className="absolute inset-x-0 top-6 z-40">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-6 text-white sm:px-10">
+          <Link href="/" className="font-semibold">
+            Pivotroom.africa
+          </Link>
+          <nav className="flex items-center gap-4 text-sm">
+            <Link href="/experts" className="hidden md:inline">
+              Find an expert
             </Link>
-            <nav className="flex items-center gap-4 text-sm">
-              <Link href="/experts" className="hidden md:inline">
-                Find an expert
-              </Link>
-              <HeaderAuthNav isSignedIn={isSignedIn} dark />
-            </nav>
-          </div>
+            <HeaderAuthNav isSignedIn={isSignedIn} dark />
+          </nav>
         </div>
       </header>
     );

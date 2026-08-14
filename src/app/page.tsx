@@ -25,9 +25,8 @@ export default async function Home() {
 
   return (
     <div className="flex flex-1 flex-col">
-      {/* Hero — full-page width on both mobile and desktop, capped only to
-          avoid looking absurd on ultra-wide monitors */}
-      <div className="mx-auto w-full max-w-[1600px] px-2 pt-3 sm:px-3 sm:pt-4">
+      {/* Hero */}
+      <div className="mx-auto w-full max-w-6xl px-4 pt-6">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-950 via-[#2a1f14] to-neutral-900 px-6 pb-10 pt-24 text-center text-white sm:pb-14 sm:pt-28">
           <h1 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
             Book 1:1 sessions with African experts over video call
