@@ -113,16 +113,19 @@ export type Database = {
           id: string
           name: string
           parent_id: string | null
+          tagline: string | null
         }
         Insert: {
           id?: string
           name: string
           parent_id?: string | null
+          tagline?: string | null
         }
         Update: {
           id?: string
           name?: string
           parent_id?: string | null
+          tagline?: string | null
         }
         Relationships: [
           {

@@ -1,19 +1,24 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
-import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
+import {
+  getApprovedExperts,
+  getCategoriesWithFeaturedExperts,
+  getCategoryDirectory,
+} from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { getFeaturedLogosForHome } from "@/features/marketing/server/queries";
-import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
+import { CategoryIconGrid } from "@/features/experts/components/category-icon-grid";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
 import { HeroSearch } from "@/features/experts/components/hero-search";
 import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
 
 export default async function Home() {
-  const [user, categoryGroups, searchableExperts, featuredLogos] = await Promise.all([
+  const [user, categoryGroups, categoryDirectory, searchableExperts, featuredLogos] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
+    getCategoryDirectory(),
     getApprovedExperts(),
     getFeaturedLogosForHome(),
   ]);
@@ -39,26 +44,25 @@ export default async function Home() {
         </div>
       </div>
 
-      {categoryGroups.length > 0 ? (
-        <>
-          <div className="mx-auto w-full max-w-6xl px-4 pt-8">
-            <CategoryPillNav categories={categoryGroups.map((g) => g.category)} />
-          </div>
+      <div className="mx-auto w-full max-w-6xl px-4 pt-8">
+        <CategoryIconGrid categories={categoryDirectory} />
+      </div>
 
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
-            {categoryGroups.map((group) => (
-              <CategoryExpertRow
-                key={group.category.id}
-                categoryId={group.category.id}
-                categoryName={group.category.name}
-                experts={group.experts}
-                wishlistedIds={wishlistedIds}
-                donatingIds={donatingIds}
-                isSignedIn={Boolean(user)}
-              />
-            ))}
-          </div>
-        </>
+      {categoryGroups.length > 0 ? (
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
+          {categoryGroups.map((group) => (
+            <CategoryExpertRow
+              key={group.category.id}
+              categoryId={group.category.id}
+              categoryName={group.category.name}
+              tagline={group.category.tagline}
+              experts={group.experts}
+              wishlistedIds={wishlistedIds}
+              donatingIds={donatingIds}
+              isSignedIn={Boolean(user)}
+            />
+          ))}
+        </div>
       ) : (
         <div className="mx-auto w-full max-w-md px-4 py-16 text-center">
           <p className="text-black/60 dark:text-white/60">
