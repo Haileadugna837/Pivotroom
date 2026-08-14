@@ -31,7 +31,6 @@ export default async function WishlistPage() {
               bio={expert.bio}
               pricePer15Min={expert.price_per_15_min}
               currency={expert.currency}
-              categoryName={expert.categories?.name ?? null}
               fullName={expert.profile?.full_name ?? null}
               photoUrl={expert.photo_url}
               wishlisted={true}

@@ -34,8 +34,23 @@ export default async function CategoryPage({
   if (!result) notFound();
 
   const { category, subcategories, experts } = result;
-  const activeSub = sub && subcategories.some((s) => s.id === sub) ? sub : null;
-  const visibleExperts = activeSub ? experts.filter((e) => e.category_id === activeSub) : experts;
+  const validSubIds = new Set(subcategories.map((s) => s.id));
+  const selectedSubs = new Set(
+    (sub ?? "").split(",").filter((subId) => validSubIds.has(subId)),
+  );
+  const visibleExperts =
+    selectedSubs.size > 0
+      ? experts.filter((e) => e.matchedCategoryIds.some((id) => selectedSubs.has(id)))
+      : experts;
+
+  function subcategoryHref(subId: string) {
+    const next = new Set(selectedSubs);
+    if (next.has(subId)) next.delete(subId);
+    else next.add(subId);
+    return next.size > 0
+      ? `/experts/category/${category.id}?sub=${[...next].join(",")}`
+      : `/experts/category/${category.id}`;
+  }
 
   const user = await getUser();
   const [wishlistedIds, donatingIds] = await Promise.all([
@@ -72,7 +87,7 @@ export default async function CategoryPage({
           <Link
             href={`/experts/category/${category.id}`}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium ${
-              activeSub === null
+              selectedSubs.size === 0
                 ? "border-foreground bg-foreground text-background"
                 : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
             }`}
@@ -82,9 +97,9 @@ export default async function CategoryPage({
           {subcategories.map((s) => (
             <Link
               key={s.id}
-              href={`/experts/category/${category.id}?sub=${s.id}`}
+              href={subcategoryHref(s.id)}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium ${
-                activeSub === s.id
+                selectedSubs.has(s.id)
                   ? "border-foreground bg-foreground text-background"
                   : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
               }`}
@@ -112,7 +127,6 @@ export default async function CategoryPage({
               bio={expert.bio}
               pricePer15Min={expert.price_per_15_min}
               currency={expert.currency}
-              categoryName={category.name}
               fullName={expert.profile?.full_name ?? null}
               photoUrl={expert.photo_url}
               wishlisted={wishlistedIds.has(expert.id)}

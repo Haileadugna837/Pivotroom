@@ -10,7 +10,7 @@ type Expert = {
   price_per_15_min: number | null;
   currency: string;
   status: string;
-  categories: { name: string } | null;
+  categoryNames: string[];
   created_at: string;
   photo_url: string | null;
   profile: { full_name: string | null; email: string } | null;
@@ -132,10 +132,17 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
                   <div>
                   <p className="font-medium">{e.profile?.full_name ?? e.profile?.email ?? e.id}</p>
                   <p className="text-black/50 dark:text-white/50">{e.profile?.email}</p>
-                  {e.categories?.name && (
-                    <span className="mt-1 inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">
-                      {e.categories.name}
-                    </span>
+                  {e.categoryNames.length > 0 && (
+                    <div className="mt-1 flex flex-wrap gap-1">
+                      {e.categoryNames.map((name) => (
+                        <span
+                          key={name}
+                          className="inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10"
+                        >
+                          {name}
+                        </span>
+                      ))}
+                    </div>
                   )}
                   {e.headline && <p className="mt-2">{e.headline}</p>}
                   <p className="mt-1 text-black/50 dark:text-white/50">

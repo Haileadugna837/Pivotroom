@@ -3,25 +3,49 @@ import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+async function getCategoryNamesByExpertId(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  expertIds: string[],
+) {
+  const namesByExpertId = new Map<string, { name: string }[]>();
+  if (expertIds.length === 0) return namesByExpertId;
+
+  const { data: rows, error } = await supabase
+    .from("expert_categories")
+    .select("expert_id, categories(name)")
+    .in("expert_id", expertIds);
+  if (error) throw error;
+
+  for (const row of rows) {
+    if (!row.categories?.name) continue;
+    const list = namesByExpertId.get(row.expert_id) ?? [];
+    list.push({ name: row.categories.name });
+    namesByExpertId.set(row.expert_id, list);
+  }
+  return namesByExpertId;
+}
+
 export async function getApprovedExperts() {
   const supabase = await createClient();
 
   const { data: experts, error: expertsError } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, photo_url, categories(name)")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
 
   if (expertsError) throw expertsError;
   if (!experts.length) return [];
 
-  const { data: publicProfiles, error: profilesError } = await supabase
-    .from("expert_public_profiles")
-    .select("id, full_name, avatar_url")
-    .in(
-      "id",
-      experts.map((e) => e.id),
-    );
+  const expertIds = experts.map((e) => e.id);
+
+  const [{ data: publicProfiles, error: profilesError }, categoriesByExpertId] = await Promise.all([
+    supabase
+      .from("expert_public_profiles")
+      .select("id, full_name, avatar_url")
+      .in("id", expertIds),
+    getCategoryNamesByExpertId(supabase, expertIds),
+  ]);
 
   if (profilesError) throw profilesError;
 
@@ -29,6 +53,7 @@ export async function getApprovedExperts() {
 
   return experts.map((expert) => ({
     ...expert,
+    categories: categoriesByExpertId.get(expert.id) ?? [],
     profile: profileById.get(expert.id) ?? null,
   }));
 }
@@ -45,20 +70,21 @@ export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCatego
 
   const { data: experts, error: expertsError } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, photo_url, category_id")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url")
     .eq("status", "approved")
     .order("created_at", { ascending: false });
   if (expertsError) throw expertsError;
   if (!experts.length) return [];
 
-  const { data: publicProfiles, error: profilesError } = await supabase
-    .from("expert_public_profiles")
-    .select("id, full_name, avatar_url")
-    .in(
-      "id",
-      experts.map((e) => e.id),
-    );
+  const expertIds = experts.map((e) => e.id);
+
+  const [{ data: publicProfiles, error: profilesError }, { data: expertCategoryRows, error: ecError }] =
+    await Promise.all([
+      supabase.from("expert_public_profiles").select("id, full_name, avatar_url").in("id", expertIds),
+      supabase.from("expert_categories").select("expert_id, category_id").in("expert_id", expertIds),
+    ]);
   if (profilesError) throw profilesError;
+  if (ecError) throw ecError;
   const profileById = new Map(publicProfiles.map((p) => [p.id, p]));
 
   const topLevelById = new Map(categories.filter((c) => !c.parent_id).map((c) => [c.id, c]));
@@ -66,18 +92,19 @@ export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCatego
     categories.filter((c) => c.parent_id).map((c) => [c.id, c.parent_id as string]),
   );
 
-  function resolveTopLevelId(categoryId: string | null) {
-    if (!categoryId) return null;
+  function resolveTopLevelId(categoryId: string) {
     if (topLevelById.has(categoryId)) return categoryId;
     return parentIdByChildId.get(categoryId) ?? null;
   }
 
+  const expertById = new Map(experts.map((e) => [e.id, e]));
   const expertsByTopCategory = new Map<string, typeof experts>();
-  for (const expert of experts) {
-    const topId = resolveTopLevelId(expert.category_id);
-    if (!topId) continue;
+  for (const row of expertCategoryRows ?? []) {
+    const topId = resolveTopLevelId(row.category_id);
+    const expert = expertById.get(row.expert_id);
+    if (!topId || !expert) continue;
     const list = expertsByTopCategory.get(topId) ?? [];
-    list.push(expert);
+    if (!list.some((e) => e.id === expert.id)) list.push(expert);
     expertsByTopCategory.set(topId, list);
   }
 
@@ -139,11 +166,25 @@ export async function getCategoryWithExperts(categoryId: string) {
 
   const categoryIds = [categoryId, ...subcategories.map((s) => s.id)];
 
+  const { data: matchRows, error: matchError } = await supabase
+    .from("expert_categories")
+    .select("expert_id, category_id")
+    .in("category_id", categoryIds);
+  if (matchError) throw matchError;
+
+  const matchedCategoryIdsByExpertId = new Map<string, Set<string>>();
+  for (const row of matchRows) {
+    const set = matchedCategoryIdsByExpertId.get(row.expert_id) ?? new Set<string>();
+    set.add(row.category_id);
+    matchedCategoryIdsByExpertId.set(row.expert_id, set);
+  }
+  const expertIds = Array.from(matchedCategoryIdsByExpertId.keys());
+
   const { data: experts, error: expertsError } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, photo_url, category_id")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url")
     .eq("status", "approved")
-    .in("category_id", categoryIds)
+    .in("id", expertIds.length > 0 ? expertIds : [""])
     .order("created_at", { ascending: false });
   if (expertsError) throw expertsError;
 
@@ -165,7 +206,11 @@ export async function getCategoryWithExperts(categoryId: string) {
   return {
     category,
     subcategories,
-    experts: experts.map((e) => ({ ...e, profile: profileById.get(e.id) ?? null })),
+    experts: experts.map((e) => ({
+      ...e,
+      profile: profileById.get(e.id) ?? null,
+      matchedCategoryIds: Array.from(matchedCategoryIdsByExpertId.get(e.id) ?? []),
+    })),
   };
 }
 
@@ -174,9 +219,7 @@ export const getApprovedExpertById = cache(async (id: string) => {
 
   const { data: expert, error } = await supabase
     .from("experts")
-    .select(
-      "id, headline, bio, price_per_15_min, currency, photo_url, categories(name), expectations, example_questions",
-    )
+    .select("id, headline, bio, price_per_15_min, currency, photo_url, expectations, example_questions")
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();

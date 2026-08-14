@@ -9,7 +9,6 @@ type ExpertCardProps = {
   bio: string | null;
   pricePer15Min: number | null;
   currency: string;
-  categoryName: string | null;
   fullName: string | null;
   photoUrl: string | null;
   wishlisted: boolean;
@@ -24,7 +23,6 @@ export function ExpertCard({
   bio,
   pricePer15Min,
   currency,
-  categoryName,
   fullName,
   photoUrl,
   wishlisted,

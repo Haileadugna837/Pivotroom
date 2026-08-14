@@ -16,12 +16,20 @@ export async function getMyExpertProfileFull(userId: string) {
   const { data, error } = await supabase
     .from("experts")
     .select(
-      "id, headline, bio, category_id, price_per_15_min, status, payout_account_name, payout_account_number, photo_url, timezone, expectations, example_questions",
+      "id, headline, bio, price_per_15_min, status, payout_account_name, payout_account_number, photo_url, timezone, expectations, example_questions",
     )
     .eq("id", userId)
     .maybeSingle();
   if (error) throw error;
-  return data;
+  if (!data) return null;
+
+  const { data: categoryRows, error: categoriesError } = await supabase
+    .from("expert_categories")
+    .select("category_id")
+    .eq("expert_id", userId);
+  if (categoriesError) throw categoriesError;
+
+  return { ...data, category_ids: categoryRows.map((c) => c.category_id) };
 }
 
 export async function getMySocialLinks(userId: string) {

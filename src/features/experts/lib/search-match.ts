@@ -5,12 +5,17 @@ export type SearchableExpert = {
   price_per_15_min: number | null;
   currency: string;
   photo_url: string | null;
-  categories: { name: string } | null;
+  categories: { name: string }[];
   profile: { full_name: string | null } | null;
 };
 
 export function matchesExpertQuery(expert: SearchableExpert, words: string[]) {
-  const haystack = [expert.profile?.full_name, expert.headline, expert.bio, expert.categories?.name]
+  const haystack = [
+    expert.profile?.full_name,
+    expert.headline,
+    expert.bio,
+    ...expert.categories.map((c) => c.name),
+  ]
     .filter(Boolean)
     .join(" ")
     .toLowerCase();

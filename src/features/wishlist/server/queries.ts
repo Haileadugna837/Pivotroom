@@ -24,7 +24,7 @@ export async function getMyWishlistedExperts(userId: string) {
 
   const { data: rows, error } = await supabase
     .from("wishlists")
-    .select("expert_id, experts(id, headline, bio, price_per_15_min, currency, photo_url, status, categories(name))")
+    .select("expert_id, experts(id, headline, bio, price_per_15_min, currency, photo_url, status)")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
   if (error) throw error;

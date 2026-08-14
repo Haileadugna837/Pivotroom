@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { applyAsExpert, type ApplyExpertState } from "@/features/experts/server/actions";
 import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
+import { CategoryMultiSelect } from "@/features/experts/components/category-multi-select";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 type Category = { id: string; name: string; parent_id: string | null };
@@ -12,7 +13,7 @@ type ApplyFormProps = {
   initialValues?: {
     headline: string | null;
     bio: string | null;
-    category_id: string | null;
+    category_ids: string[];
     price_per_15_min: number | null;
     payout_account_name?: string | null;
     payout_account_number?: string | null;
@@ -31,16 +32,6 @@ const FORM_ID = "apply-expert-form";
 export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
   const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
-
-  const topLevel = categories.filter((c) => !c.parent_id);
-  const childrenByParent = new Map<string, Category[]>();
-  categories
-    .filter((c) => c.parent_id)
-    .forEach((c) => {
-      const list = childrenByParent.get(c.parent_id!) ?? [];
-      list.push(c);
-      childrenByParent.set(c.parent_id!, list);
-    });
 
   return (
     <div className="flex flex-col gap-3">
@@ -63,24 +54,14 @@ export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }:
         placeholder="Short bio"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
-      <select
-        name="category_id"
-        required
-        defaultValue={initialValues?.category_id ?? ""}
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
-      >
-        <option value="">Select a category</option>
-        {topLevel.map((parent) => (
-          <optgroup key={parent.id} label={parent.name}>
-            <option value={parent.id}>{parent.name}</option>
-            {(childrenByParent.get(parent.id) ?? []).map((child) => (
-              <option key={child.id} value={child.id}>
-                — {child.name}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </select>
+      <div>
+        <p className="mb-1.5 text-sm">Categories</p>
+        <CategoryMultiSelect
+          categories={categories}
+          name="category_ids"
+          initialSelectedIds={initialValues?.category_ids ?? []}
+        />
+      </div>
       <label className="text-sm">
         Price per 15 minutes (ETB)
         <input
