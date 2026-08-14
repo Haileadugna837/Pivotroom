@@ -100,11 +100,11 @@ export async function getCategoryDirectory() {
   if (error) throw error;
   if (!categories.length) return [];
 
-  const childrenByParentId = new Map<string, string[]>();
+  const childrenByParentId = new Map<string, { id: string; name: string }[]>();
   for (const c of categories) {
     if (!c.parent_id) continue;
     const list = childrenByParentId.get(c.parent_id) ?? [];
-    list.push(c.name);
+    list.push({ id: c.id, name: c.name });
     childrenByParentId.set(c.parent_id, list);
   }
 
@@ -116,6 +116,57 @@ export async function getCategoryDirectory() {
       tagline: c.tagline,
       subcategories: childrenByParentId.get(c.id) ?? [],
     }));
+}
+
+export async function getCategoryWithExperts(categoryId: string) {
+  const supabase = await createClient();
+
+  const { data: category, error: catError } = await supabase
+    .from("categories")
+    .select("id, name, parent_id, tagline")
+    .eq("id", categoryId)
+    .is("parent_id", null)
+    .maybeSingle();
+  if (catError) throw catError;
+  if (!category) return null;
+
+  const { data: subcategories, error: subError } = await supabase
+    .from("categories")
+    .select("id, name")
+    .eq("parent_id", categoryId)
+    .order("name");
+  if (subError) throw subError;
+
+  const categoryIds = [categoryId, ...subcategories.map((s) => s.id)];
+
+  const { data: experts, error: expertsError } = await supabase
+    .from("experts")
+    .select("id, headline, bio, price_per_15_min, currency, photo_url, category_id")
+    .eq("status", "approved")
+    .in("category_id", categoryIds)
+    .order("created_at", { ascending: false });
+  if (expertsError) throw expertsError;
+
+  const profileById = new Map<string, { id: string | null; full_name: string | null; avatar_url: string | null }>();
+  if (experts.length) {
+    const { data: publicProfiles, error: profilesError } = await supabase
+      .from("expert_public_profiles")
+      .select("id, full_name, avatar_url")
+      .in(
+        "id",
+        experts.map((e) => e.id),
+      );
+    if (profilesError) throw profilesError;
+    for (const p of publicProfiles) {
+      if (p.id) profileById.set(p.id, p);
+    }
+  }
+
+  return {
+    category,
+    subcategories,
+    experts: experts.map((e) => ({ ...e, profile: profileById.get(e.id) ?? null })),
+  };
 }
 
 export const getApprovedExpertById = cache(async (id: string) => {
