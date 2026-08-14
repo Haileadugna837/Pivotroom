@@ -13,6 +13,7 @@ import {
 } from "@/features/notifications/server/send";
 import { uploadExpertPhoto } from "@/features/experts/server/photo";
 import { uploadNgoLogo } from "@/features/ngo/server/logo";
+import { uploadFeaturedLogo } from "@/features/marketing/server/logo";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 import { parseLines } from "@/lib/text";
 
@@ -464,6 +465,71 @@ export async function deleteNgo(formData: FormData) {
   if (error) throw error;
 
   revalidatePath("/admin/ngos");
+}
+
+export type AddFeaturedLogoState = { error?: string };
+
+export async function addFeaturedLogo(
+  _prevState: AddFeaturedLogoState,
+  formData: FormData,
+): Promise<AddFeaturedLogoState> {
+  await requireAdmin();
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return { error: "Name is required." };
+
+  const linkUrl = String(formData.get("link_url") ?? "").trim() || null;
+
+  const logo = formData.get("logo");
+  if (!(logo instanceof File) || logo.size === 0) {
+    return { error: "A logo image is required." };
+  }
+
+  const admin = createAdminClient();
+  const logoId = crypto.randomUUID();
+
+  let logoUrl: string;
+  try {
+    logoUrl = await uploadFeaturedLogo(admin.storage, logoId, logo);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : "Logo upload failed." };
+  }
+
+  const { error } = await admin
+    .from("featured_logos")
+    .insert({ id: logoId, name, link_url: linkUrl, logo_url: logoUrl });
+  if (error) return { error: `Failed to save logo: ${error.message}` };
+
+  revalidatePath("/admin/featured-logos");
+  revalidatePath("/");
+  return {};
+}
+
+export async function removeFeaturedLogo(formData: FormData) {
+  await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing logo id");
+
+  const admin = createAdminClient();
+  const { error } = await admin.from("featured_logos").delete().eq("id", id);
+  if (error) throw error;
+
+  revalidatePath("/admin/featured-logos");
+  revalidatePath("/");
+}
+
+export async function setFeaturedLogosEnabled(formData: FormData) {
+  await requireAdmin();
+  const enabled = formData.get("enabled") === "true";
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("site_settings")
+    .update({ featured_logos_enabled: enabled })
+    .eq("id", 1);
+  if (error) throw error;
+
+  revalidatePath("/admin/featured-logos");
+  revalidatePath("/");
 }
 
 const ACCOUNT_STATUSES = ["active", "restricted", "suspended"] as const;
