@@ -456,30 +456,6 @@ export type Database = {
           },
         ]
       }
-      featured_logos: {
-        Row: {
-          created_at: string
-          id: string
-          link_url: string | null
-          logo_url: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          link_url?: string | null
-          logo_url: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          link_url?: string | null
-          logo_url?: string
-          name?: string
-        }
-        Relationships: []
-      }
       ngos: {
         Row: {
           created_at: string
