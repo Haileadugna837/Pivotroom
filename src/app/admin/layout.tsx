@@ -21,6 +21,7 @@ const items: SidebarItem[] = [
   { href: "/admin/nominees", label: "Nominations" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/ngos", label: "NGOs" },
+  { href: "/admin/featured-logos", label: "Featured Logos" },
   { href: "/admin/audit-log", label: "Audit Log" },
   { href: "/admin/settings", label: "Settings" },
   { href: "/dashboard", label: "My Account" },
