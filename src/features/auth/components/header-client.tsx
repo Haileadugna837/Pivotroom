@@ -14,7 +14,7 @@ export function HeaderClient({ isSignedIn }: { isSignedIn: boolean }) {
     // once the user scrolls past the dark hero into the light page below.
     return (
       <header className="absolute inset-x-0 top-6 z-40">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-8 py-6 text-white sm:px-10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 text-white">
           <Link href="/" className="font-semibold">
             Pivotroom.africa
           </Link>
