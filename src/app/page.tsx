@@ -3,16 +3,19 @@ import { getUser } from "@/lib/supabase/server";
 import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
+import { getFeaturedLogos } from "@/features/marketing/server/queries";
 import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
 import { HeroSearch } from "@/features/experts/components/hero-search";
+import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
 
 export default async function Home() {
-  const [user, categoryGroups, searchableExperts] = await Promise.all([
+  const [user, categoryGroups, searchableExperts, featuredLogos] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
     getApprovedExperts(),
+    getFeaturedLogos(),
   ]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
@@ -24,7 +27,7 @@ export default async function Home() {
     <div className="flex flex-1 flex-col">
       {/* Hero */}
       <div className="mx-auto w-full max-w-6xl px-4 pt-6">
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 to-neutral-800 px-6 py-16 text-center text-white sm:py-24">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-950 via-[#2a1f14] to-neutral-900 px-6 pb-10 pt-24 text-center text-white sm:pb-14 sm:pt-28">
           <h1 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
             Book 1:1 sessions with African experts over video call
           </h1>
@@ -32,6 +35,7 @@ export default async function Home() {
             Find the right expert, book a time, and get real advice on a call.
           </p>
           <HeroSearch experts={searchableExperts} />
+          <FeaturedLogosStrip logos={featuredLogos} />
         </div>
       </div>
 

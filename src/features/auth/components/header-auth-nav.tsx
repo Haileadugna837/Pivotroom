@@ -4,8 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/server/actions";
 
-export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
+export function HeaderAuthNav({ isSignedIn, dark = false }: { isSignedIn: boolean; dark?: boolean }) {
   const pathname = usePathname();
+  const iconBorder = dark
+    ? "border-white/30 hover:bg-white/10"
+    : "border-black/10 dark:border-white/15";
+  const buttonBorder = dark
+    ? "border-white/30 hover:bg-white/10"
+    : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10";
 
   if (!isSignedIn) {
     return (
@@ -22,7 +28,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
         <Link
           href="/login"
           aria-label="Sign in"
-          className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+          className={`rounded-full border p-2 md:hidden ${iconBorder}`}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="8" cy="5.5" r="2.75" stroke="currentColor" strokeWidth="1.3" />
@@ -48,7 +54,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
     <form action={signOut}>
       <button
         type="submit"
-        className="hidden items-center gap-1.5 rounded-md border border-black/10 px-3 py-1.5 text-sm hover:bg-black/5 md:inline-flex dark:border-white/15 dark:hover:bg-white/10"
+        className={`hidden items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm md:inline-flex ${buttonBorder}`}
       >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path
@@ -71,7 +77,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
       <button
         type="submit"
         aria-label="Sign out"
-        className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+        className={`rounded-full border p-2 md:hidden ${iconBorder}`}
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path

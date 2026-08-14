@@ -157,6 +157,16 @@ export async function getCategoriesForAdmin() {
   return data;
 }
 
+export async function getFeaturedLogosForAdmin() {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("featured_logos")
+    .select("id, name, logo_url, link_url, created_at")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  return data;
+}
+
 export async function getNgosForAdmin() {
   const admin = createAdminClient();
   const { data, error } = await admin
