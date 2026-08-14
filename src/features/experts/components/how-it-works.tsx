@@ -2,7 +2,7 @@ import { HOW_IT_WORKS_STEPS } from "@/features/experts/components/how-it-works-s
 
 export function HowItWorks() {
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-10">
+    <div id="how-it-works" className="mx-auto w-full max-w-6xl scroll-mt-20 px-4 py-10">
       <h2 className="mb-4 text-xl font-semibold">How it works</h2>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
         {HOW_IT_WORKS_STEPS.map((step) => (
