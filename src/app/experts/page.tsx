@@ -104,7 +104,7 @@ export default async function ExpertsPage({
                 wishlistedIds={wishlistedIds}
                 donatingIds={donatingIds}
                 isSignedIn={Boolean(user)}
-                seeAllHref={`/experts/search?q=${encodeURIComponent(group.category.name)}`}
+                seeAllHref={`/experts/category/${group.category.id}`}
               />
             ))}
           </div>
