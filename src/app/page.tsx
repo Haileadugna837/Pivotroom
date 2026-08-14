@@ -3,16 +3,19 @@ import { getUser } from "@/lib/supabase/server";
 import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
+import { getFeaturedLogosForHome } from "@/features/marketing/server/queries";
 import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
 import { HeroSearch } from "@/features/experts/components/hero-search";
+import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
 
 export default async function Home() {
-  const [user, categoryGroups, searchableExperts] = await Promise.all([
+  const [user, categoryGroups, searchableExperts, featuredLogos] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
     getApprovedExperts(),
+    getFeaturedLogosForHome(),
   ]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
@@ -32,6 +35,7 @@ export default async function Home() {
             Find the right expert, book a time, and get real advice on a call.
           </p>
           <HeroSearch experts={searchableExperts} />
+          <FeaturedLogosStrip logos={featuredLogos} />
         </div>
       </div>
 
