@@ -1,84 +1,117 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
-import { getApprovedExperts } from "@/features/experts/server/queries";
+import { getApprovedExperts, getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
-import { ExpertCard } from "@/features/experts/components/expert-card";
+import { getExpertRatingSummaries } from "@/features/reviews/server/queries";
 import { FeaturedExpertCard } from "@/features/experts/components/featured-expert-card";
+import { CategoryPillNav } from "@/features/experts/components/category-pill-nav";
+import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
+import { SortBar } from "@/features/experts/components/sort-bar";
+import { HowItWorks } from "@/features/experts/components/how-it-works";
+import { parseSortValue, sortExpertsBy } from "@/features/experts/lib/sort";
 
 export const metadata: Metadata = {
   title: "Find an expert",
-  description: "Browse vetted African experts and book a 1:1 session.",
+  description: "Browse vetted African experts by category and book a 1:1 session.",
 };
 
-export default async function ExpertsPage() {
-  const [experts, user] = await Promise.all([getApprovedExperts(), getUser()]);
+export default async function ExpertsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string }>;
+}) {
+  const { sort: sortParam } = await searchParams;
+  const sort = parseSortValue(sortParam);
+
+  const [experts, categoryGroups, user, ratings] = await Promise.all([
+    getApprovedExperts(),
+    getCategoriesWithFeaturedExperts(1, 12),
+    getUser(),
+    getExpertRatingSummaries(),
+  ]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
     user ? getWishlistedExpertIds(user.id) : Promise.resolve(new Set<string>()),
     getExpertIdsWithNgoDonations(),
   ]);
 
-  const featured = experts.slice(0, 10);
+  const topExperts = sortExpertsBy(experts, sort, ratings).slice(0, 10);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      {featured.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-xl font-semibold">
-            Top Experts.{" "}
-            <span className="font-normal text-black/50 dark:text-white/50">
-              Access to the best experts has never been easier
-            </span>
-          </h2>
-          <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
-            {featured.map((expert) => (
-              <FeaturedExpertCard
-                key={expert.id}
-                expertId={expert.id}
-                href={`/experts/${expert.id}`}
-                fullName={expert.profile?.full_name ?? null}
-                photoUrl={expert.photo_url}
-                headline={expert.headline}
-                bio={expert.bio}
-                pricePer15Min={expert.price_per_15_min}
-                currency={expert.currency}
-                wishlisted={wishlistedIds.has(expert.id)}
+      <h1 className="mb-6 text-2xl font-semibold leading-tight sm:text-3xl">
+        Choose an expert.
+        <br />
+        Book a session.
+        <br />
+        Get advice on a video call.
+      </h1>
+
+      {experts.length === 0 ? (
+        <p className="text-sm text-black/60 dark:text-white/60">No experts are listed yet.</p>
+      ) : (
+        <>
+          <div className="mb-6 flex flex-wrap items-center gap-2">
+            <Link
+              href="/experts"
+              className="shrink-0 rounded-full border border-black/10 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+            >
+              All experts
+            </Link>
+            <CategoryPillNav categories={categoryGroups.map((g) => g.category)} />
+          </div>
+
+          <SortBar />
+
+          {topExperts.length > 0 && (
+            <div className="mb-12">
+              <h2 className="text-xl font-semibold">
+                Top Experts.{" "}
+                <span className="font-normal text-black/50 dark:text-white/50">
+                  Access to the best experts has never been easier
+                </span>
+              </h2>
+              <div className="mt-4 flex gap-4 overflow-x-auto pb-2">
+                {topExperts.map((expert) => (
+                  <FeaturedExpertCard
+                    key={expert.id}
+                    expertId={expert.id}
+                    href={`/experts/${expert.id}`}
+                    fullName={expert.profile?.full_name ?? null}
+                    photoUrl={expert.photo_url}
+                    headline={expert.headline}
+                    bio={expert.bio}
+                    pricePer15Min={expert.price_per_15_min}
+                    currency={expert.currency}
+                    wishlisted={wishlistedIds.has(expert.id)}
+                    isSignedIn={Boolean(user)}
+                    donatesToNgo={donatingIds.has(expert.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-12">
+            {categoryGroups.map((group) => (
+              <CategoryExpertRow
+                key={group.category.id}
+                categoryId={group.category.id}
+                categoryName={group.category.name}
+                experts={sortExpertsBy(group.experts, sort, ratings)}
+                wishlistedIds={wishlistedIds}
+                donatingIds={donatingIds}
                 isSignedIn={Boolean(user)}
-                donatesToNgo={donatingIds.has(expert.id)}
+                seeAllHref={`/experts/search?q=${encodeURIComponent(group.category.name)}`}
               />
             ))}
           </div>
-        </div>
+        </>
       )}
 
-      <h1 className="mb-6 text-xl font-semibold">Find an expert</h1>
-      {experts.length === 0 ? (
-        <p className="text-sm text-black/60 dark:text-white/60">
-          No experts are listed yet.
-        </p>
-      ) : (
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-          {experts.map((expert) => (
-            <ExpertCard
-              key={expert.id}
-              expertId={expert.id}
-              href={`/experts/${expert.id}`}
-              headline={expert.headline}
-              bio={expert.bio}
-              pricePer15Min={expert.price_per_15_min}
-              currency={expert.currency}
-              categoryName={expert.categories?.name ?? null}
-              fullName={expert.profile?.full_name ?? null}
-              photoUrl={expert.photo_url}
-              wishlisted={wishlistedIds.has(expert.id)}
-              isSignedIn={Boolean(user)}
-              donatesToNgo={donatingIds.has(expert.id)}
-            />
-          ))}
-        </div>
-      )}
+      <HowItWorks />
 
       <Link
         href="/experts/search"
