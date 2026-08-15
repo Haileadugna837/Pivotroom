@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/server/actions";
-import { getSidebarIcon, MORE_ICON } from "@/components/sidebar-icons";
+import { PivotroomBottomNavigation, type BottomNavItem } from "@/components/pivotroom-bottom-navigation";
 
 export type SidebarItem = {
   href: string;
@@ -58,14 +58,16 @@ export function SidebarLayout({
   const itemByHref = new Map(items.map((item) => [item.href, item]));
   const primaryItems = primaryHrefs.map((href) => itemByHref.get(href)).filter((item): item is SidebarItem => Boolean(item));
 
-  // Bottom bar = primaryItems + a trailing "More" slot. The floating circle
-  // tracks whichever of those is active (More counts as active when the
-  // current page is one of the overflow items reachable only via the drawer).
-  const totalSlots = primaryItems.length + 1;
-  const primaryActiveIndex = primaryItems.findIndex((item) => item.href === pathname);
-  const isOverflowActive = primaryActiveIndex === -1 && items.some((item) => item.href === pathname);
-  const activeSlotIndex = primaryActiveIndex !== -1 ? primaryActiveIndex : isOverflowActive ? primaryItems.length : -1;
-  const activeCenterPercent = activeSlotIndex !== -1 ? ((activeSlotIndex + 0.5) / totalSlots) * 100 : 0;
+  // Bottom bar = primaryItems + a trailing "More" slot. "More" counts as
+  // active when the current page is one of the overflow items reachable
+  // only via the drawer, so the morphing indicator still lands somewhere.
+  const bottomNavItems: BottomNavItem[] = [
+    ...primaryItems.map((item) => ({ key: item.href, label: item.label, href: item.href })),
+    { key: "more", label: "More", href: null },
+  ];
+  const primaryActive = primaryItems.find((item) => item.href === pathname);
+  const isOverflowActive = !primaryActive && items.some((item) => item.href === pathname);
+  const activeKey = primaryActive ? primaryActive.href : isOverflowActive ? "more" : "";
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
@@ -88,58 +90,7 @@ export function SidebarLayout({
 
       {/* Mobile sticky bottom tab bar */}
       {bottomNav && (
-        <nav className="fixed inset-x-0 bottom-0 z-40 md:hidden" aria-label={title}>
-          <div className="relative rounded-t-2xl border-t border-black/10 bg-background pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-6px_16px_rgba(0,0,0,0.06)] dark:border-white/15">
-            {/* Floating active-tab circle: straddles the top border (top-0 -translate-y-1/2,
-                same technique as the footer's "P" badge) so the border visibly breaks around
-                it, and slides between tabs by animating its `left` percentage. */}
-            {activeSlotIndex !== -1 &&
-              (primaryActiveIndex !== -1 ? (
-                <Link
-                  href={primaryItems[primaryActiveIndex].href}
-                  className="absolute top-0 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-md ring-4 ring-background transition-[left] duration-300 ease-out"
-                  style={{ left: `${activeCenterPercent}%` }}
-                >
-                  {getSidebarIcon(primaryItems[primaryActiveIndex].href)}
-                </Link>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setOpen(true)}
-                  className="absolute top-0 z-10 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-foreground text-background shadow-md ring-4 ring-background transition-[left] duration-300 ease-out"
-                  style={{ left: `${activeCenterPercent}%` }}
-                >
-                  {MORE_ICON}
-                </button>
-              ))}
-
-            <div className="relative flex items-stretch justify-around px-1">
-              {primaryItems.map((item) => {
-                const active = pathname === item.href;
-                return (
-                  <Link key={item.href} href={item.href} className="flex flex-1 flex-col items-center gap-1 py-1">
-                    <span className="flex h-9 w-9 items-center justify-center">
-                      {!active && (
-                        <span className="text-black/50 dark:text-white/50">{getSidebarIcon(item.href)}</span>
-                      )}
-                    </span>
-                    <span className={`text-[11px] ${active ? "font-medium" : "text-black/50 dark:text-white/50"}`}>
-                      {item.label}
-                    </span>
-                  </Link>
-                );
-              })}
-              <button type="button" onClick={() => setOpen(true)} className="flex flex-1 flex-col items-center gap-1 py-1">
-                <span className="flex h-9 w-9 items-center justify-center">
-                  {!isOverflowActive && <span className="text-black/50 dark:text-white/50">{MORE_ICON}</span>}
-                </span>
-                <span className={`text-[11px] ${isOverflowActive ? "font-medium" : "text-black/50 dark:text-white/50"}`}>
-                  More
-                </span>
-              </button>
-            </div>
-          </div>
-        </nav>
+        <PivotroomBottomNavigation items={bottomNavItems} activeKey={activeKey} onSelectOverflow={() => setOpen(true)} />
       )}
 
       {/* Mobile drawer + backdrop */}
