@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/features/auth/server/actions";
+import { getSidebarIcon, MORE_ICON } from "@/components/sidebar-icons";
 
 export type SidebarItem = {
   href: string;
@@ -40,29 +41,75 @@ export function SidebarLayout({
   title,
   items,
   children,
+  mobileNav = "drawer",
+  primaryHrefs = [],
 }: {
   title: string;
   items: SidebarItem[];
   children: React.ReactNode;
+  /** "bottom" swaps the mobile hamburger+drawer for a sticky bottom tab bar (client/expert account area only — admin keeps the drawer). */
+  mobileNav?: "drawer" | "bottom";
+  /** Up to 4 hrefs (must exist in `items`) pinned to the bottom bar, in order; everything else is reachable via the trailing "More" tab. */
+  primaryHrefs?: string[];
 }) {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const bottomNav = mobileNav === "bottom";
+  const itemByHref = new Map(items.map((item) => [item.href, item]));
+  const primaryItems = primaryHrefs.map((href) => itemByHref.get(href)).filter((item): item is SidebarItem => Boolean(item));
 
   return (
     <div className="flex flex-1 flex-col md:flex-row">
-      {/* Mobile top bar */}
-      <div className="flex items-center justify-between border-b border-black/10 px-4 py-3 md:hidden dark:border-white/15">
-        <span className="text-sm font-medium">{title}</span>
-        <button
-          type="button"
-          onClick={() => setOpen(true)}
-          aria-label="Open menu"
-          className="rounded-md border border-black/10 p-2 dark:border-white/15"
+      {/* Mobile top bar (drawer mode only — bottom-nav mode relies on the global header for context) */}
+      {!bottomNav && (
+        <div className="flex items-center justify-between border-b border-black/10 px-4 py-3 md:hidden dark:border-white/15">
+          <span className="text-sm font-medium">{title}</span>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Open menu"
+            className="rounded-md border border-black/10 p-2 dark:border-white/15"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+      )}
+
+      {/* Mobile sticky bottom tab bar */}
+      {bottomNav && (
+        <nav
+          className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-black/10 bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 md:hidden dark:border-white/15"
+          aria-label={title}
         >
-          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-        </button>
-      </div>
+          {primaryItems.map((item) => {
+            const active = pathname === item.href;
+            return (
+              <Link key={item.href} href={item.href} className="flex flex-1 flex-col items-center gap-1 py-1">
+                <span
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ${
+                    active
+                      ? "-translate-y-3 bg-foreground text-background shadow-md ring-4 ring-background"
+                      : "text-black/50 dark:text-white/50"
+                  }`}
+                >
+                  {getSidebarIcon(item.href)}
+                </span>
+                <span className={`text-[11px] ${active ? "font-medium" : "text-black/50 dark:text-white/50"}`}>
+                  {item.label}
+                </span>
+              </Link>
+            );
+          })}
+          <button type="button" onClick={() => setOpen(true)} className="flex flex-1 flex-col items-center gap-1 py-1">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full text-black/50 dark:text-white/50">
+              {MORE_ICON}
+            </span>
+            <span className="text-[11px] text-black/50 dark:text-white/50">More</span>
+          </button>
+        </nav>
+      )}
 
       {/* Mobile drawer + backdrop */}
       {open && (
@@ -115,7 +162,7 @@ export function SidebarLayout({
         </form>
       </aside>
 
-      <main className="min-w-0 flex-1">{children}</main>
+      <main className={`min-w-0 flex-1 ${bottomNav ? "pb-20 md:pb-0" : ""}`}>{children}</main>
     </div>
   );
 }
