@@ -44,8 +44,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
     items.push({ href: "/admin", label: "Admin" });
   }
 
+  // Bottom tab bar (mobile only) pins the 4 most likely-to-be-used
+  // destinations: bookings and wishlist are relevant to every account,
+  // the third slot adapts to whichever task is actually primary for this
+  // person (managing incoming sessions for an approved expert vs.
+  // nominating someone as a plain client), and settings rounds it out.
+  // Everything else — availability, payments, expert profile, nominations
+  // for experts, admin — stays one tap away behind "More".
+  const primaryHrefs = [
+    "/dashboard",
+    "/dashboard/wishlist",
+    expertProfile?.status === "approved" ? "/dashboard/expert/bookings" : "/dashboard/nominations",
+    "/dashboard/settings",
+  ];
+
   return (
-    <SidebarLayout title="Account" items={items}>
+    <SidebarLayout title="Account" items={items} mobileNav="bottom" primaryHrefs={primaryHrefs}>
       {children}
     </SidebarLayout>
   );
