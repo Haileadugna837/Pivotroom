@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { AnimatePresence, motion, useReducedMotion, type Transition } from "framer-motion";
+import { motion, useReducedMotion, type Transition } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   Home,
@@ -36,15 +36,22 @@ const ICON_BY_HREF: Record<string, LucideIcon> = {
   "/admin": ShieldCheck,
 };
 
-function iconFor(item: BottomNavItem): LucideIcon {
-  if (!item.href) return MoreHorizontal;
-  return ICON_BY_HREF[item.href] ?? Circle;
+// Returns a rendered icon node rather than a component reference — keeps the
+// "resolve which icon" logic out of NavButton's render body so no capitalized
+// binding is created there on every render.
+function renderNavIcon(item: BottomNavItem, size: number) {
+  const IconComponent: LucideIcon = item.href ? (ICON_BY_HREF[item.href] ?? Circle) : MoreHorizontal;
+  return <IconComponent size={size} strokeWidth={1.8} aria-hidden="true" />;
 }
 
 const EASE: Transition["ease"] = [0.22, 1, 0.36, 1];
 const MORPH: Transition = { duration: 0.3, ease: EASE };
 const MORPH_REDUCED: Transition = { duration: 0.12, ease: "linear" };
 
+// Icon-only tabs — labels are still passed through for aria-label/aria-current
+// (and the drawer's own text list) but never rendered visually here, so the
+// bar stays compact instead of "Wishlist / Nominations / Settings / More"
+// crowding a phone-width row.
 function NavButton({
   item,
   active,
@@ -56,19 +63,10 @@ function NavButton({
 }) {
   const reduceMotion = useReducedMotion();
   const transition = reduceMotion ? MORPH_REDUCED : MORPH;
-  const Icon = iconFor(item);
 
   const inner = (
-    <motion.div
-      whileTap={{ scale: 0.94 }}
-      transition={{ duration: 0.12 }}
-      className="flex flex-1 flex-col items-center justify-end gap-1 pb-1"
-    >
-      <motion.div
-        animate={{ y: active ? -8 : 0 }}
-        transition={transition}
-        className="relative flex min-h-12 items-center justify-center"
-      >
+    <motion.div whileTap={{ scale: 0.94 }} transition={{ duration: 0.12 }} className="flex flex-1 items-center justify-center py-2">
+      <motion.div animate={{ y: active ? -8 : 0 }} transition={transition} className="relative flex h-12 w-12 items-center justify-center">
         {active && (
           <motion.span
             layoutId="pivotroom-active-navigation"
@@ -76,44 +74,24 @@ function NavButton({
             className="absolute inset-0 rounded-full bg-foreground"
           />
         )}
-        <span
-          className={`relative z-10 flex min-h-12 items-center gap-2 rounded-full px-4 ${
+        <motion.span
+          animate={{ scale: active ? [1, 1.06, 1] : 1 }}
+          transition={{ duration: 0.3 }}
+          className={`relative z-10 flex items-center justify-center ${
             active ? "text-background" : "text-black/50 dark:text-white/50"
           }`}
         >
-          <motion.span
-            animate={{ scale: active ? [1, 1.06, 1] : 1 }}
-            transition={{ duration: 0.3 }}
-            className="flex items-center justify-center"
-          >
-            <Icon size={active ? 22 : 23} strokeWidth={1.8} aria-hidden="true" />
-          </motion.span>
-          <AnimatePresence initial={false}>
-            {active && (
-              <motion.span
-                key="label"
-                initial={{ opacity: 0, width: 0, x: -5 }}
-                animate={{ opacity: 1, width: "auto", x: 0 }}
-                exit={{ opacity: 0, width: 0, x: -5 }}
-                transition={transition}
-                className="overflow-hidden whitespace-nowrap text-[13px] font-medium"
-              >
-                {item.label}
-              </motion.span>
-            )}
-          </AnimatePresence>
-        </span>
+          {renderNavIcon(item, active ? 22 : 23)}
+        </motion.span>
       </motion.div>
-      {!active && (
-        <span className="text-[13px] font-normal text-black/50 dark:text-white/50">{item.label}</span>
-      )}
     </motion.div>
   );
 
   const sharedProps = {
     "aria-label": item.label,
     "aria-current": active ? ("page" as const) : undefined,
-    className: "flex flex-1 rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40",
+    className:
+      "flex flex-1 items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40",
   };
 
   if (item.href) {
@@ -143,7 +121,7 @@ export function PivotroomBottomNavigation({
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around rounded-t-3xl border-t border-black/10 bg-background px-1 pt-3 shadow-[0_-6px_20px_rgba(0,0,0,0.025)] pb-[max(0.75rem,env(safe-area-inset-bottom))] md:hidden dark:border-white/15"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around rounded-t-3xl border-t border-black/10 bg-background px-1 pt-2.5 shadow-[0_-6px_20px_rgba(0,0,0,0.025)] pb-[max(0.625rem,env(safe-area-inset-bottom))] md:hidden dark:border-white/15"
     >
       {items.map((item) => (
         <NavButton key={item.key} item={item} active={item.key === activeKey} onSelectOverflow={onSelectOverflow} />

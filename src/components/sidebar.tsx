@@ -144,7 +144,7 @@ export function SidebarLayout({
         </form>
       </aside>
 
-      <main className={`min-w-0 flex-1 ${bottomNav ? "pb-20 md:pb-0" : ""}`}>{children}</main>
+      <main className={`min-w-0 flex-1 ${bottomNav ? "pb-16 md:pb-0" : ""}`}>{children}</main>
     </div>
   );
 }
