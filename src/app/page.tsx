@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
 import {
-  getApprovedExperts,
   getCategoriesWithFeaturedExperts,
   getCategoryDirectory,
 } from "@/features/experts/server/queries";
@@ -11,15 +10,13 @@ import { getFeaturedLogosForHome } from "@/features/marketing/server/queries";
 import { CategoryIconGrid } from "@/features/experts/components/category-icon-grid";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
-import { HeroSearch } from "@/features/experts/components/hero-search";
 import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
 
 export default async function Home() {
-  const [user, categoryGroups, categoryDirectory, searchableExperts, featuredLogos] = await Promise.all([
+  const [user, categoryGroups, categoryDirectory, featuredLogos] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
     getCategoryDirectory(),
-    getApprovedExperts(),
     getFeaturedLogosForHome(),
   ]);
 
@@ -39,7 +36,12 @@ export default async function Home() {
           <p className="mx-auto mt-3 max-w-md text-white/70">
             Find the right expert, book a time, and get real advice on a call.
           </p>
-          <HeroSearch experts={searchableExperts} />
+          <Link
+            href="/experts"
+            className="mt-6 inline-block rounded-full bg-white px-6 py-3 text-sm font-medium text-black hover:bg-white/90"
+          >
+            Find an expert
+          </Link>
           <FeaturedLogosStrip logos={featuredLogos} />
         </div>
       </div>
