@@ -41,7 +41,23 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
   const insideAccountArea = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
 
   if (!insideAccountArea) {
-    return <Link href="/dashboard">Dashboard</Link>;
+    return (
+      <>
+        <Link href="/dashboard" className="hidden md:inline">
+          Dashboard
+        </Link>
+        <Link
+          href="/dashboard"
+          aria-label="Dashboard"
+          className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2.5 7.5 8 3l5.5 4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M4 6.8V12.5a.8.8 0 0 0 .8.8h6.4a.8.8 0 0 0 .8-.8V6.8" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round" />
+          </svg>
+        </Link>
+      </>
+    );
   }
 
   return (
