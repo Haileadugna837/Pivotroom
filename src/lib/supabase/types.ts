@@ -205,6 +205,104 @@ export type Database = {
           },
         ]
       }
+      expert_finder_sessions: {
+        Row: {
+          category_id: string | null
+          completed_at: string | null
+          created_at: string
+          device_type: string | null
+          id: string
+          identity: string | null
+          last_activity_at: string
+          lead_submitted: boolean
+          match_count: number | null
+          match_status: string | null
+          name: string | null
+          phone: string | null
+          problem: string | null
+          session_id: string
+          source_page: string | null
+          started_at: string
+          status: string
+          subcategory_id: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          category_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          identity?: string | null
+          last_activity_at?: string
+          lead_submitted?: boolean
+          match_count?: number | null
+          match_status?: string | null
+          name?: string | null
+          phone?: string | null
+          problem?: string | null
+          session_id: string
+          source_page?: string | null
+          started_at?: string
+          status?: string
+          subcategory_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          category_id?: string | null
+          completed_at?: string | null
+          created_at?: string
+          device_type?: string | null
+          id?: string
+          identity?: string | null
+          last_activity_at?: string
+          lead_submitted?: boolean
+          match_count?: number | null
+          match_status?: string | null
+          name?: string | null
+          phone?: string | null
+          problem?: string | null
+          session_id?: string
+          source_page?: string | null
+          started_at?: string
+          status?: string
+          subcategory_id?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_finder_sessions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_finder_sessions_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_finder_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "expert_public_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_finder_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_google_tokens: {
         Row: {
           access_token: string | null

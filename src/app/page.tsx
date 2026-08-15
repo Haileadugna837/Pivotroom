@@ -11,13 +11,16 @@ import { CategoryIconGrid } from "@/features/experts/components/category-icon-gr
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
 import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
+import { ExpertFinderSection } from "@/features/finder/components/expert-finder-section";
+import { getCategories } from "@/features/experts/server/categories";
 
 export default async function Home() {
-  const [user, categoryGroups, categoryDirectory, featuredLogos] = await Promise.all([
+  const [user, categoryGroups, categoryDirectory, featuredLogos, finderCategories] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
     getCategoryDirectory(),
     getFeaturedLogosForHome(),
+    getCategories(),
   ]);
 
   const [wishlistedIds, donatingIds] = await Promise.all([
@@ -51,32 +54,61 @@ export default async function Home() {
       </div>
 
       {categoryGroups.length > 0 ? (
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
-          {categoryGroups.map((group) => (
-            <CategoryExpertRow
-              key={group.category.id}
-              categoryId={group.category.id}
-              categoryName={group.category.name}
-              tagline={group.category.tagline}
-              experts={group.experts}
-              wishlistedIds={wishlistedIds}
-              donatingIds={donatingIds}
-              isSignedIn={Boolean(user)}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
+            {categoryGroups.slice(0, 2).map((group) => (
+              <CategoryExpertRow
+                key={group.category.id}
+                categoryId={group.category.id}
+                categoryName={group.category.name}
+                tagline={group.category.tagline}
+                experts={group.experts}
+                wishlistedIds={wishlistedIds}
+                donatingIds={donatingIds}
+                isSignedIn={Boolean(user)}
+              />
+            ))}
+          </div>
+
+          <div className="mx-auto w-full max-w-4xl px-4">
+            <ExpertFinderSection categories={finderCategories} />
+          </div>
+
+          {categoryGroups.length > 2 && (
+            <div className="mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 py-10">
+              {categoryGroups.slice(2).map((group) => (
+                <CategoryExpertRow
+                  key={group.category.id}
+                  categoryId={group.category.id}
+                  categoryName={group.category.name}
+                  tagline={group.category.tagline}
+                  experts={group.experts}
+                  wishlistedIds={wishlistedIds}
+                  donatingIds={donatingIds}
+                  isSignedIn={Boolean(user)}
+                />
+              ))}
+            </div>
+          )}
+        </>
       ) : (
-        <div className="mx-auto w-full max-w-md px-4 py-16 text-center">
-          <p className="text-black/60 dark:text-white/60">
-            New experts are joining every week — browse the full directory to see who&apos;s available now.
-          </p>
-          <Link
-            href="/experts"
-            className="mt-4 inline-block rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-          >
-            Browse all experts
-          </Link>
-        </div>
+        <>
+          <div className="mx-auto w-full max-w-md px-4 py-16 text-center">
+            <p className="text-black/60 dark:text-white/60">
+              New experts are joining every week — browse the full directory to see who&apos;s available now.
+            </p>
+            <Link
+              href="/experts"
+              className="mt-4 inline-block rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
+            >
+              Browse all experts
+            </Link>
+          </div>
+
+          <div className="mx-auto w-full max-w-4xl px-4 pb-10">
+            <ExpertFinderSection categories={finderCategories} />
+          </div>
+        </>
       )}
 
       <HowItWorks />
