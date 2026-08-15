@@ -80,7 +80,7 @@ export function SidebarLayout({
       {/* Mobile sticky bottom tab bar */}
       {bottomNav && (
         <nav
-          className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-black/10 bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 md:hidden dark:border-white/15"
+          className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around border-t border-black/10 bg-background px-1 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2.5 md:hidden dark:border-white/15"
           aria-label={title}
         >
           {primaryItems.map((item) => {
@@ -88,10 +88,10 @@ export function SidebarLayout({
             return (
               <Link key={item.href} href={item.href} className="flex flex-1 flex-col items-center gap-1 py-1">
                 <span
-                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ${
+                  className={`flex h-9 w-9 items-center justify-center rounded-full transition-all duration-200 ease-out ${
                     active
-                      ? "-translate-y-3 bg-foreground text-background shadow-md ring-4 ring-background"
-                      : "text-black/50 dark:text-white/50"
+                      ? "scale-100 bg-foreground text-background"
+                      : "scale-90 text-black/50 dark:text-white/50"
                   }`}
                 >
                   {getSidebarIcon(item.href)}
