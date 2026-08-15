@@ -19,6 +19,7 @@ const items: SidebarItem[] = [
   { href: "/admin/payouts", label: "Payouts" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/nominees", label: "Nominations" },
+  { href: "/admin/expert-demand", label: "Expert Demand" },
   { href: "/admin/categories", label: "Categories" },
   { href: "/admin/ngos", label: "NGOs" },
   { href: "/admin/audit-log", label: "Audit Log" },
