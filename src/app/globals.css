@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Class-based dark mode (Tailwind v4 CSS-first config) so light/dark/system
+   can be toggled explicitly, instead of `dark:` always following the OS
+   media query. "System" mode is just JS applying/removing this class based
+   on the current OS preference — see ThemeToggle + the anti-flash script in
+   the root layout's <head>. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -12,11 +19,9 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 body {

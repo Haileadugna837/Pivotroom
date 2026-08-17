@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
 import { HeaderAuthNav } from "@/features/auth/components/header-auth-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export async function Header() {
   const user = await getUser();
@@ -13,10 +14,11 @@ export async function Header() {
         </span>
         <span className="hidden md:inline">Pivotroom.africa</span>
       </Link>
-      <nav className="flex items-center gap-4 text-sm">
+      <nav className="flex items-center gap-3 text-sm">
         <Link href="/experts" className="hidden md:inline">
           Find an expert
         </Link>
+        <ThemeToggle />
         <HeaderAuthNav isSignedIn={Boolean(user)} />
       </nav>
     </header>
