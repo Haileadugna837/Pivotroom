@@ -216,8 +216,15 @@ Tables: `profiles` (auto-created on signup via trigger), `categories` (now with
 `payout_account_number`, `photo_url`, `timezone` (IANA identifier, default
 `Africa/Addis_Ababa`) — no more `is_approved`/`session_rate`/`session_duration_minutes`),
 `expert_availability` (per-date windows), `expert_google_tokens` (service-role
-write, expert can read own row), `expert_profile_views`, `page_views`, and
-`admin_audit_log` (all three service-role only, no RLS policies at all),
+write, expert can read own row), `expert_profile_views`, `page_views`,
+`admin_audit_log`, `expert_invites`, and `expert_finder_sessions` (all
+service-role only — every read/write goes through the admin client, which
+bypasses RLS; each carries an explicit `using (false) with check (false)`
+"deny direct access" policy so the Supabase linter's "RLS enabled, no policy"
+INFO notice — which can't distinguish "locked down on purpose" from "forgot
+policies" — stops firing; verified via a live insert/select/delete smoke test
+that the service-role client is unaffected, since `service_role` bypasses RLS
+regardless of what policies exist),
 `bookings`, `payment_proofs`, `expert_payouts`, `reviews`. All have RLS
 enabled. View `expert_public_profiles`
 exposes only name/avatar for approved experts (intentionally security-definer —
