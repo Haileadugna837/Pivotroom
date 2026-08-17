@@ -12,6 +12,7 @@ import { identityLabel, problemLabel } from "@/features/finder/config";
 import { markFinderResultsViewed } from "@/features/finder/server/actions";
 import { parseSortValue, sortExpertsBy } from "@/features/experts/lib/sort";
 import { SORT_OPTIONS } from "@/features/experts/components/sort-bar";
+import { CapturePageEvent } from "@/components/capture-page-event";
 
 export const metadata: Metadata = {
   title: "Your expert matches",
@@ -63,6 +64,15 @@ export default async function FinderResultsPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      <CapturePageEvent
+        event="finder_results_viewed"
+        properties={{
+          category_id: session.category_id,
+          subcategory_id: session.subcategory_id,
+          identity: session.identity,
+          problem: session.problem,
+        }}
+      />
       <Link
         href="/"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"

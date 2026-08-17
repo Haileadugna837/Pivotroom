@@ -38,7 +38,7 @@ export async function createBooking(formData: FormData) {
 
   const { data: expert, error: expertError } = await supabase
     .from("experts")
-    .select("price_per_15_min, currency, timezone")
+    .select("price_per_15_min, currency, timezone, primary_category_id")
     .eq("id", expertId)
     .eq("status", "approved")
     .maybeSingle();
@@ -97,6 +97,7 @@ export async function createBooking(formData: FormData) {
   await captureServerEvent(user.id, "booking_created", {
     booking_id: booking.id,
     expert_id: expertId,
+    category_id: expert.primary_category_id,
     price,
     currency: expert.currency,
   });
@@ -162,13 +163,21 @@ export async function markBookingCompletedAsExpert(formData: FormData) {
   const bookingId = String(formData.get("booking_id") ?? "");
   if (!bookingId) throw new Error("Missing booking_id");
 
-  const { error } = await supabase
+  const { data, error } = await supabase
     .from("bookings")
     .update({ status: "completed" })
     .eq("id", bookingId)
     .eq("status", "confirmed")
-    .lte("end_time", new Date().toISOString());
+    .lte("end_time", new Date().toISOString())
+    .select("client_id, expert_id");
   if (error) throw error;
+
+  if (data && data.length > 0) {
+    await captureServerEvent(data[0].client_id, "booking_completed", {
+      booking_id: bookingId,
+      expert_id: data[0].expert_id,
+    });
+  }
 
   revalidatePath(`/bookings/${bookingId}`);
 }

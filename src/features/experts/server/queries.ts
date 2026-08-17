@@ -237,7 +237,9 @@ export const getApprovedExpertById = cache(async (id: string) => {
 
   const { data: expert, error } = await supabase
     .from("experts")
-    .select("id, headline, bio, price_per_15_min, currency, photo_url, expectations, example_questions")
+    .select(
+      "id, headline, bio, price_per_15_min, currency, photo_url, expectations, example_questions, primary_category_id",
+    )
     .eq("id", id)
     .eq("status", "approved")
     .maybeSingle();
