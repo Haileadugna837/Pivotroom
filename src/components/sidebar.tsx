@@ -77,13 +77,14 @@ export function SidebarLayout({
   const itemByHref = new Map(items.map((item) => [item.href, item]));
   const primaryItems = primaryHrefs.map((href) => itemByHref.get(href)).filter((item): item is SidebarItem => Boolean(item));
 
-  // Bottom bar = primaryItems + a trailing "More" slot. "More" counts as
-  // active when the current page is one of the overflow items reachable
-  // only via the drawer, so the morphing indicator still lands somewhere.
-  const bottomNavItems: BottomNavItem[] = [
-    ...primaryItems.map((item) => ({ key: item.href, label: item.label, href: item.href })),
-    { key: "more", label: "More", href: null },
-  ];
+  // Bottom bar = primaryItems + a trailing "More" slot — but only when some
+  // item isn't already pinned. A plain client account has exactly as many
+  // items as fit in the bar, so there's nothing left to hide behind "More";
+  // adding it anyway would be a dead tab that opens an empty-of-new-info drawer.
+  const hasOverflowItems = items.length > primaryItems.length;
+  const bottomNavItems: BottomNavItem[] = hasOverflowItems
+    ? [...primaryItems.map((item) => ({ key: item.href, label: item.label, href: item.href })), { key: "more", label: "More", href: null }]
+    : primaryItems.map((item) => ({ key: item.href, label: item.label, href: item.href }));
   const primaryActive = primaryItems.find((item) => item.href === pathname);
   const isOverflowActive = !primaryActive && items.some((item) => item.href === pathname);
   const activeKey = primaryActive ? primaryActive.href : isOverflowActive ? "more" : "";

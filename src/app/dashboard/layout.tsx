@@ -48,9 +48,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
   // destinations: bookings and wishlist are relevant to every account,
   // the third slot adapts to whichever task is actually primary for this
   // person (managing incoming sessions for an approved expert vs.
-  // nominating someone as a plain client), and settings rounds it out.
-  // Everything else — availability, payments, expert profile, nominations
-  // for experts, admin — stays one tap away behind "More".
+  // nominating someone as a plain client), and My Account rounds it out.
+  // A plain client account has exactly these 4 items total, so the bar shows
+  // no "More" tab at all (SidebarLayout omits it once nothing is left over).
+  // Everything beyond these 4 — availability, payments, expert profile,
+  // nominations for experts, admin — stays one tap away behind "More" only
+  // for accounts that actually have that overflow (experts/admins).
   const primaryHrefs = [
     "/dashboard",
     "/dashboard/wishlist",
