@@ -18,6 +18,8 @@
     "googleapis": "^174.0.1",
     "lucide-react": "^1.31.0",
     "next": "16.3.0",
+    "posthog-js": "^1.417.3",
+    "posthog-node": "^5.49.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "resend": "^6.19.0",

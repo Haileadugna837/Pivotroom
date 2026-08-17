@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { notifyAdminPaymentSubmitted } from "@/features/notifications/server/send";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 export async function submitPaymentProof(formData: FormData) {
   const supabase = await createClient();
@@ -35,6 +36,8 @@ export async function submitPaymentProof(formData: FormData) {
   if (updateError) throw updateError;
 
   await notifyAdminPaymentSubmitted(bookingId);
+
+  await captureServerEvent(user.id, "payment_proof_submitted", { booking_id: bookingId });
 
   revalidatePath(`/bookings/${bookingId}`);
 }

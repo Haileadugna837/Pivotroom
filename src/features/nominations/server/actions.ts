@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 export type NominateState = { error?: string };
 
@@ -62,6 +63,8 @@ export async function submitNomination(
     links,
   });
   if (error) return { error: error.message };
+
+  await captureServerEvent(user.id, "nomination_submitted");
 
   revalidatePath("/dashboard/nominations");
   redirect("/dashboard/nominations?nominated=1");

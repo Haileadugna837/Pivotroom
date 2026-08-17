@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { getUser } from "@/lib/supabase/server";
+import { isAdminEmail } from "@/lib/admin";
 import { Header } from "@/features/auth/components/header";
 import { Footer } from "@/components/footer";
+import { PostHogIdentify } from "@/components/posthog-identify";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,7 +40,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const user = await getUser();
+
   return (
     <html
       lang="en"
@@ -47,6 +52,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
+        <PostHogIdentify
+          user={user ? { id: user.id, email: user.email ?? "", isAdmin: isAdminEmail(user.email) } : null}
+        />
         <Header />
         {children}
         <Footer />
