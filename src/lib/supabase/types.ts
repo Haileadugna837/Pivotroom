@@ -172,21 +172,85 @@ export type Database = {
           },
         ]
       }
+      expert_bookable_topics: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string
+          expert_id: string
+          expertise_topic_id: string
+          id: string
+          industry_id: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description: string
+          expert_id: string
+          expertise_topic_id: string
+          id?: string
+          industry_id?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string
+          expert_id?: string
+          expertise_topic_id?: string
+          id?: string
+          industry_id?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_bookable_topics_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_bookable_topics_expertise_topic_id_fkey"
+            columns: ["expertise_topic_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_bookable_topics_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_categories: {
         Row: {
           category_id: string
           created_at: string
           expert_id: string
+          expertise_type: string | null
         }
         Insert: {
           category_id: string
           created_at?: string
           expert_id: string
+          expertise_type?: string | null
         }
         Update: {
           category_id?: string
           created_at?: string
           expert_id?: string
+          expertise_type?: string | null
         }
         Relationships: [
           {
@@ -335,6 +399,42 @@ export type Database = {
           },
         ]
       }
+      expert_industries: {
+        Row: {
+          created_at: string
+          experience_level: string | null
+          expert_id: string
+          industry_id: string
+        }
+        Insert: {
+          created_at?: string
+          experience_level?: string | null
+          expert_id: string
+          industry_id: string
+        }
+        Update: {
+          created_at?: string
+          experience_level?: string | null
+          expert_id?: string
+          industry_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_industries_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expert_industries_industry_id_fkey"
+            columns: ["industry_id"]
+            isOneToOne: false
+            referencedRelation: "industries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_invites: {
         Row: {
           completed_at: string | null
@@ -459,6 +559,53 @@ export type Database = {
           },
         ]
       }
+      expert_profile_change_requests: {
+        Row: {
+          change_type: string
+          expert_id: string
+          id: string
+          new_value: Json
+          old_value: Json | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          change_type: string
+          expert_id: string
+          id?: string
+          new_value: Json
+          old_value?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          change_type?: string
+          expert_id?: string
+          id?: string
+          new_value?: Json
+          old_value?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expert_profile_change_requests_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expert_profile_views: {
         Row: {
           expert_id: string
@@ -530,6 +677,8 @@ export type Database = {
           payout_account_number: string | null
           photo_url: string | null
           price_per_15_min: number | null
+          primary_category_id: string | null
+          secondary_category_id: string | null
           status: string
           timezone: string
         }
@@ -545,6 +694,8 @@ export type Database = {
           payout_account_number?: string | null
           photo_url?: string | null
           price_per_15_min?: number | null
+          primary_category_id?: string | null
+          secondary_category_id?: string | null
           status?: string
           timezone?: string
         }
@@ -560,6 +711,8 @@ export type Database = {
           payout_account_number?: string | null
           photo_url?: string | null
           price_per_15_min?: number | null
+          primary_category_id?: string | null
+          secondary_category_id?: string | null
           status?: string
           timezone?: string
         }
@@ -576,6 +729,20 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experts_primary_category_id_fkey"
+            columns: ["primary_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "experts_secondary_category_id_fkey"
+            columns: ["secondary_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -601,6 +768,74 @@ export type Database = {
           link_url?: string | null
           logo_url?: string
           name?: string
+        }
+        Relationships: []
+      }
+      industries: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          industry_group_id: string
+          name: string
+          search_keywords: string[]
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          industry_group_id: string
+          name: string
+          search_keywords?: string[]
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          industry_group_id?: string
+          name?: string
+          search_keywords?: string[]
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "industries_industry_group_id_fkey"
+            columns: ["industry_group_id"]
+            isOneToOne: false
+            referencedRelation: "industry_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      industry_groups: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
         }
         Relationships: []
       }
@@ -889,6 +1124,70 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      taxonomy_suggestions: {
+        Row: {
+          context_category_id: string | null
+          context_industry_group_id: string | null
+          created_at: string
+          expert_id: string
+          id: string
+          name: string
+          note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          suggestion_type: string
+        }
+        Insert: {
+          context_category_id?: string | null
+          context_industry_group_id?: string | null
+          created_at?: string
+          expert_id: string
+          id?: string
+          name: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          suggestion_type: string
+        }
+        Update: {
+          context_category_id?: string | null
+          context_industry_group_id?: string | null
+          created_at?: string
+          expert_id?: string
+          id?: string
+          name?: string
+          note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          suggestion_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "taxonomy_suggestions_context_category_id_fkey"
+            columns: ["context_category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "taxonomy_suggestions_context_industry_group_id_fkey"
+            columns: ["context_industry_group_id"]
+            isOneToOne: false
+            referencedRelation: "industry_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "taxonomy_suggestions_expert_id_fkey"
+            columns: ["expert_id"]
+            isOneToOne: false
+            referencedRelation: "experts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       wishlists: {
         Row: {

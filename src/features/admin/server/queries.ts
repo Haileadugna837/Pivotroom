@@ -3,6 +3,69 @@ import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ExpertTab = "all" | "pending" | "approved" | "rejected" | "suspended";
 
+export async function getPendingExpertiseChangeRequests() {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("expert_profile_change_requests")
+    .select("id, expert_id, change_type, old_value, new_value, submitted_at")
+    .eq("status", "pending")
+    .order("submitted_at", { ascending: true });
+  if (error) throw error;
+  if (!data.length) return [];
+
+  const expertIds = Array.from(new Set(data.map((r) => r.expert_id)));
+  const [{ data: profiles }, { data: categories }] = await Promise.all([
+    admin.from("profiles").select("id, full_name, email").in("id", expertIds),
+    admin.from("categories").select("id, name"),
+  ]);
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+  const categoryNameById = new Map((categories ?? []).map((c) => [c.id, c.name]));
+
+  function categoryLabel(value: unknown) {
+    if (!value || typeof value !== "object" || !("category_id" in value)) return "None";
+    const categoryId = (value as { category_id: string | null }).category_id;
+    if (!categoryId) return "None";
+    return categoryNameById.get(categoryId) ?? "Unknown category";
+  }
+
+  return data.map((r) => ({
+    ...r,
+    expertName: profileById.get(r.expert_id)?.full_name || profileById.get(r.expert_id)?.email || r.expert_id,
+    oldCategoryName: categoryLabel(r.old_value),
+    newCategoryName: categoryLabel(r.new_value),
+  }));
+}
+
+export async function getPendingTaxonomySuggestions() {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("taxonomy_suggestions")
+    .select("id, expert_id, suggestion_type, name, note, context_category_id, context_industry_group_id, created_at")
+    .eq("status", "pending")
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  if (!data.length) return [];
+
+  const expertIds = Array.from(new Set(data.map((s) => s.expert_id)));
+  const [{ data: profiles }, { data: categories }, { data: industryGroups }] = await Promise.all([
+    admin.from("profiles").select("id, full_name, email").in("id", expertIds),
+    admin.from("categories").select("id, name"),
+    admin.from("industry_groups").select("id, name"),
+  ]);
+  const profileById = new Map((profiles ?? []).map((p) => [p.id, p]));
+  const categoryNameById = new Map((categories ?? []).map((c) => [c.id, c.name]));
+  const industryGroupNameById = new Map((industryGroups ?? []).map((g) => [g.id, g.name]));
+
+  return data.map((s) => ({
+    ...s,
+    expertName: profileById.get(s.expert_id)?.full_name || profileById.get(s.expert_id)?.email || s.expert_id,
+    contextLabel:
+      s.suggestion_type === "expertise"
+        ? (s.context_category_id && categoryNameById.get(s.context_category_id)) || "—"
+        : (s.context_industry_group_id && industryGroupNameById.get(s.context_industry_group_id)) || "—",
+  }));
+}
+
 export async function getInvitesForAdmin() {
   const admin = createAdminClient();
   const { data, error } = await admin
