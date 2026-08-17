@@ -7,7 +7,7 @@ import {
   Home,
   Heart,
   Star,
-  Settings as SettingsIcon,
+  CircleUserRound,
   MoreHorizontal,
   CalendarCheck,
   Clock,
@@ -32,7 +32,7 @@ const ICON_BY_HREF: Record<string, LucideIcon> = {
   "/dashboard/expert/availability": Clock,
   "/dashboard/expert/payments": Wallet,
   "/dashboard/expert/profile": UserRound,
-  "/dashboard/settings": SettingsIcon,
+  "/dashboard/settings": CircleUserRound,
   "/admin": ShieldCheck,
 };
 
