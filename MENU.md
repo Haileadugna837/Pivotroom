@@ -233,8 +233,25 @@ flagged ERROR by the linter but scoped to 3 non-sensitive columns, filtered to
 An expert's categories live in `expert_categories` (many-to-many join table,
 `expert_id` + `category_id` composite PK, `on delete cascade` both ways —
 deleting a category or an expert just drops the matching join rows, never
-fails). Storage bucket `expert-photos` (public read; owner-only
-write via `storage.objects` RLS keyed on the `{expert_id}/...` path prefix).
+fails). Storage bucket `expert-photos` (`public = true` at the bucket level —
+that's what actually serves photos via public URL, `getPublicUrl()` doesn't
+even make a network request; owner-only write via `storage.objects` RLS keyed
+on the `{expert_id}/...` path prefix). The bucket previously also had a broad
+`SELECT` RLS policy on `storage.objects` ("expert-photos: public read") —
+redundant for display (the bucket-level public flag already covers that) and
+its only real effect was letting anyone enumerate every file via the storage
+`list()` API (flagged by the linter as `public_bucket_allows_listing`);
+dropped after confirming via grep that nothing in the app calls `.list()` or
+`.download()` against this bucket, only `.upload()` and `.getPublicUrl()`.
+
+`nominees.status`/`resolved_expert_id` default to `'pending'`/`null`, and
+`submitNomination()` only ever inserts `{ name }` — but the original
+`authenticated insert` RLS policy had `with check (true)`, so a direct API
+call (bypassing the app entirely) could insert a nominee already `status =
+'added'` with an arbitrary `resolved_expert_id`, skipping admin review.
+Tightened to `with check (status = 'pending' and resolved_expert_id is
+null)` — matches exactly what the app's own insert already produces (no
+behavior change for real users), closes the gap for anyone going around it.
 
 Booking status flow: `pending_payment` → `payment_submitted` (client submits
 proof) → `confirmed` (admin verifies) → `completed` (expert/admin marks it) /
