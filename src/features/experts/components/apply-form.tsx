@@ -3,17 +3,12 @@
 import { useActionState } from "react";
 import { applyAsExpert, type ApplyExpertState } from "@/features/experts/server/actions";
 import { PhotoUploadField } from "@/features/experts/components/photo-upload-field";
-import { CategoryMultiSelect } from "@/features/experts/components/category-multi-select";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 
-type Category = { id: string; name: string; parent_id: string | null };
-
 type ApplyFormProps = {
-  categories: Category[];
   initialValues?: {
     headline: string | null;
     bio: string | null;
-    category_ids: string[];
     price_per_15_min: number | null;
     payout_account_name?: string | null;
     payout_account_number?: string | null;
@@ -29,7 +24,7 @@ type ApplyFormProps = {
 const initialState: ApplyExpertState = {};
 const FORM_ID = "apply-expert-form";
 
-export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }: ApplyFormProps) {
+export function ApplyForm({ initialValues, extraSlot, inviteToken }: ApplyFormProps) {
   const isEditing = Boolean(initialValues);
   const [state, formAction, pending] = useActionState(applyAsExpert, initialState);
 
@@ -54,14 +49,6 @@ export function ApplyForm({ categories, initialValues, extraSlot, inviteToken }:
         placeholder="Short bio"
         className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
       />
-      <div>
-        <p className="mb-1.5 text-sm">Categories</p>
-        <CategoryMultiSelect
-          categories={categories}
-          name="category_ids"
-          initialSelectedIds={initialValues?.category_ids ?? []}
-        />
-      </div>
       <label className="text-sm">
         Price per 15 minutes (ETB)
         <input

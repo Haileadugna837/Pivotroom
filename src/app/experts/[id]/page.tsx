@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getUser } from "@/lib/supabase/server";
 import { getApprovedExpertById } from "@/features/experts/server/queries";
+import { getPublicBookableTopics } from "@/features/experts/server/bookable-topics";
 import { BookingLauncher } from "@/features/booking/components/booking-launcher";
 import { getReviewsForExpert } from "@/features/reviews/server/queries";
 import { ReviewList } from "@/features/reviews/components/review-list";
@@ -52,9 +53,10 @@ export default async function ExpertDetailPage({
   const { reviews, average, count } = await getReviewsForExpert(id);
 
   const user = await getUser();
-  const [wishlisted, donatesToNgo] = await Promise.all([
+  const [wishlisted, donatesToNgo, bookableTopics] = await Promise.all([
     user ? isExpertWishlisted(user.id, id) : Promise.resolve(false),
     expertDonatesToNgo(id),
+    getPublicBookableTopics(id),
   ]);
 
   const name = expert.profile?.full_name ?? "Expert";
@@ -157,6 +159,20 @@ export default async function ExpertDetailPage({
           className="hidden md:col-start-2 md:block"
         />
       </div>
+
+      {bookableTopics.length > 0 && (
+        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
+          <h2 className="mb-3 text-sm font-medium">What you can book {name} for</h2>
+          <ul className="flex flex-col gap-3">
+            {bookableTopics.map((t) => (
+              <li key={t.id} className="rounded-lg border border-black/10 p-3 text-sm dark:border-white/15">
+                <p className="font-medium">{t.title}</p>
+                <p className="mt-1 text-black/60 dark:text-white/60">{t.description}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
         <h2 className="mb-3 text-sm font-medium">Reviews</h2>

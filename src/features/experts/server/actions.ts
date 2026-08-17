@@ -24,10 +24,6 @@ export async function applyAsExpert(
 
   const headline = String(formData.get("headline") ?? "").trim();
   const bio = String(formData.get("bio") ?? "").trim();
-  const categoryIds = formData.getAll("category_ids").map(String).filter(Boolean);
-  if (categoryIds.length === 0) {
-    return { error: "Select at least one category." };
-  }
   const pricePer15Min = Number(formData.get("price_per_15_min"));
   const payoutAccountName = String(formData.get("payout_account_name") ?? "").trim() || null;
   const payoutAccountNumber = String(formData.get("payout_account_number") ?? "").trim() || null;
@@ -75,17 +71,6 @@ export async function applyAsExpert(
   const { error } = await supabase.from("experts").upsert(record);
   if (error) {
     return { error: `Failed to save profile: ${error.message}` };
-  }
-
-  const { error: deleteError } = await supabase.from("expert_categories").delete().eq("expert_id", user.id);
-  if (deleteError) {
-    return { error: `Failed to save categories: ${deleteError.message}` };
-  }
-  const { error: categoriesError } = await supabase
-    .from("expert_categories")
-    .insert(categoryIds.map((categoryId) => ({ expert_id: user.id, category_id: categoryId })));
-  if (categoriesError) {
-    return { error: `Failed to save categories: ${categoriesError.message}` };
   }
 
   const inviteToken = String(formData.get("invite_token") ?? "");

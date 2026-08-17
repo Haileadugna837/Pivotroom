@@ -21,15 +21,7 @@ export async function getMyExpertProfileFull(userId: string) {
     .eq("id", userId)
     .maybeSingle();
   if (error) throw error;
-  if (!data) return null;
-
-  const { data: categoryRows, error: categoriesError } = await supabase
-    .from("expert_categories")
-    .select("category_id")
-    .eq("expert_id", userId);
-  if (categoriesError) throw categoriesError;
-
-  return { ...data, category_ids: categoryRows.map((c) => c.category_id) };
+  return data;
 }
 
 export async function getMySocialLinks(userId: string) {

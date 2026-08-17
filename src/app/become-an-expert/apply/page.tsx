@@ -3,8 +3,9 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { getInviteByToken, markInviteUsed } from "@/features/experts/server/invites";
 import { getMyExpertProfile } from "@/features/experts/server/self";
-import { getCategories } from "@/features/experts/server/categories";
-import { ApplyForm } from "@/features/experts/components/apply-form";
+import { getExpertiseCategoryTree } from "@/features/experts/server/expertise";
+import { getIndustryDirectory } from "@/features/experts/server/industries";
+import { ExpertOnboardingWizard } from "@/features/experts/components/onboarding/expert-onboarding-wizard";
 
 export const metadata: Metadata = {
   title: "Apply as an expert",
@@ -34,7 +35,7 @@ export default async function BecomeAnExpertApplyPage({
   const existingProfile = await getMyExpertProfile(user.id);
   if (existingProfile) redirect("/dashboard/expert/profile");
 
-  const categories = await getCategories();
+  const [categoryTree, industryGroups] = await Promise.all([getExpertiseCategoryTree(), getIndustryDirectory()]);
 
   return (
     <div className="mx-auto max-w-lg px-6 py-10">
@@ -42,7 +43,7 @@ export default async function BecomeAnExpertApplyPage({
       <p className="mb-6 text-sm text-black/50 dark:text-white/50">
         Your profile will be reviewed by an admin before it appears publicly.
       </p>
-      <ApplyForm categories={categories} inviteToken={token} />
+      <ExpertOnboardingWizard categoryTree={categoryTree} industryGroups={industryGroups} inviteToken={token} />
     </div>
   );
 }

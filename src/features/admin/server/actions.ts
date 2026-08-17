@@ -699,6 +699,188 @@ export async function toggleReviewVisibility(formData: FormData) {
   if (expertId) revalidatePath(`/experts/${expertId}`);
 }
 
+type ChangeRequestValue = { category_id: string | null; expertise_ids?: string[] };
+
+export async function approveExpertiseChangeRequest(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing change request id");
+
+  const admin = createAdminClient();
+  const { data: request, error } = await admin
+    .from("expert_profile_change_requests")
+    .select("id, expert_id, change_type, new_value, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!request || request.status !== "pending") return;
+
+  const newValue = request.new_value as ChangeRequestValue;
+  const expertiseIds = newValue.expertise_ids ?? [];
+
+  if (request.change_type === "primary_category" && newValue.category_id) {
+    await admin.from("experts").update({ primary_category_id: newValue.category_id }).eq("id", request.expert_id);
+    await admin
+      .from("expert_categories")
+      .delete()
+      .eq("expert_id", request.expert_id)
+      .eq("expertise_type", "primary");
+    if (expertiseIds.length > 0) {
+      await admin.from("expert_categories").insert(
+        expertiseIds.map((categoryId) => ({
+          expert_id: request.expert_id,
+          category_id: categoryId,
+          expertise_type: "primary" as const,
+        })),
+      );
+    }
+  } else if (request.change_type === "secondary_category") {
+    await admin.from("experts").update({ secondary_category_id: newValue.category_id }).eq("id", request.expert_id);
+    await admin
+      .from("expert_categories")
+      .delete()
+      .eq("expert_id", request.expert_id)
+      .eq("expertise_type", "secondary");
+    if (newValue.category_id && expertiseIds.length > 0) {
+      await admin.from("expert_categories").insert(
+        expertiseIds.map((categoryId) => ({
+          expert_id: request.expert_id,
+          category_id: categoryId,
+          expertise_type: "secondary" as const,
+        })),
+      );
+    }
+  }
+
+  await admin
+    .from("expert_profile_change_requests")
+    .update({ status: "approved", reviewed_at: new Date().toISOString(), reviewed_by: adminUser.id })
+    .eq("id", id);
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "expertise_change_approved",
+    targetTable: "expert_profile_change_requests",
+    targetId: id,
+  });
+
+  revalidatePath("/admin/expertise-requests");
+}
+
+export async function rejectExpertiseChangeRequest(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  const reason = String(formData.get("reason") ?? "").trim() || null;
+  if (!id) throw new Error("Missing change request id");
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("expert_profile_change_requests")
+    .update({
+      status: "rejected",
+      reviewed_at: new Date().toISOString(),
+      reviewed_by: adminUser.id,
+      rejection_reason: reason,
+    })
+    .eq("id", id)
+    .eq("status", "pending");
+  if (error) throw error;
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "expertise_change_rejected",
+    targetTable: "expert_profile_change_requests",
+    targetId: id,
+    details: reason ? { reason } : undefined,
+  });
+
+  revalidatePath("/admin/expertise-requests");
+}
+
+function slugify(name: string) {
+  return (
+    name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "") || crypto.randomUUID()
+  );
+}
+
+export async function approveTaxonomySuggestion(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing suggestion id");
+
+  const admin = createAdminClient();
+  const { data: suggestion, error } = await admin
+    .from("taxonomy_suggestions")
+    .select("id, suggestion_type, name, context_category_id, context_industry_group_id, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!suggestion || suggestion.status !== "pending") return;
+
+  try {
+    if (suggestion.suggestion_type === "expertise" && suggestion.context_category_id) {
+      const { error: insertError } = await admin
+        .from("categories")
+        .insert({ name: suggestion.name, parent_id: suggestion.context_category_id });
+      if (insertError) throw insertError;
+    } else if (suggestion.suggestion_type === "industry" && suggestion.context_industry_group_id) {
+      const { error: insertError } = await admin.from("industries").insert({
+        industry_group_id: suggestion.context_industry_group_id,
+        name: suggestion.name,
+        slug: slugify(suggestion.name),
+      });
+      if (insertError) throw insertError;
+    }
+  } catch {
+    // Most likely a duplicate name (e.g. an admin approving a suggestion for
+    // something that already exists under a slightly different label) —
+    // leave the suggestion pending rather than crashing so admin can reject
+    // it and point the expert at the existing entry instead.
+    return;
+  }
+
+  await admin
+    .from("taxonomy_suggestions")
+    .update({ status: "approved", reviewed_at: new Date().toISOString(), reviewed_by: adminUser.id })
+    .eq("id", id);
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "taxonomy_suggestion_approved",
+    targetTable: "taxonomy_suggestions",
+    targetId: id,
+  });
+
+  revalidatePath("/admin/expertise-requests");
+}
+
+export async function rejectTaxonomySuggestion(formData: FormData) {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) throw new Error("Missing suggestion id");
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("taxonomy_suggestions")
+    .update({ status: "rejected", reviewed_at: new Date().toISOString(), reviewed_by: adminUser.id })
+    .eq("id", id)
+    .eq("status", "pending");
+  if (error) throw error;
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "taxonomy_suggestion_rejected",
+    targetTable: "taxonomy_suggestions",
+    targetId: id,
+  });
+
+  revalidatePath("/admin/expertise-requests");
+}
+
 export async function markBookingCompletedAsAdmin(formData: FormData) {
   await requireAdmin();
   const bookingId = String(formData.get("booking_id") ?? "");
