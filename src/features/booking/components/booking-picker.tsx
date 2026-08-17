@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import posthog from "posthog-js";
 import { createBooking } from "@/features/booking/server/actions";
 
 type AvailabilityWindow = {
@@ -132,7 +133,13 @@ export function BookingPicker({
                       <button
                         key={t}
                         type="button"
-                        onClick={() => setSelection({ date, startMinutes: t })}
+                        onClick={() => {
+                          setSelection({ date, startMinutes: t });
+                          posthog.capture("booking_time_selected", {
+                            expert_id: expertId,
+                            duration_minutes: duration,
+                          });
+                        }}
                         className={`${buttonBase} ${active ? buttonActive : buttonInactive}`}
                       >
                         {formatTimeLabel(t)}

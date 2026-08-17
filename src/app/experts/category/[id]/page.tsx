@@ -7,6 +7,7 @@ import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { ExpertCard } from "@/features/experts/components/expert-card";
 import { getCategoryIcon } from "@/features/experts/lib/category-visuals";
+import { CapturePageEvent } from "@/components/capture-page-event";
 
 export async function generateMetadata({
   params,
@@ -60,6 +61,10 @@ export default async function CategoryPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
+      <CapturePageEvent
+        event="category_viewed"
+        properties={{ category_id: category.id, category_name: category.name }}
+      />
       <Link
         href="/experts"
         className="mb-6 inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"

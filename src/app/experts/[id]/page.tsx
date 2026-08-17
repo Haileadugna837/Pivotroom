@@ -14,6 +14,7 @@ import { getExpertNgoDonationSummary } from "@/features/ngo/server/queries";
 import { VerifiedBadge } from "@/features/experts/components/verified-badge";
 import { WhatToExpect } from "@/features/experts/components/what-to-expect";
 import { HowItWorksFaq } from "@/features/experts/components/how-it-works-faq";
+import { CapturePageEvent } from "@/components/capture-page-event";
 
 function formatPercentage(value: number) {
   return Number.isInteger(value) ? String(value) : value.toFixed(1);
@@ -79,6 +80,10 @@ export default async function ExpertDetailPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 pb-24 md:pb-10">
+      <CapturePageEvent
+        event="expert_viewed"
+        properties={{ expert_id: expert.id, expert_name: name, category_id: expert.primary_category_id }}
+      />
       <div className="md:grid md:grid-cols-[1fr_380px] md:items-start md:gap-10">
         <div className="mx-auto w-full max-w-lg md:col-start-1 md:row-start-1 md:mx-0">
           <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 md:aspect-[4/5] dark:bg-white/10">

@@ -896,13 +896,21 @@ export async function markBookingCompletedAsAdmin(formData: FormData) {
   if (!bookingId) throw new Error("Missing booking_id");
 
   const admin = createAdminClient();
-  const { error } = await admin
+  const { data, error } = await admin
     .from("bookings")
     .update({ status: "completed" })
     .eq("id", bookingId)
     .eq("status", "confirmed")
-    .lte("end_time", new Date().toISOString());
+    .lte("end_time", new Date().toISOString())
+    .select("client_id, expert_id");
   if (error) throw error;
+
+  if (data && data.length > 0) {
+    await captureServerEvent(data[0].client_id, "booking_completed", {
+      booking_id: bookingId,
+      expert_id: data[0].expert_id,
+    });
+  }
 
   revalidatePath(`/bookings/${bookingId}`);
 }

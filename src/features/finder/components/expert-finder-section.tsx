@@ -3,6 +3,7 @@
 import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import posthog from "posthog-js";
 import {
   FINDER_IDENTITIES,
   FINDER_PROBLEMS_BY_IDENTITY,
@@ -96,6 +97,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
       sourcePage: window.location.pathname,
       deviceType: getDeviceType(),
     });
+    posthog.capture("finder_identity_selected", { identity });
     setStep("problem");
   }
 
@@ -103,6 +105,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
     setProblem(value);
     const sessionId = getOrCreateFinderSessionId();
     track({ sessionId, problem: value });
+    posthog.capture("finder_problem_selected", { identity, problem: value });
     setStep("category");
   }
 
@@ -119,6 +122,12 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
       });
       setMatchCount(result.matchCount);
       setPreviews(result.previews);
+      posthog.capture("finder_search_submitted", {
+        category_id: categoryId,
+        subcategory_id: subcategoryId,
+        match_count: result.matchCount,
+        match_status: result.matchStatus,
+      });
       setStep(result.matchStatus === "experts_found" ? "found" : "not_found");
     } catch {
       setStep("not_found");
@@ -138,6 +147,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
       setContactError(result.error);
       return;
     }
+    posthog.capture("finder_no_match_contact_submitted", { identity, problem, category_id: categoryId });
     setStep("contact_submitted");
   }
 
