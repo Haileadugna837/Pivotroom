@@ -117,9 +117,9 @@ export default async function ExpertDetailPage({
           )}
 
           {donatesToNgo && (
-            <span className="mt-3 inline-flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
-              <VerifiedBadge gold size={12} />
-              Supports an NGO
+            <span className="mt-3 inline-flex max-w-full items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+              <VerifiedBadge gold size={12} className="shrink-0" />
+              This expert&apos;s session income is donated to a foundation
             </span>
           )}
 

@@ -1,13 +1,9 @@
 import Link from "next/link";
 import { getUser } from "@/lib/supabase/server";
-import {
-  getCategoriesWithFeaturedExperts,
-  getCategoryDirectory,
-} from "@/features/experts/server/queries";
+import { getCategoriesWithFeaturedExperts } from "@/features/experts/server/queries";
 import { getWishlistedExpertIds } from "@/features/wishlist/server/queries";
 import { getExpertIdsWithNgoDonations } from "@/features/ngo/server/queries";
 import { getFeaturedLogosForHome } from "@/features/marketing/server/queries";
-import { CategoryIconGrid } from "@/features/experts/components/category-icon-grid";
 import { CategoryExpertRow } from "@/features/experts/components/category-expert-row";
 import { HowItWorks } from "@/features/experts/components/how-it-works";
 import { FeaturedLogosStrip } from "@/features/marketing/components/featured-logos-strip";
@@ -15,10 +11,9 @@ import { ExpertFinderSection } from "@/features/finder/components/expert-finder-
 import { getCategories } from "@/features/experts/server/categories";
 
 export default async function Home() {
-  const [user, categoryGroups, categoryDirectory, featuredLogos, finderCategories] = await Promise.all([
+  const [user, categoryGroups, featuredLogos, finderCategories] = await Promise.all([
     getUser(),
     getCategoriesWithFeaturedExperts(),
-    getCategoryDirectory(),
     getFeaturedLogosForHome(),
     getCategories(),
   ]);
@@ -47,10 +42,6 @@ export default async function Home() {
           </Link>
           <FeaturedLogosStrip logos={featuredLogos} />
         </div>
-      </div>
-
-      <div className="mx-auto w-full max-w-6xl px-4 pt-8">
-        <CategoryIconGrid categories={categoryDirectory} />
       </div>
 
       {categoryGroups.length > 0 ? (
