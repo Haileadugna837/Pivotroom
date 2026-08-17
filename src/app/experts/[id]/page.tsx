@@ -10,10 +10,18 @@ import { SocialIcon } from "@/features/experts/components/social-icons";
 import { ShareButton } from "@/features/experts/components/share-button";
 import { isExpertWishlisted } from "@/features/wishlist/server/queries";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
-import { expertDonatesToNgo } from "@/features/ngo/server/queries";
+import { getExpertNgoDonationSummary } from "@/features/ngo/server/queries";
 import { VerifiedBadge } from "@/features/experts/components/verified-badge";
 import { WhatToExpect } from "@/features/experts/components/what-to-expect";
 import { HowItWorksFaq } from "@/features/experts/components/how-it-works-faq";
+
+function formatPercentage(value: number) {
+  return Number.isInteger(value) ? String(value) : value.toFixed(1);
+}
+
+function formatNgoNameList(names: string[]) {
+  return new Intl.ListFormat("en", { style: "long", type: "conjunction" }).format(names);
+}
 
 export async function generateMetadata({
   params,
@@ -53,16 +61,21 @@ export default async function ExpertDetailPage({
   const { reviews, average, count } = await getReviewsForExpert(id);
 
   const user = await getUser();
-  const [wishlisted, donatesToNgo, bookableTopics] = await Promise.all([
+  const [wishlisted, ngoDonation, bookableTopics] = await Promise.all([
     user ? isExpertWishlisted(user.id, id) : Promise.resolve(false),
-    expertDonatesToNgo(id),
+    getExpertNgoDonationSummary(id),
     getPublicBookableTopics(id),
   ]);
+  const donatesToNgo = ngoDonation != null;
 
   const name = expert.profile?.full_name ?? "Expert";
   const loginHref = `/login?next=${encodeURIComponent(`/experts/${expert.id}?openBooking=1`)}`;
   const expectations = expert.expectations ?? [];
   const exampleQuestions = expert.example_questions ?? [];
+
+  const donationMessage = ngoDonation
+    ? `${formatPercentage(ngoDonation.totalPercentage)}% of proceeds will be donated to ${formatNgoNameList(ngoDonation.ngoNames)}`
+    : null;
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-10 pb-24 md:pb-10">
@@ -116,11 +129,10 @@ export default async function ExpertDetailPage({
             </p>
           )}
 
-          {donatesToNgo && (
-            <span className="mt-3 inline-flex max-w-full items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
-              <VerifiedBadge gold size={12} className="shrink-0" />
-              Booking this expert helps fund a foundation they support
-            </span>
+          {donationMessage && (
+            <div className="mt-3 rounded-2xl bg-indigo-50 px-5 py-4 text-center text-sm font-medium text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-200">
+              {donationMessage}
+            </div>
           )}
 
           {expert.bio && (

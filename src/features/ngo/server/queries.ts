@@ -43,3 +43,26 @@ export async function expertDonatesToNgo(expertId: string): Promise<boolean> {
   if (error) throw error;
   return data != null;
 }
+
+export type NgoDonationSummary = { totalPercentage: number; ngoNames: string[] };
+
+// Public expert-detail-page version of the donation callout — needs the
+// actual percentage(s) and NGO name(s), not just a yes/no. Same admin-client
+// reasoning as expertDonatesToNgo: `expert_ngo_allocations` RLS is owner-only,
+// and this never exposes anything beyond what's already meant to be public
+// (the expert chose these NGOs and percentages specifically to be shown).
+export async function getExpertNgoDonationSummary(expertId: string): Promise<NgoDonationSummary | null> {
+  const admin = createAdminClient();
+  const { data, error } = await admin
+    .from("expert_ngo_allocations")
+    .select("percentage, ngos(name)")
+    .eq("expert_id", expertId)
+    .order("created_at", { ascending: true });
+  if (error) throw error;
+  if (!data.length) return null;
+
+  return {
+    totalPercentage: data.reduce((sum, row) => sum + Number(row.percentage), 0),
+    ngoNames: data.map((row) => row.ngos?.name).filter((name): name is string => Boolean(name)),
+  };
+}
