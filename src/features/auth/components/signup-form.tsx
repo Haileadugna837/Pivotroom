@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import posthog from "posthog-js";
 import { createClient } from "@/lib/supabase/client";
 
 export function SignupForm({ next }: { next?: string }) {
@@ -34,6 +35,7 @@ export function SignupForm({ next }: { next?: string }) {
       setError(error.message);
       return;
     }
+    posthog.capture("user_signed_up");
     setSubmitted(true);
   }
 

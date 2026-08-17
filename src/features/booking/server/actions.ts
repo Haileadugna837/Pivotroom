@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isSlotAvailable, isWithinAvailabilityWindow } from "./availability";
 import { zonedWallTimeToUtc } from "./timezone";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 const ALLOWED_DURATIONS = [15, 30, 45, 60];
 
@@ -92,6 +93,13 @@ export async function createBooking(formData: FormData) {
     .single();
 
   if (error) throw error;
+
+  await captureServerEvent(user.id, "booking_created", {
+    booking_id: booking.id,
+    expert_id: expertId,
+    price,
+    currency: expert.currency,
+  });
 
   redirect(`/bookings/${booking.id}`);
 }

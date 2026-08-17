@@ -181,7 +181,11 @@ export default async function BookingDetailPage({
         <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
           <h2 className="mb-2 text-sm font-medium">Payment proof</h2>
           <p className="text-sm text-black/60 dark:text-white/60">
-            Transaction {proof.transaction_id} — {proof.status}
+            {/* ph-mask: PostHog session-replay text masking (className, not a
+                capture-blocking mechanism) — a transaction ID rendered as
+                plain text isn't covered by the default input-value masking
+                that already protects the payment-proof/payout forms. */}
+            Transaction <span className="ph-mask">{proof.transaction_id}</span> — {proof.status}
           </p>
           {proof.admin_note && (
             <p className="mt-1 text-sm text-black/60 dark:text-white/60">

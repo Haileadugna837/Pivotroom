@@ -16,6 +16,7 @@ import { uploadNgoLogo } from "@/features/ngo/server/logo";
 import { uploadFeaturedLogo } from "@/features/marketing/server/logo";
 import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 import { parseLines } from "@/lib/text";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -68,6 +69,10 @@ async function setExpertStatus(formData: FormData, status: "approved" | "rejecte
     targetTable: "experts",
     targetId: expertId,
   });
+
+  // Captured for the expert the status change is about, not the admin who
+  // made it — the admin's own PostHog capture is opted out entirely.
+  await captureServerEvent(expertId, "expert_status_changed", { status });
 
   revalidatePath("/admin/experts");
 }
@@ -281,6 +286,10 @@ async function verifyOnePayment(
     targetId: proofId,
     details: { booking_id: bookingId },
   });
+
+  // Captured for the client whose booking was confirmed, not the admin who
+  // verified the payment.
+  await captureServerEvent(clientId, "booking_confirmed", { booking_id: bookingId, expert_id: expertId });
 }
 
 export async function verifyPayment(formData: FormData) {

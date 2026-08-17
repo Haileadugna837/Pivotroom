@@ -8,6 +8,7 @@ import { TIMEZONE_OPTIONS, DEFAULT_TIMEZONE } from "@/lib/timezones";
 import { parseLines } from "@/lib/text";
 import { EXPERTISE_LIMITS, validatePrimaryExpertise, validateSecondaryExpertise, parseJsonArray } from "./expertise";
 import { getIndustryCount, type ExperienceLevel } from "./industries";
+import { captureServerEvent } from "@/lib/posthog/server";
 
 export type SubmitApplicationState = { error?: string };
 
@@ -195,6 +196,8 @@ export async function submitExpertApplication(
   if (inviteToken) {
     await markInviteCompleted(inviteToken);
   }
+
+  await captureServerEvent(user.id, "expert_application_submitted");
 
   redirect("/dashboard?applied=1");
 }
