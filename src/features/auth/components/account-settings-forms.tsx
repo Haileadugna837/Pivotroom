@@ -14,15 +14,20 @@ function StatusMessage({ state }: { state: SettingsActionState }) {
 export function AccountSettingsForms({
   currentEmail,
   hasPasswordIdentity,
+  title,
 }: {
   currentEmail: string;
   hasPasswordIdentity: boolean;
+  /** When set, renders as a labeled section (no own top border/margin) instead
+   * of the default self-contained block with its own separator — for pages
+   * that already provide section spacing/labeling around this component. */
+  title?: string;
 }) {
   const [emailState, emailAction, emailPending] = useActionState(updateEmail, initialState);
   const [passwordState, passwordAction, passwordPending] = useActionState(updatePassword, initialState);
 
-  return (
-    <div className="mt-8 flex flex-col gap-8 border-t border-black/10 pt-6 dark:border-white/15">
+  const forms = (
+    <div className="flex flex-col gap-8">
       <div>
         <h2 className="mb-3 text-sm font-medium">Change email</h2>
         <form action={emailAction} className="flex flex-col gap-3">
@@ -76,5 +81,20 @@ export function AccountSettingsForms({
         </div>
       )}
     </div>
+  );
+
+  if (title) {
+    return (
+      <div className="flex flex-col gap-3">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+          {title}
+        </h2>
+        {forms}
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">{forms}</div>
   );
 }

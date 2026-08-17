@@ -18,27 +18,27 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const expertProfile = await getMyExpertProfile(user.id);
 
   const items: SidebarItem[] = [
-    { href: "/dashboard", label: "My Bookings" },
-    { href: "/dashboard/wishlist", label: "Wishlist" },
-    { href: "/dashboard/nominations", label: "Nominations" },
+    { href: "/dashboard", label: "My Bookings", group: "Account" },
+    { href: "/dashboard/wishlist", label: "Wishlist", group: "Account" },
+    { href: "/dashboard/nominations", label: "Nominations", group: "Account" },
   ];
 
   if (expertProfile?.status === "approved") {
     items.push(
-      { href: "/dashboard/expert/bookings", label: "Expert Bookings" },
-      { href: "/dashboard/expert/availability", label: "Availability" },
-      { href: "/dashboard/expert/payments", label: "Payments" },
-      { href: "/dashboard/expert/profile", label: "Expert Profile" },
+      { href: "/dashboard/expert/bookings", label: "Expert Bookings", group: "Expert" },
+      { href: "/dashboard/expert/availability", label: "Availability", group: "Expert" },
+      { href: "/dashboard/expert/payments", label: "Payments", group: "Expert" },
+      { href: "/dashboard/expert/profile", label: "Expert Profile", group: "Expert" },
     );
   } else if (expertProfile) {
     // Has an expert row but not yet approved (pending/rejected/suspended) —
     // let them view/manage their existing application. There's no open
     // self-serve "Become an Expert" entry point anymore; new applications
     // only start from an admin-sent invite link (see /become-an-expert).
-    items.push({ href: "/dashboard/expert/profile", label: "Expert Application" });
+    items.push({ href: "/dashboard/expert/profile", label: "Expert Application", group: "Expert" });
   }
 
-  items.push({ href: "/dashboard/settings", label: "Settings" });
+  items.push({ href: "/dashboard/settings", label: "My Account" });
 
   if (isAdminEmail(user.email)) {
     items.push({ href: "/admin", label: "Admin" });
@@ -59,7 +59,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   ];
 
   return (
-    <SidebarLayout title="Account" items={items} mobileNav="bottom" primaryHrefs={primaryHrefs}>
+    <SidebarLayout title="Account" items={items} mobileNav="bottom" primaryHrefs={primaryHrefs} hideStandaloneSignOut>
       {children}
     </SidebarLayout>
   );

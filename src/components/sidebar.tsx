@@ -9,6 +9,9 @@ import { PivotroomBottomNavigation, type BottomNavItem } from "@/components/pivo
 export type SidebarItem = {
   href: string;
   label: string;
+  /** Optional group label — consecutive items sharing a group get one small
+   * uppercase divider before the first of them, instead of a flat list. */
+  group?: string;
 };
 
 function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: () => void }) {
@@ -16,21 +19,34 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
 
   return (
     <nav className="flex flex-col gap-1">
-      {items.map((item) => {
+      {items.map((item, index) => {
         const active = pathname === item.href;
+        const previousGroup = index > 0 ? items[index - 1].group : undefined;
+        const showGroupLabel = Boolean(item.group && item.group !== previousGroup);
+        const groupLabelIsFirst = index === 0;
         return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onNavigate}
-            className={`rounded-md px-3 py-2 text-sm ${
-              active
-                ? "bg-black/5 font-medium dark:bg-white/10"
-                : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
-            }`}
-          >
-            {item.label}
-          </Link>
+          <div key={item.href}>
+            {showGroupLabel && (
+              <p
+                className={`mb-1 px-3 text-[11px] font-medium uppercase tracking-wide text-black/35 dark:text-white/35 ${
+                  groupLabelIsFirst ? "mt-0" : "mt-4"
+                }`}
+              >
+                {item.group}
+              </p>
+            )}
+            <Link
+              href={item.href}
+              onClick={onNavigate}
+              className={`block rounded-md px-3 py-2 text-sm ${
+                active
+                  ? "bg-black/5 font-medium dark:bg-white/10"
+                  : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+              }`}
+            >
+              {item.label}
+            </Link>
+          </div>
         );
       })}
     </nav>
@@ -43,6 +59,7 @@ export function SidebarLayout({
   children,
   mobileNav = "drawer",
   primaryHrefs = [],
+  hideStandaloneSignOut = false,
 }: {
   title: string;
   items: SidebarItem[];
@@ -51,6 +68,8 @@ export function SidebarLayout({
   mobileNav?: "drawer" | "bottom";
   /** Up to 4 hrefs (must exist in `items`) pinned to the bottom bar, in order; everything else is reachable via the trailing "More" tab. */
   primaryHrefs?: string[];
+  /** Hides the standalone Sign out button in the drawer/desktop sidebar footer — for when a page in `items` already has its own sign-out action (e.g. "My Account"). */
+  hideStandaloneSignOut?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -114,14 +133,16 @@ export function SidebarLayout({
               </div>
               <SidebarNav items={items} onNavigate={() => setOpen(false)} />
             </div>
-            <form action={signOut}>
-              <button
-                type="submit"
-                className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
-              >
-                Sign out
-              </button>
-            </form>
+            {!hideStandaloneSignOut && (
+              <form action={signOut}>
+                <button
+                  type="submit"
+                  className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+                >
+                  Sign out
+                </button>
+              </form>
+            )}
           </aside>
         </div>
       )}
@@ -134,14 +155,16 @@ export function SidebarLayout({
           </p>
           <SidebarNav items={items} />
         </div>
-        <form action={signOut}>
-          <button
-            type="submit"
-            className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
-          >
-            Sign out
-          </button>
-        </form>
+        {!hideStandaloneSignOut && (
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+            >
+              Sign out
+            </button>
+          </form>
+        )}
       </aside>
 
       <main className={`min-w-0 flex-1 ${bottomNav ? "pb-16 md:pb-0" : ""}`}>{children}</main>
