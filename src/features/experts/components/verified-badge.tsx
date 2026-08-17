@@ -12,10 +12,10 @@ export function VerifiedBadge({ gold = false, size = 14, className = "" }: Verif
       viewBox="0 0 20 20"
       fill="none"
       role="img"
-      aria-label={gold ? "This expert donates their session income to a foundation" : "Approved expert"}
+      aria-label={gold ? "Booking this expert helps fund a foundation they support" : "Approved expert"}
       className={className}
     >
-      <title>{gold ? "This expert donates their session income to a foundation" : "Approved expert"}</title>
+      <title>{gold ? "Booking this expert helps fund a foundation they support" : "Approved expert"}</title>
       <circle cx="10" cy="10" r="10" fill="currentColor" className={gold ? "text-amber-400" : "text-blue-500"} />
       <path
         d="M6 10.5l2.5 2.5L14 7.5"
