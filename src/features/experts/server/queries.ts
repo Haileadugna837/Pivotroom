@@ -81,7 +81,20 @@ export async function getCategoriesWithFeaturedExperts(minExperts = 1, perCatego
   const [{ data: publicProfiles, error: profilesError }, { data: expertCategoryRows, error: ecError }] =
     await Promise.all([
       supabase.from("expert_public_profiles").select("id, full_name, avatar_url").in("id", expertIds),
-      supabase.from("expert_categories").select("expert_id, category_id").in("expert_id", expertIds),
+      // Homepage shelves only reflect what an expert is *primarily* known
+      // for — a secondary-only tag shouldn't surface an expert under an
+      // unrelated shelf while someone's just browsing. Secondary expertise
+      // still counts in problem-based matching (the Finder) and the
+      // Experts tab's search, neither of which goes through this query.
+      // `.or(...)` rather than `.neq("expertise_type", "secondary")` —
+      // SQL's three-valued logic means a plain `<> 'secondary'` filter
+      // silently drops NULL rows too (untyped/legacy tags), which is the
+      // opposite of what's wanted here.
+      supabase
+        .from("expert_categories")
+        .select("expert_id, category_id")
+        .in("expert_id", expertIds)
+        .or("expertise_type.is.null,expertise_type.eq.primary"),
     ]);
   if (profilesError) throw profilesError;
   if (ecError) throw ecError;
@@ -166,10 +179,15 @@ export async function getCategoryWithExperts(categoryId: string) {
 
   const categoryIds = [categoryId, ...subcategories.map((s) => s.id)];
 
+  // Same primary-only rule as the homepage shelves (getCategoriesWithFeaturedExperts)
+  // — a category page reached by browsing shouldn't list an expert who's
+  // only secondarily tagged here. `.or(...)`, not `.neq(...)`, so untyped
+  // legacy rows (expertise_type is null) still count as visible.
   const { data: matchRows, error: matchError } = await supabase
     .from("expert_categories")
     .select("expert_id, category_id")
-    .in("category_id", categoryIds);
+    .in("category_id", categoryIds)
+    .or("expertise_type.is.null,expertise_type.eq.primary");
   if (matchError) throw matchError;
 
   const matchedCategoryIdsByExpertId = new Map<string, Set<string>>();
