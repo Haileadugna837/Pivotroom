@@ -68,7 +68,7 @@ function generateReferralCode() {
   return crypto.randomUUID().replace(/-/g, "").slice(0, 8).toUpperCase();
 }
 
-export type SubmitEarlyAccessLeadState = { error?: string; success?: boolean; referralCode?: string };
+export type SubmitEarlyAccessLeadState = { error?: string; success?: boolean; referralCode?: string; leadId?: string };
 
 export async function submitEarlyAccessLead(
   sessionId: string,
@@ -179,5 +179,169 @@ export async function submitEarlyAccessLead(
     });
   }
 
-  return { success: true, referralCode };
+  return { success: true, referralCode, leadId };
+}
+
+export type SubmitFoundingExpertApplicationState = { error?: string; success?: boolean };
+
+export async function submitFoundingExpertApplication(
+  sessionId: string,
+  input: {
+    name: string;
+    phone?: string;
+    email?: string;
+    professionalType: string;
+    professionalTypeSecondary?: string;
+    expertiseTopics: string[];
+    experienceText: string;
+    currentRole?: string;
+    currentCompany?: string;
+    yearsExperience?: number;
+    linkedinUrl?: string;
+    websiteUrl?: string;
+    instagramUrl?: string;
+  },
+): Promise<SubmitFoundingExpertApplicationState> {
+  const name = input.name.trim();
+  if (!name || name.length < 2) {
+    return { error: "Enter your name." };
+  }
+
+  const rawPhone = input.phone?.trim();
+  const normalized = rawPhone ? normalizePhone(rawPhone) : null;
+  if (rawPhone && !normalized) {
+    return { error: "Enter a valid phone number." };
+  }
+  const email = input.email?.trim() || null;
+  if (!normalized && !email) {
+    return { error: "Enter a phone number or email so we can reach you." };
+  }
+
+  if (!input.professionalType) {
+    return { error: "Select what best describes you." };
+  }
+  if (input.expertiseTopics.length === 0) {
+    return { error: "Add at least one topic you can speak about." };
+  }
+  if (!input.experienceText.trim()) {
+    return { error: "Tell us briefly about your experience." };
+  }
+
+  const admin = createAdminClient();
+
+  const { data: session } = await admin
+    .from("acquisition_sessions")
+    .select("source_page, utm_source, utm_medium, utm_campaign, utm_term, utm_content")
+    .eq("session_id", sessionId)
+    .maybeSingle();
+
+  const { data: inserted, error } = await admin
+    .from("founding_expert_applications")
+    .insert({
+      name,
+      normalized_phone: normalized?.e164 ?? null,
+      raw_phone: rawPhone || null,
+      email,
+      professional_type: input.professionalType,
+      professional_type_secondary: input.professionalTypeSecondary || null,
+      expertise_topics: input.expertiseTopics,
+      experience_text: input.experienceText.trim(),
+      current_role: input.currentRole?.trim() || null,
+      current_company: input.currentCompany?.trim() || null,
+      years_experience: input.yearsExperience ?? null,
+      linkedin_url: input.linkedinUrl?.trim() || null,
+      website_url: input.websiteUrl?.trim() || null,
+      instagram_url: input.instagramUrl?.trim() || null,
+      source_page: session?.source_page,
+      utm_source: session?.utm_source,
+      utm_medium: session?.utm_medium,
+      utm_campaign: session?.utm_campaign,
+      utm_term: session?.utm_term,
+      utm_content: session?.utm_content,
+      session_id: sessionId,
+    })
+    .select("id")
+    .single();
+  if (error) return { error: "Something went wrong submitting your application. Please try again." };
+
+  await admin.from("acquisition_funnel_events").insert({
+    session_id: sessionId,
+    event_type: "expert_application_submitted",
+    event_data: { application_id: inserted.id },
+  });
+
+  return { success: true };
+}
+
+export type SubmitNominationAnonymousState = { error?: string; success?: boolean };
+
+// Anonymous-friendly nomination — no sign-in required. Reuses the existing
+// nominees/nominations tables (extended in Round 1 with nullable
+// name/nominator_id) so admin reviews both origins in one place.
+export async function submitNominationAnonymous(
+  sessionId: string,
+  input: {
+    nomineeName?: string;
+    company?: string;
+    socialUrl?: string;
+    topic?: string;
+    description?: string;
+    leadId?: string;
+  },
+): Promise<SubmitNominationAnonymousState> {
+  const nomineeName = input.nomineeName?.trim() || null;
+  const description = input.description?.trim() || null;
+  if (!nomineeName && !description) {
+    return { error: "Add a name or describe who you're looking for." };
+  }
+
+  const admin = createAdminClient();
+
+  let nomineeId: string;
+  if (nomineeName) {
+    const { data: existingNominee } = await admin
+      .from("nominees")
+      .select("id")
+      .ilike("name", nomineeName)
+      .maybeSingle();
+    if (existingNominee) {
+      nomineeId = existingNominee.id;
+    } else {
+      const { data: createdNominee, error } = await admin
+        .from("nominees")
+        .insert({ name: nomineeName })
+        .select("id")
+        .single();
+      if (error) return { error: "Something went wrong. Please try again." };
+      nomineeId = createdNominee.id;
+    }
+  } else {
+    const { data: createdNominee, error } = await admin
+      .from("nominees")
+      .insert({ description })
+      .select("id")
+      .single();
+    if (error) return { error: "Something went wrong. Please try again." };
+    nomineeId = createdNominee.id;
+  }
+
+  const { error: nominationError } = await admin.from("nominations").insert({
+    nominee_id: nomineeId,
+    nominator_lead_id: input.leadId || null,
+    company: input.company?.trim() || null,
+    social_url: input.socialUrl?.trim() || null,
+    topic: input.topic?.trim() || null,
+    reason: input.topic?.trim() || description || "",
+    source: "acquisition_landing",
+    landing_session_id: sessionId,
+  });
+  if (nominationError) return { error: "Something went wrong. Please try again." };
+
+  await admin.from("acquisition_funnel_events").insert({
+    session_id: sessionId,
+    event_type: "nomination_completed",
+    event_data: { nominee_id: nomineeId },
+  });
+
+  return { success: true };
 }

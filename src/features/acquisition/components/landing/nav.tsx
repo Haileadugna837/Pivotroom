@@ -2,9 +2,6 @@
 
 import Link from "next/link";
 
-// Deliberately minimal for Round 2 — "How It Works"/"For Experts" links
-// are added once those landing sections exist (Round 3); linking to
-// non-existent anchors now would be dead navigation.
 export function AcquisitionNav({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
   return (
     <header className="flex items-center justify-between px-6 py-4">
@@ -18,6 +15,12 @@ export function AcquisitionNav({ onGetEarlyAccess }: { onGetEarlyAccess: () => v
         <Link href="/experts" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
           Explore
         </Link>
+        <a href="#how-it-works" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
+          How It Works
+        </a>
+        <a href="#for-experts" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
+          For Experts
+        </a>
         <Link href="/login" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
           Sign In
         </Link>

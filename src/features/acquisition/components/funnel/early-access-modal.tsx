@@ -8,9 +8,20 @@ import { EarlyAccessSuccessScreen } from "@/features/acquisition/components/funn
 
 type Step = "categories" | "problem" | "contact" | "success";
 
-export function EarlyAccessFunnel({ sessionId, onClose }: { sessionId: string; onClose: () => void }) {
-  const [step, setStep] = useState<Step>("categories");
-  const [categories, setCategories] = useState<string[]>([]);
+export function EarlyAccessFunnel({
+  sessionId,
+  onClose,
+  initialCategories,
+}: {
+  sessionId: string;
+  onClose: () => void;
+  // Set when opened from a problem card (spec §14) — pre-selects the
+  // matching category and skips straight to the problem step so the
+  // visitor isn't asked to pick a category they effectively already did.
+  initialCategories?: string[];
+}) {
+  const [step, setStep] = useState<Step>(initialCategories?.length ? "problem" : "categories");
+  const [categories, setCategories] = useState<string[]>(initialCategories ?? []);
   const [problem, setProblem] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -18,12 +29,18 @@ export function EarlyAccessFunnel({ sessionId, onClose }: { sessionId: string; o
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<string | undefined>(undefined);
   const started = useRef(false);
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
     recordFunnelEvent(sessionId, "user_funnel_started").catch(() => {});
+    if (initialCategories?.length) {
+      upsertAcquisitionSession({ sessionId, status: "categories_selected", categoriesSelected: initialCategories }).catch(() => {});
+      recordFunnelEvent(sessionId, "user_category_selected", { categories: initialCategories, source: "problem_card" }).catch(() => {});
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionId]);
 
   useEffect(() => {
@@ -77,6 +94,7 @@ export function EarlyAccessFunnel({ sessionId, onClose }: { sessionId: string; o
       return;
     }
     setReferralCode(result.referralCode ?? null);
+    setLeadId(result.leadId);
     setStep("success");
   }
 
@@ -230,7 +248,7 @@ export function EarlyAccessFunnel({ sessionId, onClose }: { sessionId: string; o
       )}
 
       {step === "success" && referralCode && (
-        <EarlyAccessSuccessScreen sessionId={sessionId} referralCode={referralCode} onClose={onClose} />
+        <EarlyAccessSuccessScreen sessionId={sessionId} referralCode={referralCode} leadId={leadId} onClose={onClose} />
       )}
     </div>
   );
