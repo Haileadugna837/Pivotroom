@@ -252,7 +252,7 @@ export async function getSiteSettingsForAdmin() {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("site_settings")
-    .select("featured_logos_enabled")
+    .select("featured_logos_enabled, acquisition_landing_enabled")
     .eq("id", 1)
     .single();
   if (error) throw error;
@@ -301,7 +301,12 @@ export async function getNomineesForAdmin() {
     .select("id, nominee_id, nominator_id, reason, links, created_at");
   if (nomError) throw nomError;
 
-  const nominatorIds = Array.from(new Set(nominations.map((n) => n.nominator_id)));
+  // nominator_id is nullable — anonymous nominations submitted from the
+  // acquisition landing page (no account) attribute via nominator_lead_id
+  // instead, see acquisition_leads.
+  const nominatorIds = Array.from(
+    new Set(nominations.map((n) => n.nominator_id).filter((id): id is string => id != null)),
+  );
   const { data: profiles } = await admin.from("profiles").select("id, full_name, email").in("id", nominatorIds);
   const nominatorById = new Map((profiles ?? []).map((p) => [p.id, p.full_name || p.email]));
 
@@ -318,7 +323,10 @@ export async function getNomineesForAdmin() {
       return {
         ...nominee,
         nominations: list
-          .map((n) => ({ ...n, nominatorName: nominatorById.get(n.nominator_id) ?? "Unknown" }))
+          .map((n) => ({
+            ...n,
+            nominatorName: n.nominator_id ? (nominatorById.get(n.nominator_id) ?? "Unknown") : "Anonymous",
+          }))
           .sort((a, b) => b.created_at.localeCompare(a.created_at)),
         count: list.length,
       };

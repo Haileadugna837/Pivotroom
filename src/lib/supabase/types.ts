@@ -14,6 +14,182 @@ export type Database = {
   }
   public: {
     Tables: {
+      acquisition_funnel_events: {
+        Row: {
+          created_at: string
+          event_data: Json | null
+          event_type: string
+          id: string
+          session_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          session_id: string
+        }
+        Update: {
+          created_at?: string
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          session_id?: string
+        }
+        Relationships: []
+      }
+      acquisition_leads: {
+        Row: {
+          admin_note: string | null
+          categories_requested: string[]
+          created_at: string
+          email: string | null
+          id: string
+          last_session_id: string | null
+          name: string
+          normalized_phone: string
+          problem_text: string | null
+          raw_phone: string | null
+          referral_code: string
+          referred_by_code: string | null
+          referrer: string | null
+          source_page: string | null
+          status: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          categories_requested?: string[]
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_session_id?: string | null
+          name: string
+          normalized_phone: string
+          problem_text?: string | null
+          raw_phone?: string | null
+          referral_code: string
+          referred_by_code?: string | null
+          referrer?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          categories_requested?: string[]
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_session_id?: string | null
+          name?: string
+          normalized_phone?: string
+          problem_text?: string | null
+          raw_phone?: string | null
+          referral_code?: string
+          referred_by_code?: string | null
+          referrer?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
+      acquisition_sessions: {
+        Row: {
+          categories_selected: string[] | null
+          completed_at: string | null
+          created_at: string
+          device_type: string | null
+          entry_path: string | null
+          id: string
+          last_activity_at: string
+          lead_id: string | null
+          problem_text_draft: string | null
+          ref_code: string | null
+          referrer: string | null
+          session_id: string
+          source_page: string | null
+          started_at: string
+          status: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          categories_selected?: string[] | null
+          completed_at?: string | null
+          created_at?: string
+          device_type?: string | null
+          entry_path?: string | null
+          id?: string
+          last_activity_at?: string
+          lead_id?: string | null
+          problem_text_draft?: string | null
+          ref_code?: string | null
+          referrer?: string | null
+          session_id: string
+          source_page?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          categories_selected?: string[] | null
+          completed_at?: string | null
+          created_at?: string
+          device_type?: string | null
+          entry_path?: string | null
+          id?: string
+          last_activity_at?: string
+          lead_id?: string | null
+          problem_text_draft?: string | null
+          ref_code?: string | null
+          referrer?: string | null
+          session_id?: string
+          source_page?: string | null
+          started_at?: string
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "acquisition_sessions_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "acquisition_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_audit_log: {
         Row: {
           action: string
@@ -771,6 +947,107 @@ export type Database = {
         }
         Relationships: []
       }
+      founding_expert_applications: {
+        Row: {
+          admin_note: string | null
+          created_at: string
+          current_company: string | null
+          current_role: string | null
+          email: string | null
+          experience_text: string
+          expert_invite_id: string | null
+          expertise_topics: string[]
+          id: string
+          instagram_url: string | null
+          invited_at: string | null
+          linkedin_url: string | null
+          name: string
+          normalized_phone: string | null
+          professional_type: string
+          professional_type_secondary: string | null
+          raw_phone: string | null
+          session_id: string | null
+          source_page: string | null
+          status: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          website_url: string | null
+          years_experience: number | null
+        }
+        Insert: {
+          admin_note?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_role?: string | null
+          email?: string | null
+          experience_text: string
+          expert_invite_id?: string | null
+          expertise_topics?: string[]
+          id?: string
+          instagram_url?: string | null
+          invited_at?: string | null
+          linkedin_url?: string | null
+          name: string
+          normalized_phone?: string | null
+          professional_type: string
+          professional_type_secondary?: string | null
+          raw_phone?: string | null
+          session_id?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Update: {
+          admin_note?: string | null
+          created_at?: string
+          current_company?: string | null
+          current_role?: string | null
+          email?: string | null
+          experience_text?: string
+          expert_invite_id?: string | null
+          expertise_topics?: string[]
+          id?: string
+          instagram_url?: string | null
+          invited_at?: string | null
+          linkedin_url?: string | null
+          name?: string
+          normalized_phone?: string | null
+          professional_type?: string
+          professional_type_secondary?: string | null
+          raw_phone?: string | null
+          session_id?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          years_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founding_expert_applications_expert_invite_id_fkey"
+            columns: ["expert_invite_id"]
+            isOneToOne: false
+            referencedRelation: "expert_invites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       industries: {
         Row: {
           active: boolean
@@ -871,30 +1148,55 @@ export type Database = {
       }
       nominations: {
         Row: {
+          company: string | null
           created_at: string
           id: string
+          landing_session_id: string | null
           links: string[]
-          nominator_id: string
+          nominator_id: string | null
+          nominator_lead_id: string | null
           nominee_id: string
           reason: string
+          social_url: string | null
+          source: string
+          topic: string | null
         }
         Insert: {
+          company?: string | null
           created_at?: string
           id?: string
+          landing_session_id?: string | null
           links?: string[]
-          nominator_id: string
+          nominator_id?: string | null
+          nominator_lead_id?: string | null
           nominee_id: string
           reason: string
+          social_url?: string | null
+          source?: string
+          topic?: string | null
         }
         Update: {
+          company?: string | null
           created_at?: string
           id?: string
+          landing_session_id?: string | null
           links?: string[]
-          nominator_id?: string
+          nominator_id?: string | null
+          nominator_lead_id?: string | null
           nominee_id?: string
           reason?: string
+          social_url?: string | null
+          source?: string
+          topic?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "nominations_nominator_lead_id_fkey"
+            columns: ["nominator_lead_id"]
+            isOneToOne: false
+            referencedRelation: "acquisition_leads"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "nominations_nominee_id_fkey"
             columns: ["nominee_id"]
@@ -907,22 +1209,25 @@ export type Database = {
       nominees: {
         Row: {
           created_at: string
+          description: string | null
           id: string
-          name: string
+          name: string | null
           resolved_expert_id: string | null
           status: string
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: string
-          name: string
+          name?: string | null
           resolved_expert_id?: string | null
           status?: string
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: string
-          name?: string
+          name?: string | null
           resolved_expert_id?: string | null
           status?: string
         }
@@ -1109,16 +1414,19 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          acquisition_landing_enabled: boolean
           featured_logos_enabled: boolean
           id: number
           updated_at: string
         }
         Insert: {
+          acquisition_landing_enabled?: boolean
           featured_logos_enabled?: boolean
           id?: number
           updated_at?: string
         }
         Update: {
+          acquisition_landing_enabled?: boolean
           featured_logos_enabled?: boolean
           id?: number
           updated_at?: string
