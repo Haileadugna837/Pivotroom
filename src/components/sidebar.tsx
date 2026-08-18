@@ -12,29 +12,101 @@ export type SidebarItem = {
   /** Optional group label — consecutive items sharing a group get one small
    * uppercase divider before the first of them, instead of a flat list. */
   group?: string;
+  /** When set, this item renders as a non-navigating collapsible parent —
+   * `href` is only used as a stable React/open-state key, never linked to.
+   * Bottom-nav mode (client/expert account areas) never receives items with
+   * children, so this only affects the admin drawer/desktop sidebar. */
+  children?: SidebarItem[];
 };
 
 function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: () => void }) {
   const pathname = usePathname();
+  const [openKeys, setOpenKeys] = useState<Set<string>>(
+    () => new Set(items.filter((i) => i.children?.some((c) => c.href === pathname)).map((i) => i.href)),
+  );
+
+  function toggle(key: string) {
+    setOpenKeys((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
 
   return (
     <nav className="flex flex-col gap-1">
       {items.map((item, index) => {
-        const active = pathname === item.href;
         const previousGroup = index > 0 ? items[index - 1].group : undefined;
         const showGroupLabel = Boolean(item.group && item.group !== previousGroup);
         const groupLabelIsFirst = index === 0;
-        return (
-          <div key={item.href}>
-            {showGroupLabel && (
-              <p
-                className={`mb-1 px-3 text-[11px] font-medium uppercase tracking-wide text-black/35 dark:text-white/35 ${
-                  groupLabelIsFirst ? "mt-0" : "mt-4"
+        const groupLabel = showGroupLabel && (
+          <p
+            className={`mb-1 px-3 text-[11px] font-medium uppercase tracking-wide text-black/35 dark:text-white/35 ${
+              groupLabelIsFirst ? "mt-0" : "mt-4"
+            }`}
+          >
+            {item.group}
+          </p>
+        );
+
+        if (item.children) {
+          const childActive = item.children.some((c) => c.href === pathname);
+          const isOpen = openKeys.has(item.href) || childActive;
+          return (
+            <div key={item.href}>
+              {groupLabel}
+              <button
+                type="button"
+                onClick={() => toggle(item.href)}
+                aria-expanded={isOpen}
+                className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm ${
+                  childActive
+                    ? "font-medium text-black dark:text-white"
+                    : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
                 }`}
               >
-                {item.group}
-              </p>
-            )}
+                {item.label}
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                  className={`shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                >
+                  <path d="M4 2l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              {isOpen && (
+                <div className="ml-2 flex flex-col gap-1 border-l border-black/10 pl-3 dark:border-white/15">
+                  {item.children.map((child) => {
+                    const active = pathname === child.href;
+                    return (
+                      <Link
+                        key={child.href}
+                        href={child.href}
+                        onClick={onNavigate}
+                        className={`block rounded-md px-3 py-2 text-sm ${
+                          active
+                            ? "bg-black/5 font-medium dark:bg-white/10"
+                            : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+                        }`}
+                      >
+                        {child.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        const active = pathname === item.href;
+        return (
+          <div key={item.href}>
+            {groupLabel}
             <Link
               href={item.href}
               onClick={onNavigate}
