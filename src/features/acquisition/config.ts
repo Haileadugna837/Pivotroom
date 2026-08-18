@@ -77,3 +77,53 @@ export const ACQUISITION_CATEGORIES: AcquisitionCategory[] = [
 export function acquisitionCategoryLabel(key: string): string {
   return ACQUISITION_CATEGORIES.find((c) => c.key === key)?.label ?? key;
 }
+
+// Problem-based acquisition cards (spec §14). Each opens the Early Access
+// funnel pre-seeded with the matching category — except "I need someone
+// specific," which is really a nomination intent, not a demand-category
+// intent, so it opens the nomination form directly instead.
+export type ProblemCard = {
+  key: string;
+  label: string;
+  categoryKey?: string;
+  opensNomination?: boolean;
+};
+
+export const PROBLEM_CARDS: ProblemCard[] = [
+  { key: "starting", label: "I'm starting something", categoryKey: "starting_a_business" },
+  { key: "growing", label: "I'm trying to grow my business", categoryKey: "growing_my_business" },
+  { key: "customers", label: "I need customers", categoryKey: "marketing_sales" },
+  { key: "raising_money", label: "I'm raising money", categoryKey: "money_investment" },
+  { key: "career_change", label: "I'm changing careers", categoryKey: "career" },
+  { key: "new_market", label: "I'm entering a new market", categoryKey: "growing_my_business" },
+  { key: "big_decision", label: "I'm making an important decision", categoryKey: "something_else" },
+  { key: "specific_person", label: "I need someone specific", opensNomination: true },
+];
+
+export const PROFESSIONAL_TYPES = [
+  "Founder",
+  "Executive",
+  "Investor",
+  "Operator",
+  "Specialist",
+  "Creator",
+  "Professional",
+  "Other",
+] as const;
+
+export const EXPERTISE_TOPIC_SUGGESTIONS = [
+  "Scaling businesses",
+  "Real estate investing",
+  "Raising capital",
+  "Marketing strategy",
+  "Sales leadership",
+  "Exporting",
+  "Technology leadership",
+  "Career development",
+  "Product management",
+  "Fundraising",
+  "Operations",
+  "Brand building",
+];
+
+export const MAX_EXPERTISE_TOPICS = 5;

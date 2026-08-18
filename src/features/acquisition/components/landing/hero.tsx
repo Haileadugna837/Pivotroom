@@ -6,9 +6,11 @@ import type { ExpertPreviewCard } from "@/features/acquisition/server/queries";
 export function AcquisitionHero({
   experts,
   onGetEarlyAccess,
+  onBecomeFoundingExpert,
 }: {
   experts: ExpertPreviewCard[];
   onGetEarlyAccess: () => void;
+  onBecomeFoundingExpert: () => void;
 }) {
   return (
     <section className="mx-auto w-full max-w-5xl px-6 pt-10 pb-16 text-center sm:pt-16">
@@ -43,6 +45,13 @@ export function AcquisitionHero({
         >
           Get Early Access
         </button>
+        <button
+          type="button"
+          onClick={onBecomeFoundingExpert}
+          className="w-full rounded-full border border-black/15 px-8 py-3.5 text-sm font-medium sm:w-auto dark:border-white/20"
+        >
+          Become a Founding Expert
+        </button>
       </motion.div>
       <p className="mt-3 text-xs text-black/40 dark:text-white/40">
         Early members get first access when bookings open.
@@ -50,7 +59,7 @@ export function AcquisitionHero({
 
       {experts.length > 0 && (
         <div className="mx-auto mt-14 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-3">
-          {experts.map((expert, i) => (
+          {experts.slice(0, 6).map((expert, i) => (
             <motion.div
               key={expert.id}
               initial={{ opacity: 0, y: 16 }}
