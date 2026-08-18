@@ -1,5 +1,15 @@
 import { createClient } from "@/lib/supabase/server";
 
+export async function getAcquisitionLandingEnabled() {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("site_settings")
+    .select("acquisition_landing_enabled")
+    .eq("id", 1)
+    .maybeSingle();
+  return data?.acquisition_landing_enabled ?? false;
+}
+
 // Returns [] when the section is toggled off in /admin/settings, so
 // the homepage never has to know about the setting — an empty list already
 // means "render nothing" for FeaturedLogosStrip.
