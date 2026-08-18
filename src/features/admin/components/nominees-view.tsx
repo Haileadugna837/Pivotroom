@@ -13,7 +13,7 @@ type Nomination = {
 
 type Nominee = {
   id: string;
-  name: string;
+  name: string | null;
   status: string;
   resolved_expert_id: string | null;
   created_at: string;
@@ -79,7 +79,7 @@ function NomineeRow({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-medium">{nominee.name}</p>
+            <p className="font-medium">{nominee.name ?? "Unnamed nominee"}</p>
             <span className="rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">
               {nominee.count} {nominee.count === 1 ? "nomination" : "nominations"}
             </span>

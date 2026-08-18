@@ -553,6 +553,21 @@ export async function setFeaturedLogosEnabled(formData: FormData) {
   revalidatePath("/");
 }
 
+export async function setAcquisitionLandingEnabled(formData: FormData) {
+  await requireAdmin();
+  const enabled = formData.get("enabled") === "true";
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("site_settings")
+    .update({ acquisition_landing_enabled: enabled })
+    .eq("id", 1);
+  if (error) throw error;
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/");
+}
+
 const ACCOUNT_STATUSES = ["active", "restricted", "suspended"] as const;
 type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
 
@@ -662,11 +677,13 @@ export async function setNomineeStatus(formData: FormData) {
 
   if (statusChanged && nominee) {
     const { data: nominations } = await admin.from("nominations").select("nominator_id").eq("nominee_id", id);
-    const nominatorIds = Array.from(new Set((nominations ?? []).map((n) => n.nominator_id)));
+    const nominatorIds = Array.from(
+      new Set((nominations ?? []).map((n) => n.nominator_id).filter((nid): nid is string => nid != null)),
+    );
     if (nominatorIds.length > 0) {
       const { data: profiles } = await admin.from("profiles").select("email").in("id", nominatorIds);
       const emails = (profiles ?? []).map((p) => p.email).filter(Boolean);
-      await notifyNominationStatusChanged({ emails, nomineeName: nominee.name, status });
+      await notifyNominationStatusChanged({ emails, nomineeName: nominee.name ?? "your nominee", status });
     }
   }
 

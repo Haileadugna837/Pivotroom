@@ -17,7 +17,7 @@ type Nomination = {
   reason: string;
   links: string[];
   created_at: string;
-  nominees: { id: string; name: string; status: string } | null;
+  nominees: { id: string; name: string | null; status: string } | null;
 };
 
 export function MyNominationsList({ nominations }: { nominations: Nomination[] }) {
