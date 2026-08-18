@@ -5,6 +5,8 @@ import { isAdminEmail } from "@/lib/admin";
 import { Header } from "@/features/auth/components/header";
 import { Footer } from "@/components/footer";
 import { PostHogIdentify } from "@/components/posthog-identify";
+import { ChromeGate } from "@/components/chrome-gate";
+import { getAcquisitionLandingEnabled } from "@/features/marketing/server/queries";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -41,7 +43,8 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const user = await getUser();
+  const [user, acquisitionEnabled] = await Promise.all([getUser(), getAcquisitionLandingEnabled()]);
+  const hideChromeOn = acquisitionEnabled ? ["/"] : [];
 
   return (
     <html
@@ -55,9 +58,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <PostHogIdentify
           user={user ? { id: user.id, email: user.email ?? "", isAdmin: isAdminEmail(user.email) } : null}
         />
-        <Header />
+        <ChromeGate hideOn={hideChromeOn}>
+          <Header />
+        </ChromeGate>
         {children}
-        <Footer />
+        <ChromeGate hideOn={hideChromeOn}>
+          <Footer />
+        </ChromeGate>
       </body>
     </html>
   );
