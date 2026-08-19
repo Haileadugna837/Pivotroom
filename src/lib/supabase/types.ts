@@ -1415,18 +1415,21 @@ export type Database = {
       site_settings: {
         Row: {
           acquisition_landing_enabled: boolean
+          acquisition_show_experts_enabled: boolean
           featured_logos_enabled: boolean
           id: number
           updated_at: string
         }
         Insert: {
           acquisition_landing_enabled?: boolean
+          acquisition_show_experts_enabled?: boolean
           featured_logos_enabled?: boolean
           id?: number
           updated_at?: string
         }
         Update: {
           acquisition_landing_enabled?: boolean
+          acquisition_show_experts_enabled?: boolean
           featured_logos_enabled?: boolean
           id?: number
           updated_at?: string

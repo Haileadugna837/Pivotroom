@@ -4,6 +4,7 @@ import { ProfileHeader } from "@/components/profile-header";
 import { getFeaturedLogosForAdmin, getSiteSettingsForAdmin } from "@/features/admin/server/queries";
 import { FeaturedLogosManager } from "@/features/admin/components/featured-logos-manager";
 import { AcquisitionLandingToggle } from "@/features/admin/components/acquisition-landing-toggle";
+import { AcquisitionShowExpertsToggle } from "@/features/admin/components/acquisition-show-experts-toggle";
 
 export default async function AdminSettingsPage() {
   const user = await getUser();
@@ -16,7 +17,7 @@ export default async function AdminSettingsPage() {
     process.env.SUPABASE_SERVICE_ROLE_KEY ? getFeaturedLogosForAdmin() : Promise.resolve([]),
     process.env.SUPABASE_SERVICE_ROLE_KEY
       ? getSiteSettingsForAdmin()
-      : Promise.resolve({ featured_logos_enabled: true, acquisition_landing_enabled: false }),
+      : Promise.resolve({ featured_logos_enabled: true, acquisition_landing_enabled: false, acquisition_show_experts_enabled: true }),
   ]);
 
   const hasPasswordIdentity = user?.identities?.some((i) => i.provider === "email") ?? false;
@@ -50,6 +51,9 @@ export default async function AdminSettingsPage() {
           marketplace homepage.
         </p>
         <AcquisitionLandingToggle enabled={siteSettings.acquisition_landing_enabled} />
+        <div className="mt-3">
+          <AcquisitionShowExpertsToggle enabled={siteSettings.acquisition_show_experts_enabled} />
+        </div>
       </div>
     </div>
   );
