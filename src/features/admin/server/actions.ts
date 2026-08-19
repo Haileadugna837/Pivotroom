@@ -568,6 +568,21 @@ export async function setAcquisitionLandingEnabled(formData: FormData) {
   revalidatePath("/");
 }
 
+export async function setAcquisitionShowExpertsEnabled(formData: FormData) {
+  await requireAdmin();
+  const enabled = formData.get("enabled") === "true";
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("site_settings")
+    .update({ acquisition_show_experts_enabled: enabled })
+    .eq("id", 1);
+  if (error) throw error;
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/");
+}
+
 const ACCOUNT_STATUSES = ["active", "restricted", "suspended"] as const;
 type AccountStatus = (typeof ACCOUNT_STATUSES)[number];
 

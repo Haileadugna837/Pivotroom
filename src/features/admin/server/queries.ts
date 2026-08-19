@@ -252,7 +252,7 @@ export async function getSiteSettingsForAdmin() {
   const admin = createAdminClient();
   const { data, error } = await admin
     .from("site_settings")
-    .select("featured_logos_enabled, acquisition_landing_enabled")
+    .select("featured_logos_enabled, acquisition_landing_enabled, acquisition_show_experts_enabled")
     .eq("id", 1)
     .single();
   if (error) throw error;

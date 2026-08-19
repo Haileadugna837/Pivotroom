@@ -22,9 +22,11 @@ type ActiveModal = "none" | "early-access" | "founding-expert" | "nominate";
 export function AcquisitionLandingClient({
   experts,
   applicationCount,
+  showExperts,
 }: {
   experts: ExpertPreviewCard[];
   applicationCount: number;
+  showExperts: boolean;
 }) {
   const [sessionId] = useState(() => getOrCreateAcquisitionSessionId() || null);
   const [activeModal, setActiveModal] = useState<ActiveModal>("none");
@@ -58,11 +60,13 @@ export function AcquisitionLandingClient({
   return (
     <div className="flex flex-1 flex-col">
       <CaptureAcquisitionVisit />
-      <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
-      <AcquisitionHero experts={experts} onGetEarlyAccess={openEarlyAccess} onBecomeFoundingExpert={openFoundingExpert} />
+      <div className="flex min-h-dvh flex-col">
+        <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
+        <AcquisitionHero onGetEarlyAccess={openEarlyAccess} onBecomeFoundingExpert={openFoundingExpert} />
+      </div>
       <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionProblemCards onSelect={handleProblemCardSelect} />
-      <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />
+      {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
       <AcquisitionPositioningSection />
       <AcquisitionFoundingExpertSection applicationCount={applicationCount} onApply={openFoundingExpert} />
 
