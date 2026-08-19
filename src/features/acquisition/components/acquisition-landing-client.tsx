@@ -4,6 +4,7 @@ import { useState } from "react";
 import { CaptureAcquisitionVisit } from "@/features/acquisition/components/capture-acquisition-visit";
 import { AcquisitionNav } from "@/features/acquisition/components/landing/nav";
 import { AcquisitionHero } from "@/features/acquisition/components/landing/hero";
+import { AcquisitionExperienceSection } from "@/features/acquisition/components/landing/experience-section";
 import { AcquisitionHowItWorks } from "@/features/acquisition/components/landing/how-it-works";
 import { AcquisitionProblemCards } from "@/features/acquisition/components/landing/problem-cards";
 import { AcquisitionExpertPreview } from "@/features/acquisition/components/landing/expert-preview";
@@ -64,6 +65,7 @@ export function AcquisitionLandingClient({
         <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
         <AcquisitionHero onGetEarlyAccess={openEarlyAccess} onBecomeFoundingExpert={openFoundingExpert} />
       </div>
+      <AcquisitionExperienceSection />
       <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionProblemCards onSelect={handleProblemCardSelect} />
       {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
