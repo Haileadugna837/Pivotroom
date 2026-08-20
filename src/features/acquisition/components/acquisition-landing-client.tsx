@@ -8,8 +8,12 @@ import { AcquisitionExperienceSection } from "@/features/acquisition/components/
 import { AcquisitionHowItWorks } from "@/features/acquisition/components/landing/how-it-works";
 import { AcquisitionProblemCards } from "@/features/acquisition/components/landing/problem-cards";
 import { AcquisitionExpertPreview } from "@/features/acquisition/components/landing/expert-preview";
+import { AcquisitionTrustSection } from "@/features/acquisition/components/landing/trust-section";
+import { AcquisitionWhyJoinEarlySection } from "@/features/acquisition/components/landing/why-join-early-section";
 import { AcquisitionPositioningSection } from "@/features/acquisition/components/landing/positioning-section";
 import { AcquisitionFoundingExpertSection } from "@/features/acquisition/components/landing/founding-expert-section";
+import { AcquisitionFaqSection } from "@/features/acquisition/components/landing/faq-section";
+import { AcquisitionFinalCtaSection } from "@/features/acquisition/components/landing/final-cta-section";
 import { EarlyAccessFunnel } from "@/features/acquisition/components/funnel/early-access-modal";
 import { FoundingExpertModal } from "@/features/acquisition/components/funnel/founding-expert-modal";
 import { NominationModal } from "@/features/acquisition/components/funnel/nomination-modal";
@@ -65,12 +69,16 @@ export function AcquisitionLandingClient({
         <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
         <AcquisitionHero onGetEarlyAccess={openEarlyAccess} onBecomeFoundingExpert={openFoundingExpert} />
       </div>
-      <AcquisitionExperienceSection />
-      <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
-      <AcquisitionProblemCards onSelect={handleProblemCardSelect} />
       {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
+      <AcquisitionProblemCards onSelect={handleProblemCardSelect} />
+      <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
+      <AcquisitionExperienceSection />
+      <AcquisitionTrustSection />
+      <AcquisitionWhyJoinEarlySection onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionPositioningSection />
       <AcquisitionFoundingExpertSection applicationCount={applicationCount} onApply={openFoundingExpert} />
+      <AcquisitionFaqSection />
+      <AcquisitionFinalCtaSection onGetEarlyAccess={openEarlyAccess} />
 
       {sessionId && activeModal === "early-access" && (
         <EarlyAccessFunnel sessionId={sessionId} onClose={closeModal} initialCategories={seedCategories} />

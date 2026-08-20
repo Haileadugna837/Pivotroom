@@ -25,10 +25,11 @@ export function AcquisitionExperienceSection() {
             <Image
               src="/acquisition/ermyas-amelga.webp"
               alt="Ermyas Amelga speaking on Meri Podcast"
-              width={1343}
-              height={1171}
+              width={960}
+              height={837}
               className="w-full"
               sizes="(min-width: 1024px) 480px, 90vw"
+              quality={80}
             />
 
             {/* Floating overlay only once there's real room beside the
