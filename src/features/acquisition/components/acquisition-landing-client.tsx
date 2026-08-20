@@ -15,22 +15,19 @@ import { AcquisitionFoundingExpertSection } from "@/features/acquisition/compone
 import { AcquisitionFaqSection } from "@/features/acquisition/components/landing/faq-section";
 import { AcquisitionFinalCtaSection } from "@/features/acquisition/components/landing/final-cta-section";
 import { EarlyAccessFunnel } from "@/features/acquisition/components/funnel/early-access-modal";
-import { FoundingExpertModal } from "@/features/acquisition/components/funnel/founding-expert-modal";
 import { NominationModal } from "@/features/acquisition/components/funnel/nomination-modal";
 import { getOrCreateAcquisitionSessionId } from "@/features/acquisition/lib/session";
 import { recordFunnelEvent } from "@/features/acquisition/server/actions";
 import type { ProblemCard } from "@/features/acquisition/config";
 import type { ExpertPreviewCard } from "@/features/acquisition/server/queries";
 
-type ActiveModal = "none" | "early-access" | "founding-expert" | "nominate";
+type ActiveModal = "none" | "early-access" | "nominate";
 
 export function AcquisitionLandingClient({
   experts,
-  applicationCount,
   showExperts,
 }: {
   experts: ExpertPreviewCard[];
-  applicationCount: number;
   showExperts: boolean;
 }) {
   const [sessionId] = useState(() => getOrCreateAcquisitionSessionId() || null);
@@ -43,17 +40,20 @@ export function AcquisitionLandingClient({
     setActiveModal("early-access");
   }
 
-  function openFoundingExpert() {
-    if (sessionId) recordFunnelEvent(sessionId, "founding_expert_cta_clicked").catch(() => {});
-    setActiveModal("founding-expert");
-  }
-
-  function handleProblemCardSelect(card: ProblemCard) {
+  // Fires on every card click — records the demand signal and, for the
+  // one nomination-intent card, opens that modal directly. All other
+  // cards stay on the page and show real matching experts (or a
+  // "recruiting" message) inline before asking for anything — see
+  // handleJoinFromProblemResults for what actually opens Early Access.
+  function handleProblemCardClicked(card: ProblemCard) {
     if (sessionId) recordFunnelEvent(sessionId, "problem_card_clicked", { card: card.key }).catch(() => {});
     if (card.opensNomination) {
       setActiveModal("nominate");
-      return;
     }
+  }
+
+  function handleJoinFromProblemResults(card: ProblemCard) {
+    if (sessionId) recordFunnelEvent(sessionId, "early_access_cta_clicked", { source: "problem_results" }).catch(() => {});
     setSeedCategories(card.categoryKey ? [card.categoryKey] : undefined);
     setActiveModal("early-access");
   }
@@ -67,24 +67,21 @@ export function AcquisitionLandingClient({
       <CaptureAcquisitionVisit />
       <div className="flex min-h-dvh flex-col">
         <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
-        <AcquisitionHero onGetEarlyAccess={openEarlyAccess} onBecomeFoundingExpert={openFoundingExpert} />
+        <AcquisitionHero onGetEarlyAccess={openEarlyAccess} />
       </div>
       {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
-      <AcquisitionProblemCards onSelect={handleProblemCardSelect} />
+      <AcquisitionProblemCards onCardClicked={handleProblemCardClicked} onJoinEarlyAccess={handleJoinFromProblemResults} />
       <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionExperienceSection />
       <AcquisitionTrustSection />
       <AcquisitionWhyJoinEarlySection onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionPositioningSection />
-      <AcquisitionFoundingExpertSection applicationCount={applicationCount} onApply={openFoundingExpert} />
+      <AcquisitionFoundingExpertSection />
       <AcquisitionFaqSection />
       <AcquisitionFinalCtaSection onGetEarlyAccess={openEarlyAccess} />
 
       {sessionId && activeModal === "early-access" && (
         <EarlyAccessFunnel sessionId={sessionId} onClose={closeModal} initialCategories={seedCategories} />
-      )}
-      {sessionId && activeModal === "founding-expert" && (
-        <FoundingExpertModal sessionId={sessionId} onClose={closeModal} />
       )}
       {sessionId && activeModal === "nominate" && <NominationModal sessionId={sessionId} onClose={closeModal} />}
     </div>
