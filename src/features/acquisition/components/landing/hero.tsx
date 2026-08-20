@@ -1,14 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
 
-export function AcquisitionHero({
-  onGetEarlyAccess,
-  onBecomeFoundingExpert,
-}: {
-  onGetEarlyAccess: () => void;
-  onBecomeFoundingExpert: () => void;
-}) {
+export function AcquisitionHero({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
   return (
     <section className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
       <motion.h1
@@ -42,13 +37,12 @@ export function AcquisitionHero({
         >
           Get Early Access
         </button>
-        <button
-          type="button"
-          onClick={onBecomeFoundingExpert}
+        <Link
+          href="/founding-experts"
           className="mt-4 text-sm font-medium text-black/60 underline underline-offset-4 hover:text-black dark:text-white/60 dark:hover:text-white"
         >
           Are you an expert? Apply to the Founding 100 →
-        </button>
+        </Link>
       </motion.div>
       <p className="mt-3 text-xs text-black/40 dark:text-white/40">
         Early members get first access when bookings open.

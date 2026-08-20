@@ -3,6 +3,54 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { TablesInsert } from "@/lib/supabase/types";
 import { normalizePhone } from "@/features/acquisition/lib/phone";
+import { ACQUISITION_CATEGORIES } from "@/features/acquisition/config";
+import type { ExpertPreviewCard } from "@/features/acquisition/server/queries";
+
+// Real approved-expert matches for a problem card's mapped taxonomy
+// categories — same shape as the finder feature's runExpertMatch, just
+// simpler (no subcategory drill-down, this page's categories are already
+// leaf-level marketing groupings). Called client-side on a problem-card
+// click, so it's a server action, not a page-load query.
+export async function getMatchingExpertsForCategoryKey(categoryKey: string): Promise<ExpertPreviewCard[]> {
+  const category = ACQUISITION_CATEGORIES.find((c) => c.key === categoryKey);
+  if (!category || category.mappedCategoryIds.length === 0) return [];
+
+  const admin = createAdminClient();
+  const { data: matchRows, error: matchError } = await admin
+    .from("expert_categories")
+    .select("expert_id")
+    .in("category_id", category.mappedCategoryIds);
+  if (matchError) throw matchError;
+
+  const expertIds = Array.from(new Set((matchRows ?? []).map((r) => r.expert_id)));
+  if (expertIds.length === 0) return [];
+
+  const { data: experts, error: expertsError } = await admin
+    .from("experts")
+    .select("id, headline, photo_url")
+    .eq("status", "approved")
+    .in("id", expertIds)
+    .limit(3);
+  if (expertsError) throw expertsError;
+  if (experts.length === 0) return [];
+
+  const { data: profiles } = await admin
+    .from("profiles")
+    .select("id, full_name")
+    .in(
+      "id",
+      experts.map((e) => e.id),
+    );
+  const nameById = new Map((profiles ?? []).map((p) => [p.id, p.full_name]));
+
+  return experts.map((e) => ({
+    id: e.id,
+    name: nameById.get(e.id) ?? "Pivotroom Expert",
+    headline: e.headline,
+    category: null,
+    photoUrl: e.photo_url,
+  }));
+}
 
 export type UpsertAcquisitionSessionInput = {
   sessionId: string;
