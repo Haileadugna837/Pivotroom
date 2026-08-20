@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import { Target, Search, Calendar } from "lucide-react";
 
 const STEPS = [
-  { n: "01", icon: Target, text: "Tell us what you're trying to solve." },
-  { n: "02", icon: Search, text: "Find someone with relevant experience." },
-  { n: "03", icon: Calendar, text: "Book focused one-to-one time with them." },
+  { n: "01", icon: Target, text: "Tell us what you're facing." },
+  { n: "02", icon: Search, text: "Discover people who've already dealt with it." },
+  { n: "03", icon: Calendar, text: "Choose a time and talk one-to-one." },
 ];
 
 export function AcquisitionHowItWorks({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {

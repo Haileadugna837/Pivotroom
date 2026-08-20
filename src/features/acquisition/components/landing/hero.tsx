@@ -33,7 +33,7 @@ export function AcquisitionHero({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
-        className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row"
+        className="mt-8 flex flex-col items-center"
       >
         <button
           type="button"
@@ -45,9 +45,9 @@ export function AcquisitionHero({
         <button
           type="button"
           onClick={onBecomeFoundingExpert}
-          className="w-full rounded-full border border-black/15 px-8 py-3.5 text-sm font-medium sm:w-auto dark:border-white/20"
+          className="mt-4 text-sm font-medium text-black/60 underline underline-offset-4 hover:text-black dark:text-white/60 dark:hover:text-white"
         >
-          Become a Founding Expert
+          Are you an expert? Apply to the Founding 100 →
         </button>
       </motion.div>
       <p className="mt-3 text-xs text-black/40 dark:text-white/40">

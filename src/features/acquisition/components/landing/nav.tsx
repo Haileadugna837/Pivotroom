@@ -13,7 +13,7 @@ export function AcquisitionNav({ onGetEarlyAccess }: { onGetEarlyAccess: () => v
       </Link>
       <nav className="flex items-center gap-4 text-sm">
         <Link href="/experts" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
-          Explore
+          Experts
         </Link>
         <a href="#how-it-works" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
           How It Works
