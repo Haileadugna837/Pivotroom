@@ -8,8 +8,7 @@ import { AcquisitionExperienceSection } from "@/features/acquisition/components/
 import { AcquisitionHowItWorks } from "@/features/acquisition/components/landing/how-it-works";
 import { AcquisitionProblemCards } from "@/features/acquisition/components/landing/problem-cards";
 import { AcquisitionExpertPreview } from "@/features/acquisition/components/landing/expert-preview";
-import { AcquisitionTrustSection } from "@/features/acquisition/components/landing/trust-section";
-import { AcquisitionWhyJoinEarlySection } from "@/features/acquisition/components/landing/why-join-early-section";
+import { AcquisitionBreakthroughSection } from "@/features/acquisition/components/landing/breakthrough-section";
 import { AcquisitionPositioningSection } from "@/features/acquisition/components/landing/positioning-section";
 import { AcquisitionFoundingExpertSection } from "@/features/acquisition/components/landing/founding-expert-section";
 import { AcquisitionFaqSection } from "@/features/acquisition/components/landing/faq-section";
@@ -73,8 +72,7 @@ export function AcquisitionLandingClient({
       <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionProblemCards onCardClicked={handleProblemCardClicked} onJoinEarlyAccess={handleJoinFromProblemResults} />
       {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
-      <AcquisitionTrustSection />
-      <AcquisitionWhyJoinEarlySection onGetEarlyAccess={openEarlyAccess} />
+      <AcquisitionBreakthroughSection onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionPositioningSection />
       <AcquisitionFoundingExpertSection />
       <AcquisitionFaqSection />
