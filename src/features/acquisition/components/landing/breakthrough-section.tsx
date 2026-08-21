@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 export function AcquisitionBreakthroughSection({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
   return (
-    <section className="flex min-h-dvh flex-col items-center justify-center bg-black px-6 text-center text-white">
+    <section className="flex min-h-[100svh] flex-col items-center justify-center bg-black px-6 text-center text-white">
       <motion.h2
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
