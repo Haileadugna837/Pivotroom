@@ -10,7 +10,7 @@ export function AcquisitionBreakthroughSection({ onGetEarlyAccess }: { onGetEarl
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.5 }}
-        className="mx-auto max-w-3xl bg-gradient-to-r from-white to-white/60 bg-clip-text text-5xl font-semibold leading-tight text-transparent sm:text-6xl md:text-7xl"
+        className="mx-auto max-w-2xl bg-gradient-to-r from-white to-white/60 bg-clip-text text-3xl font-medium leading-tight text-transparent sm:text-4xl md:text-5xl"
       >
         Your next breakthrough
         <br />
