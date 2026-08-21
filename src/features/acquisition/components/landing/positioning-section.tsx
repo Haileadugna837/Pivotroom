@@ -9,7 +9,7 @@ const SUPPORTING_PARAGRAPHS = [
 
 export function AcquisitionPositioningSection() {
   return (
-    <section className="flex min-h-dvh flex-col items-center justify-center border-t border-black/10 bg-black/[0.03] px-6 py-20 text-center dark:border-white/15 dark:bg-white/5">
+    <section className="flex min-h-[100svh] flex-col items-center justify-center border-t border-black/10 bg-black/[0.03] px-6 py-20 text-center dark:border-white/15 dark:bg-white/5">
       <motion.h2
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}

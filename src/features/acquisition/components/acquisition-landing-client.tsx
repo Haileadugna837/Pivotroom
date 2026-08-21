@@ -64,7 +64,7 @@ export function AcquisitionLandingClient({
   return (
     <div className="flex flex-1 flex-col">
       <CaptureAcquisitionVisit />
-      <div className="flex min-h-dvh flex-col">
+      <div className="flex min-h-[100svh] flex-col">
         <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
         <AcquisitionHero onGetEarlyAccess={openEarlyAccess} />
       </div>
