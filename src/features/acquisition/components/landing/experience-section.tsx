@@ -20,6 +20,25 @@ export function AcquisitionExperienceSection() {
   return (
     <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
       <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+        <div>
+          <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">
+            Some problems need experience, not theory.
+          </h2>
+          <p className="mt-4 text-black/60 dark:text-white/60">
+            Business in Africa comes with realities you won&apos;t find in a textbook, course, or generic
+            online advice. Talk directly with founders, operators, investors, marketers, and specialists who
+            have already faced the problem you&apos;re dealing with.
+          </p>
+
+          <div className="mt-8 rounded-2xl border-l-4 border-foreground bg-black/[0.02] p-6 dark:bg-white/[0.04]">
+            <p className="text-lg font-medium">That&apos;s why we built Pivotroom.Africa</p>
+            <p className="mt-1.5 text-sm text-black/60 dark:text-white/60">
+              A marketplace of real-world experts who&apos;ve lived it, solved it, and are ready to help you
+              navigate it.
+            </p>
+          </div>
+        </div>
+
         <div className="mx-auto w-full max-w-sm lg:max-w-none">
           <div className="relative">
             <Image
@@ -45,25 +64,6 @@ export function AcquisitionExperienceSection() {
 
           <div className="mt-4 lg:hidden">
             <QuoteBubble />
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-2xl font-semibold leading-tight sm:text-3xl">
-            Some problems need experience, not theory.
-          </h2>
-          <p className="mt-4 text-black/60 dark:text-white/60">
-            Business in Africa comes with realities you won&apos;t find in a textbook, course, or generic
-            online advice. Talk directly with founders, operators, investors, marketers, and specialists who
-            have already faced the problem you&apos;re dealing with.
-          </p>
-
-          <div className="mt-8 rounded-2xl border-l-4 border-foreground bg-black/[0.02] p-6 dark:bg-white/[0.04]">
-            <p className="text-lg font-medium">That&apos;s why we built Pivotroom.Africa</p>
-            <p className="mt-1.5 text-sm text-black/60 dark:text-white/60">
-              A marketplace of real-world experts who&apos;ve lived it, solved it, and are ready to help you
-              navigate it.
-            </p>
           </div>
         </div>
       </div>
