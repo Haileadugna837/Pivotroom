@@ -69,10 +69,10 @@ export function AcquisitionLandingClient({
         <AcquisitionNav onGetEarlyAccess={openEarlyAccess} />
         <AcquisitionHero onGetEarlyAccess={openEarlyAccess} />
       </div>
-      {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
-      <AcquisitionProblemCards onCardClicked={handleProblemCardClicked} onJoinEarlyAccess={handleJoinFromProblemResults} />
-      <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionExperienceSection />
+      <AcquisitionHowItWorks onGetEarlyAccess={openEarlyAccess} />
+      <AcquisitionProblemCards onCardClicked={handleProblemCardClicked} onJoinEarlyAccess={handleJoinFromProblemResults} />
+      {showExperts && <AcquisitionExpertPreview experts={experts} onGetEarlyAccess={openEarlyAccess} />}
       <AcquisitionTrustSection />
       <AcquisitionWhyJoinEarlySection onGetEarlyAccess={openEarlyAccess} />
       <AcquisitionPositioningSection />
