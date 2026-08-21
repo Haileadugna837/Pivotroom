@@ -53,6 +53,43 @@ export default function PrivacyPage() {
         </section>
 
         <section>
+          <h2 className="mb-2 font-medium">Google Calendar access</h2>
+          <p>
+            If an expert chooses to connect their Google Calendar, we request access only to their calendar
+            events (not their full calendar settings or other calendars) so we can check their availability
+            and create booking events with a Google Meet link attached. This access is optional — clients
+            never need it, and experts can use Pivotroom without connecting a calendar.
+          </p>
+          <p className="mt-2">
+            We store the resulting access token only for as long as the calendar stays connected. An expert
+            can revoke access at any time using the &ldquo;Disconnect&rdquo; button on their availability
+            settings page, or directly from their{" "}
+            <a
+              href="https://myaccount.google.com/permissions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Google Account permissions
+            </a>{" "}
+            page.
+          </p>
+          <p className="mt-2">
+            Pivotroom&apos;s use and transfer of information received from Google APIs to any other app will
+            adhere to the{" "}
+            <a
+              href="https://developers.google.com/terms/api-services-user-data-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline"
+            >
+              Google API Services User Data Policy
+            </a>
+            , including the Limited Use requirements.
+          </p>
+        </section>
+
+        <section>
           <h2 className="mb-2 font-medium">Your choices</h2>
           <p>
             You can update or delete most of your profile information from your account settings at any
