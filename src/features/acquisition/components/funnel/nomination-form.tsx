@@ -63,7 +63,7 @@ export function NominationForm({
         <input
           value={nomineeName}
           onChange={(e) => setNomineeName(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+          className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
         />
       </label>
       <label className="text-sm">
@@ -71,7 +71,7 @@ export function NominationForm({
         <input
           value={company}
           onChange={(e) => setCompany(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+          className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
         />
       </label>
       <label className="text-sm">
@@ -80,7 +80,7 @@ export function NominationForm({
           value={socialUrl}
           onChange={(e) => setSocialUrl(e.target.value)}
           type="url"
-          className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+          className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
         />
       </label>
       <label className="text-sm">
@@ -88,7 +88,7 @@ export function NominationForm({
         <input
           value={topic}
           onChange={(e) => setTopic(e.target.value)}
-          className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+          className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
         />
       </label>
       <label className="text-sm">
@@ -98,7 +98,7 @@ export function NominationForm({
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
           placeholder="Founder who has raised investment in Ethiopia."
-          className="mt-1 block w-full resize-none rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+          className="mt-1 block w-full resize-none rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
         />
       </label>
 

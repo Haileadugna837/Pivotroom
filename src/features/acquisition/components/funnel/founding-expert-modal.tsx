@@ -150,7 +150,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -160,7 +160,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setPhone(e.target.value)}
                 type="tel"
                 inputMode="tel"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -170,7 +170,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 inputMode="email"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -180,7 +180,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setLinkedin(e.target.value)}
                 type="url"
                 placeholder="https://linkedin.com/in/…"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -189,7 +189,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 type="url"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -198,7 +198,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
                 type="url"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
           </div>
@@ -237,7 +237,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
             <select
               value={professionalTypeSecondary}
               onChange={(e) => setProfessionalTypeSecondary(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+              className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
             >
               <option value="">None</option>
               {PROFESSIONAL_TYPES.filter((t) => t !== professionalType).map((t) => (
@@ -294,7 +294,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 }
               }}
               placeholder="Add your own topic"
-              className="flex-1 rounded-lg border border-black/10 px-4 py-2.5 text-sm dark:border-white/15"
+              className="flex-1 rounded-lg border border-black/10 bg-background px-4 py-2.5 text-sm text-foreground dark:border-white/15"
             />
             <button
               type="button"
@@ -331,7 +331,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
             value={experienceText}
             onChange={(e) => setExperienceText(e.target.value)}
             rows={4}
-            className="mt-4 w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+            className="mt-4 w-full resize-none rounded-xl border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
           />
           <div className="mt-4 flex flex-col gap-4">
             <label className="text-sm">
@@ -339,7 +339,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={currentRole}
                 onChange={(e) => setCurrentRole(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -347,7 +347,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={currentCompany}
                 onChange={(e) => setCurrentCompany(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -356,7 +356,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value.replace(/\D/g, ""))}
                 inputMode="numeric"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
           </div>
