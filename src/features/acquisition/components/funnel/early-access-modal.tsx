@@ -160,7 +160,7 @@ export function EarlyAccessFunnel({
             onChange={(e) => setProblem(e.target.value)}
             placeholder="How do I expand my business outside Ethiopia?"
             rows={5}
-            className="mt-6 w-full resize-none rounded-xl border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+            className="mt-6 w-full resize-none rounded-xl border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
           />
           <div className="mt-auto flex flex-col gap-2">
             <button
@@ -194,7 +194,7 @@ export function EarlyAccessFunnel({
                 onChange={(e) => setName(e.target.value)}
                 required
                 autoComplete="name"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -207,7 +207,7 @@ export function EarlyAccessFunnel({
                 inputMode="tel"
                 autoComplete="tel"
                 placeholder="09XX XXX XXX"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
             <label className="text-sm">
@@ -218,7 +218,7 @@ export function EarlyAccessFunnel({
                 type="email"
                 inputMode="email"
                 autoComplete="email"
-                className="mt-1 block w-full rounded-lg border border-black/10 px-4 py-3 text-sm dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
               />
             </label>
           </div>
