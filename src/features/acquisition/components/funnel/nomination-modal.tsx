@@ -13,7 +13,7 @@ export function NominationModal({ sessionId, onClose }: { sessionId: string; onC
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background">
+    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground">
       <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/15">
         <span className="text-sm font-medium">Nominate someone</span>
         <button
