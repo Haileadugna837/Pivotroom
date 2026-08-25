@@ -6,10 +6,10 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  pending: "text-black/50 dark:text-white/50",
-  in_review: "text-blue-700 dark:text-blue-400",
-  added: "text-emerald-700 dark:text-emerald-400",
-  declined: "text-black/40 dark:text-white/40",
+  pending: "text-pivot-muted",
+  in_review: "text-pivot-accent",
+  added: "text-pivot-olive",
+  declined: "text-pivot-muted",
 };
 
 type Nomination = {
@@ -23,7 +23,7 @@ type Nomination = {
 export function MyNominationsList({ nominations }: { nominations: Nomination[] }) {
   if (nominations.length === 0) {
     return (
-      <p className="text-sm text-black/60 dark:text-white/60">
+      <p className="text-sm text-pivot-ink-2">
         You haven&apos;t nominated anyone yet.{" "}
         <a href="/nominate" className="underline">
           Nominate an expert
@@ -38,14 +38,14 @@ export function MyNominationsList({ nominations }: { nominations: Nomination[] }
       {nominations.map((n) => {
         const status = n.nominees?.status ?? "pending";
         return (
-          <li key={n.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+          <li key={n.id} className="rounded-lg border border-pivot-line p-4 text-sm text-pivot-ink">
             <div className="flex flex-wrap items-start justify-between gap-2">
               <p className="font-medium">{n.nominees?.name ?? "Unknown"}</p>
               <span className={`text-xs font-medium ${STATUS_STYLE[status] ?? ""}`}>
                 {STATUS_LABEL[status] ?? status}
               </span>
             </div>
-            <p className="mt-1 text-black/70 dark:text-white/70">{n.reason}</p>
+            <p className="mt-1 text-pivot-ink-2">{n.reason}</p>
             {n.links.length > 0 && (
               <div className="mt-2 flex flex-wrap gap-2">
                 {n.links.map((link) => (
@@ -61,7 +61,7 @@ export function MyNominationsList({ nominations }: { nominations: Nomination[] }
                 ))}
               </div>
             )}
-            <p className="mt-2 text-xs text-black/40 dark:text-white/40">
+            <p className="mt-2 text-xs text-pivot-muted">
               Submitted {new Date(n.created_at).toLocaleDateString()}
             </p>
           </li>

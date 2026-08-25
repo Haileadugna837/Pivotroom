@@ -34,14 +34,14 @@ export default async function ExpertExpertisePage() {
     ]);
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Expertise</h1>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-2xl bg-pivot-paper px-6 py-10">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Expertise</h1>
+      <p className="mb-6 text-sm text-pivot-muted">
         How clients find and understand what you can help with.
       </p>
 
       {selections.untypedExpertiseIds.length > 0 && (
-        <p className="mb-4 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
+        <p className="mb-4 rounded-md bg-pivot-accent/10 px-3 py-2 text-xs text-pivot-accent">
           Some of your older expertise tags couldn&apos;t be automatically sorted into primary/secondary — they still
           count toward your marketplace visibility. Set your Primary and Secondary Expertise below to clean this up.
         </p>

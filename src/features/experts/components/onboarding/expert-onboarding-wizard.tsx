@@ -122,20 +122,20 @@ export function ExpertOnboardingWizard({
   return (
     <form action={formAction} className="flex flex-col gap-6">
       <div>
-        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+        <p className="mb-1 text-xs font-medium uppercase tracking-wide text-pivot-muted">
           Step {step} of {TOTAL_STEPS}
         </p>
-        <div className="h-1 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-pivot-paper-2">
           <div
-            className="h-full rounded-full bg-foreground transition-all"
+            className="h-full rounded-full bg-pivot-ink transition-all"
             style={{ width: `${(step / TOTAL_STEPS) * 100}%` }}
           />
         </div>
       </div>
 
       <div>
-        <h2 className="text-lg font-semibold">{STEP_META[step].title}</h2>
-        <p className="mt-1 text-sm text-black/50 dark:text-white/50">{STEP_META[step].help}</p>
+        <h2 className="text-lg font-semibold text-pivot-ink">{STEP_META[step].title}</h2>
+        <p className="mt-1 text-sm text-pivot-muted">{STEP_META[step].help}</p>
       </div>
 
       {/* Every step stays mounted (hidden via CSS, not unmounted) so the
@@ -149,7 +149,7 @@ export function ExpertOnboardingWizard({
           name="headline"
           defaultValue=""
           placeholder="Headline (e.g. Senior Product Manager)"
-          className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
         />
       </div>
 
@@ -160,7 +160,7 @@ export function ExpertOnboardingWizard({
           defaultValue=""
           rows={5}
           placeholder="Short bio"
-          className="w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          className="w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
         />
       </div>
 
@@ -194,7 +194,7 @@ export function ExpertOnboardingWizard({
             <button
               type="button"
               onClick={() => setWantsSecondary(true)}
-              className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink"
             >
               Add secondary expertise
             </button>
@@ -205,7 +205,7 @@ export function ExpertOnboardingWizard({
                 setSecondaryCategoryId(null);
                 setSecondaryExpertiseIds([]);
               }}
-              className="rounded-md border border-black/10 px-4 py-2 text-sm dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-sm text-pivot-ink"
             >
               Skip for now
             </button>
@@ -239,7 +239,7 @@ export function ExpertOnboardingWizard({
                 setSecondaryCategoryId(null);
                 setSecondaryExpertiseIds([]);
               }}
-              className="w-fit text-xs text-black/50 underline dark:text-white/50"
+              className="w-fit text-xs text-pivot-muted underline"
             >
               Remove secondary expertise
             </button>
@@ -277,7 +277,7 @@ export function ExpertOnboardingWizard({
             min="0"
             step="0.01"
             placeholder="e.g. 75"
-            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
         <label className="text-sm">
@@ -285,7 +285,7 @@ export function ExpertOnboardingWizard({
           <select
             name="timezone"
             defaultValue={DEFAULT_TIMEZONE}
-            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           >
             {TIMEZONE_OPTIONS.map((tz) => (
               <option key={tz.value} value={tz.value}>
@@ -299,7 +299,7 @@ export function ExpertOnboardingWizard({
           <textarea
             name="expectations"
             rows={4}
-            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
         <label className="text-sm">
@@ -307,31 +307,31 @@ export function ExpertOnboardingWizard({
           <textarea
             name="example_questions"
             rows={4}
-            className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
-        <div className="mt-2 flex flex-col gap-2 border-t border-black/10 pt-4 dark:border-white/15">
-          <p className="text-sm font-medium">Payout bank account</p>
+        <div className="mt-2 flex flex-col gap-2 border-t border-pivot-line pt-4">
+          <p className="text-sm font-medium text-pivot-ink">Payout bank account</p>
           <input
             name="payout_account_name"
             placeholder="Account holder name"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
           <input
             name="payout_account_number"
             placeholder="Account number"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </div>
       </div>
 
       <div className={step === 9 ? "flex flex-col gap-4 text-sm" : "hidden"}>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+          <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
             Primary Expertise
           </p>
           <p>{primaryCategory?.name ?? "—"}</p>
-          <p className="text-black/60 dark:text-white/60">
+          <p className="text-pivot-ink-2">
             {primaryCategory?.subcategories
               .filter((s) => primaryExpertiseIds.includes(s.id))
               .map((s) => s.name)
@@ -340,11 +340,11 @@ export function ExpertOnboardingWizard({
         </div>
         {secondaryCategoryId && (
           <div>
-            <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+            <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
               Secondary Expertise
             </p>
             <p>{secondaryCategory?.name}</p>
-            <p className="text-black/60 dark:text-white/60">
+            <p className="text-pivot-ink-2">
               {secondaryCategory?.subcategories
                 .filter((s) => secondaryExpertiseIds.includes(s.id))
                 .map((s) => s.name)
@@ -353,10 +353,10 @@ export function ExpertOnboardingWizard({
           </div>
         )}
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+          <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
             Industry Experience
           </p>
-          <p className="text-black/60 dark:text-white/60">
+          <p className="text-pivot-ink-2">
             {industries
               .map((sel) => allIndustries.find((i) => i.id === sel.industryId)?.name)
               .filter(Boolean)
@@ -364,10 +364,10 @@ export function ExpertOnboardingWizard({
           </p>
         </div>
         <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+          <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
             Bookable Topics
           </p>
-          <ul className="list-disc pl-4 text-black/60 dark:text-white/60">
+          <ul className="list-disc pl-4 text-pivot-ink-2">
             {bookableTopics.map((t, i) => (
               <li key={i}>{t.title}</li>
             ))}
@@ -375,8 +375,8 @@ export function ExpertOnboardingWizard({
         </div>
       </div>
 
-      {stepError && <p className="text-sm text-red-600 dark:text-red-400">{stepError}</p>}
-      {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+      {stepError && <p className="text-sm text-pivot-danger">{stepError}</p>}
+      {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
 
       <input type="hidden" name="invite_token" value={inviteToken} />
       <input type="hidden" name="primary_category_id" value={primaryCategoryId ?? ""} />
@@ -407,7 +407,7 @@ export function ExpertOnboardingWizard({
           <button
             type="button"
             onClick={back}
-            className="rounded-md border border-black/10 px-4 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line px-4 py-2 text-sm text-pivot-ink"
           >
             Back
           </button>
@@ -419,7 +419,7 @@ export function ExpertOnboardingWizard({
           <button
             type="button"
             onClick={next}
-            className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+            className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper"
           >
             Continue
           </button>
@@ -427,7 +427,8 @@ export function ExpertOnboardingWizard({
           <button
             type="submit"
             disabled={pending}
-            className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+            className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper disabled:opacity-50"
+
           >
             {pending ? "Submitting…" : "Submit application"}
           </button>

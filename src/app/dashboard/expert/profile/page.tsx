@@ -22,9 +22,9 @@ export default async function ExpertProfilePage() {
 
   if (!expertProfile) {
     return (
-      <div className="mx-auto max-w-lg px-6 py-10">
-        <h1 className="mb-2 text-xl font-semibold">Expert Application</h1>
-        <p className="text-sm text-black/60 dark:text-white/60">
+      <div className="mx-auto max-w-lg bg-pivot-paper px-6 py-10">
+        <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Expert Application</h1>
+        <p className="text-sm text-pivot-ink-2">
           Becoming an expert on Pivotroom.africa is currently invite-only. If you&apos;ve received
           an invite link by email, use it to apply — otherwise use the Contact Us link in the
           footer if you&apos;d like to be considered.
@@ -40,12 +40,12 @@ export default async function ExpertProfilePage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Expert Profile</h1>
-      <p className="mb-1 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-lg bg-pivot-paper px-6 py-10">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Expert Profile</h1>
+      <p className="mb-1 text-sm text-pivot-muted">
         Status: {STATUS_LABEL[expertProfile.status] ?? expertProfile.status}
       </p>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
+      <p className="mb-6 text-sm text-pivot-muted">
         Manage your primary/secondary expertise, industries, and bookable topics under{" "}
         <Link href="/dashboard/expert/expertise" className="underline">
           Expertise
@@ -57,7 +57,7 @@ export default async function ExpertProfilePage() {
         extraSlot={
           <div className="flex flex-col gap-6">
             <SocialLinksManager links={socialLinks} />
-            <div className="border-t border-black/10 pt-6 dark:border-white/15">
+            <div className="border-t border-pivot-line pt-6">
               <NgoDonationManager ngos={ngos} allocations={ngoAllocations} />
             </div>
           </div>

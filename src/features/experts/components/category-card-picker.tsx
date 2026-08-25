@@ -23,13 +23,11 @@ export function CategoryCardPicker({
             type="button"
             onClick={() => onSelect(c.id)}
             className={`rounded-lg border p-4 text-left transition-colors ${
-              selectedId === c.id
-                ? "border-foreground bg-black/5 dark:bg-white/10"
-                : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+              selectedId === c.id ? "border-pivot-ink bg-pivot-paper-2" : "border-pivot-line hover:bg-pivot-paper-2"
             }`}
           >
-            <p className="text-sm font-medium">{c.name}</p>
-            {c.tagline && <p className="mt-1 text-xs text-black/50 dark:text-white/50">{c.tagline}</p>}
+            <p className="text-sm font-medium text-pivot-ink">{c.name}</p>
+            {c.tagline && <p className="mt-1 text-xs text-pivot-muted">{c.tagline}</p>}
           </button>
         ))}
     </div>

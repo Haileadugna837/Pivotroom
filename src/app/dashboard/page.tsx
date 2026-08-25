@@ -9,11 +9,9 @@ export default async function DashboardPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-xl font-semibold">My Bookings</h1>
-      <p className="mt-1 text-sm text-black/50 dark:text-white/50">
-        Sessions you&apos;ve booked with experts.
-      </p>
+    <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+      <h1 className="text-xl font-semibold text-pivot-ink">My Bookings</h1>
+      <p className="mt-1 text-sm text-pivot-muted">Sessions you&apos;ve booked with experts.</p>
       <div className="mt-6">
         <BookingsList bookings={bookings} emptyLabel="You haven't booked a session yet." />
       </div>

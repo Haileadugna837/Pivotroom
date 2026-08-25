@@ -33,7 +33,7 @@ export function ExpertiseChipPicker({
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs text-black/50 dark:text-white/50">
+      <p className="text-xs text-pivot-muted">
         {selectedIds.length} of {max} selected{min > 0 ? ` (minimum ${min})` : ""}
       </p>
       <div className="flex flex-wrap gap-2">
@@ -48,8 +48,8 @@ export function ExpertiseChipPicker({
               onClick={() => toggle(o.id)}
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
                 selected
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                  ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                  : "border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
               }`}
             >
               {o.name}
@@ -63,7 +63,7 @@ export function ExpertiseChipPicker({
             <button
               type="button"
               onClick={() => setSuggestOpen(true)}
-              className="text-xs text-black/50 underline dark:text-white/50"
+              className="text-xs text-pivot-muted underline"
             >
               Can&apos;t find what you&apos;re looking for? Suggest it
             </button>
@@ -73,7 +73,7 @@ export function ExpertiseChipPicker({
                 value={suggestText}
                 onChange={(e) => setSuggestText(e.target.value)}
                 placeholder="e.g. Influencer Marketing"
-                className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+                className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-1.5 text-sm text-pivot-ink"
               />
               <button
                 type="button"
@@ -83,7 +83,7 @@ export function ExpertiseChipPicker({
                   setSuggestText("");
                   setSuggestOpen(false);
                 }}
-                className="rounded-md border border-black/10 px-3 py-1.5 text-xs font-medium dark:border-white/15"
+                className="rounded-md border border-pivot-line px-3 py-1.5 text-xs font-medium text-pivot-ink"
               >
                 Submit suggestion
               </button>

@@ -11,9 +11,9 @@ export default async function NominatePage() {
   const user = await getUser();
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Nominate an expert</h1>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-lg bg-pivot-paper px-6 py-10">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Nominate an expert</h1>
+      <p className="mb-6 text-sm text-pivot-muted">
         Know someone who&apos;d be a great 1:1 expert on Pivotroom? Tell us about them — we review
         every nomination.
       </p>
@@ -21,7 +21,7 @@ export default async function NominatePage() {
       {user ? (
         <NominateForm />
       ) : (
-        <p className="text-sm">
+        <p className="text-sm text-pivot-ink">
           <a href="/login?next=/nominate" className="underline">
             Sign in
           </a>{" "}

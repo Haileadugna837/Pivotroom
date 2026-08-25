@@ -14,8 +14,8 @@ export default async function ExpertBookingsPage() {
   const bookings = await getMyBookingsAsExpert();
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Expert Bookings</h1>
+    <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+      <h1 className="text-xl font-semibold text-pivot-ink">Expert Bookings</h1>
       <div className="mt-6">
         <BookingsList bookings={bookings} emptyLabel="No bookings yet." />
       </div>
