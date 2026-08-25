@@ -10,7 +10,7 @@ export function ApproveInviteForm({ applicationId, hasEmail }: { applicationId: 
 
   if (!hasEmail) {
     return (
-      <p className="text-sm text-black/50 dark:text-white/50">
+      <p className="text-sm text-pivot-muted">
         No email on file — collect one before an invite can be sent.
       </p>
     );
@@ -22,12 +22,12 @@ export function ApproveInviteForm({ applicationId, hasEmail }: { applicationId: 
       <button
         type="submit"
         disabled={pending}
-        className="w-fit rounded-md bg-foreground px-4 py-1.5 text-sm text-background disabled:opacity-50"
+        className="w-fit rounded-md bg-pivot-ink px-4 py-1.5 text-sm text-pivot-paper disabled:opacity-50"
       >
         {pending ? "Sending…" : "Approve & Send Invite"}
       </button>
-      {state.success && <p className="text-sm text-emerald-700 dark:text-emerald-400">{state.success}</p>}
-      {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+      {state.success && <p className="text-sm text-pivot-olive">{state.success}</p>}
+      {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
     </form>
   );
 }

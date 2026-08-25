@@ -16,9 +16,9 @@ const ACTION_LABEL: Record<string, string> = {
 export default async function AdminAuditLogPage() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
-      <div className="mx-auto max-w-3xl px-6 py-10">
-        <h1 className="text-xl font-semibold">Audit Log</h1>
-        <p className="mt-4 text-sm text-amber-700 dark:text-amber-500">
+      <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+        <h1 className="text-xl font-semibold text-pivot-ink">Audit Log</h1>
+        <p className="mt-4 text-sm text-pivot-accent">
           `SUPABASE_SERVICE_ROLE_KEY` is not set — admin queries cannot run yet.
         </p>
       </div>
@@ -28,24 +28,24 @@ export default async function AdminAuditLogPage() {
   const entries = await getAuditLogForAdmin();
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Audit Log</h1>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Audit Log</h1>
+      <p className="mb-6 text-sm text-pivot-muted">
         A record of sensitive admin actions: expert approvals, payment verification, payouts, and
         account status changes. Showing the most recent {entries.length} entries.
       </p>
 
       {entries.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No actions logged yet.</p>
+        <p className="text-sm text-pivot-muted">No actions logged yet.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {entries.map((e) => (
-            <li key={e.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <li key={e.id} className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <p className="font-medium">{ACTION_LABEL[e.action] ?? e.action}</p>
-                <p className="text-black/50 dark:text-white/50">{new Date(e.created_at).toLocaleString()}</p>
+                <p className="font-medium text-pivot-ink">{ACTION_LABEL[e.action] ?? e.action}</p>
+                <p className="text-pivot-muted">{new Date(e.created_at).toLocaleString()}</p>
               </div>
-              <p className="mt-1 text-black/60 dark:text-white/60">
+              <p className="mt-1 text-pivot-ink-2">
                 By {e.adminProfile?.full_name ?? e.adminProfile?.email ?? "Unknown admin"}
                 {e.target_id && (
                   <>
@@ -55,7 +55,7 @@ export default async function AdminAuditLogPage() {
                 )}
               </p>
               {e.details != null && (
-                <pre className="mt-2 overflow-x-auto rounded-md bg-black/5 p-2 text-xs dark:bg-white/10">
+                <pre className="mt-2 overflow-x-auto rounded-md bg-pivot-paper-2 p-2 text-xs text-pivot-ink">
                   {JSON.stringify(e.details, null, 2)}
                 </pre>
               )}
