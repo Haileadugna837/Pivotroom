@@ -9,6 +9,16 @@ type Nomination = {
   links: string[];
   created_at: string;
   nominatorName: string;
+  nominee_title: string | null;
+  nominee_location: string | null;
+  company: string | null;
+  social_url: string | null;
+  topic: string | null;
+  categories_requested: string[];
+  nominator_phone: string | null;
+  nominator_email: string | null;
+  nominator_relationship: string | null;
+  intro_comfort: string | null;
 };
 
 type Nominee = {
@@ -165,7 +175,18 @@ function NomineeRow({
                   · {new Date(n.created_at).toLocaleDateString()}
                 </span>
               </p>
+              {(n.nominee_title || n.company || n.nominee_location) && (
+                <p className="mt-0.5 text-black/50 dark:text-white/50">
+                  {[n.nominee_title, n.company, n.nominee_location].filter(Boolean).join(" · ")}
+                </p>
+              )}
               <p className="mt-0.5 text-black/70 dark:text-white/70">{n.reason}</p>
+              {n.topic && <p className="mt-0.5 text-black/60 dark:text-white/60">Topic: {n.topic}</p>}
+              {n.categories_requested.length > 0 && (
+                <p className="mt-0.5 text-black/60 dark:text-white/60">
+                  Categories: {n.categories_requested.join(", ")}
+                </p>
+              )}
               {n.links.length > 0 && (
                 <div className="mt-1 flex flex-wrap gap-2">
                   {n.links.map((link) => (
@@ -174,6 +195,19 @@ function NomineeRow({
                     </a>
                   ))}
                 </div>
+              )}
+              {n.social_url && (
+                <a href={n.social_url} target="_blank" rel="noopener noreferrer" className="mt-1 block underline">
+                  {n.social_url}
+                </a>
+              )}
+              {(n.nominator_phone || n.nominator_email || n.nominator_relationship || n.intro_comfort) && (
+                <p className="mt-1 text-black/50 dark:text-white/50">
+                  Nominator:{" "}
+                  {[n.nominator_phone, n.nominator_email, n.nominator_relationship, n.intro_comfort]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
               )}
             </li>
           ))}

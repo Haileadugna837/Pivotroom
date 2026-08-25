@@ -290,44 +290,52 @@ export type SubmitNominationAnonymousState = { error?: string; success?: boolean
 export async function submitNominationAnonymous(
   sessionId: string,
   input: {
-    nomineeName?: string;
+    nomineeName: string;
+    nomineeTitle?: string;
     company?: string;
+    nomineeLocation?: string;
     socialUrl?: string;
+    categories: string[];
+    reason: string;
     topic?: string;
-    description?: string;
-    leadId?: string;
+    nominatorName: string;
+    nominatorPhone: string;
+    nominatorEmail?: string;
+    nominatorRelationship: string;
+    introComfort?: string;
   },
 ): Promise<SubmitNominationAnonymousState> {
-  const nomineeName = input.nomineeName?.trim() || null;
-  const description = input.description?.trim() || null;
-  if (!nomineeName && !description) {
-    return { error: "Add a name or describe who you're looking for." };
+  const nomineeName = input.nomineeName.trim();
+  if (!nomineeName) {
+    return { error: "Enter who you're nominating." };
+  }
+  if (!input.reason.trim()) {
+    return { error: "Tell us why you're nominating this person." };
+  }
+
+  const nominatorName = input.nominatorName.trim();
+  if (!nominatorName) {
+    return { error: "Enter your name." };
+  }
+  const normalizedPhone = normalizePhone(input.nominatorPhone);
+  if (!normalizedPhone) {
+    return { error: "Enter a valid phone number." };
+  }
+  if (!input.nominatorRelationship) {
+    return { error: "Select how you know them." };
   }
 
   const admin = createAdminClient();
 
+  const { data: existingNominee } = await admin.from("nominees").select("id").ilike("name", nomineeName).maybeSingle();
+
   let nomineeId: string;
-  if (nomineeName) {
-    const { data: existingNominee } = await admin
-      .from("nominees")
-      .select("id")
-      .ilike("name", nomineeName)
-      .maybeSingle();
-    if (existingNominee) {
-      nomineeId = existingNominee.id;
-    } else {
-      const { data: createdNominee, error } = await admin
-        .from("nominees")
-        .insert({ name: nomineeName })
-        .select("id")
-        .single();
-      if (error) return { error: "Something went wrong. Please try again." };
-      nomineeId = createdNominee.id;
-    }
+  if (existingNominee) {
+    nomineeId = existingNominee.id;
   } else {
     const { data: createdNominee, error } = await admin
       .from("nominees")
-      .insert({ description })
+      .insert({ name: nomineeName })
       .select("id")
       .single();
     if (error) return { error: "Something went wrong. Please try again." };
@@ -336,11 +344,18 @@ export async function submitNominationAnonymous(
 
   const { error: nominationError } = await admin.from("nominations").insert({
     nominee_id: nomineeId,
-    nominator_lead_id: input.leadId || null,
+    nominee_title: input.nomineeTitle?.trim() || null,
     company: input.company?.trim() || null,
+    nominee_location: input.nomineeLocation?.trim() || null,
     social_url: input.socialUrl?.trim() || null,
+    categories_requested: input.categories,
+    reason: input.reason.trim(),
     topic: input.topic?.trim() || null,
-    reason: input.topic?.trim() || description || "",
+    nominator_name: nominatorName,
+    nominator_phone: normalizedPhone.e164,
+    nominator_email: input.nominatorEmail?.trim() || null,
+    nominator_relationship: input.nominatorRelationship,
+    intro_comfort: input.introComfort || null,
     source: "acquisition_landing",
     landing_session_id: sessionId,
   });
