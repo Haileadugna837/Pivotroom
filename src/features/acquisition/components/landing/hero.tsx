@@ -1,52 +1,65 @@
-"use client";
+const PROOFS = [
+  { title: "Problem-first", copy: "Start with what you need help solving." },
+  { title: "Curated access", copy: "Meet experience relevant to your situation." },
+  { title: "1:1 conversations", copy: "Focused help, not endless content." },
+];
 
-import Link from "next/link";
-import { motion } from "framer-motion";
-
-export function AcquisitionHero({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
+export function AcquisitionHero() {
   return (
-    <section className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
-      <motion.h1
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mx-auto max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl"
-      >
-        Talk to people who&apos;ve already done what you&apos;re trying to do.
-      </motion.h1>
-      <motion.p
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mx-auto mt-4 max-w-xl text-base text-black/60 sm:text-lg dark:text-white/60"
-      >
-        Get one-to-one access to experienced African founders, executives, specialists, creators and
-        operators. Launching soon. Join early.
-      </motion.p>
+    <header className="grid min-h-[780px] border-b border-pivot-line md:grid-cols-[1.08fr_0.92fr]">
+      <div className="flex flex-col justify-center px-6 py-16 md:py-24 md:pl-[max(24px,calc((100vw-1400px)/2))] md:pr-[7vw]">
+        <div className="text-[11px] font-semibold tracking-[0.18em] text-pivot-ink uppercase">
+          Pivotroom early access
+        </div>
+        <h1 className="mx-0 my-5 max-w-[920px] font-serif text-[64px] leading-[0.87] tracking-[-0.045em] text-pivot-ink sm:text-[80px] md:text-[100px] lg:text-[120px]">
+          Stop figuring everything out <em className="text-pivot-accent">the hard way.</em>
+        </h1>
+        <p className="max-w-[670px] text-lg leading-relaxed text-pivot-ink-2">
+          Tell us what you&apos;re trying to solve. Pivotroom is building access to experienced founders,
+          executives, investors and operators who have already faced problems like yours.
+        </p>
+        <div className="mt-3 flex flex-wrap gap-3">
+          <a
+            href="#join"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper"
+          >
+            Join early access ↗
+          </a>
+          <a
+            href="#problems"
+            className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-pivot-ink px-[18px] text-sm font-medium text-pivot-ink"
+          >
+            See what Pivotroom is for
+          </a>
+        </div>
+        <div className="mt-3.5 text-[11px] text-pivot-muted">Free to join early access. No payment required now.</div>
+        <div className="mt-11 grid max-w-[650px] grid-cols-3 gap-5 border-t border-pivot-ink pt-5">
+          {PROOFS.map((proof) => (
+            <div key={proof.title}>
+              <strong className="block text-[17px] font-medium text-pivot-ink">{proof.title}</strong>
+              <span className="mt-1 block text-[11px] leading-snug text-pivot-muted">{proof.copy}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="mt-8 flex flex-col items-center"
+      <div
+        className="relative min-h-[500px] bg-cover bg-center md:min-h-[780px]"
+        style={{
+          backgroundImage:
+            "linear-gradient(180deg, transparent 40%, rgba(56,22,21,.6)), url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=1500&q=88')",
+        }}
       >
-        <button
-          type="button"
-          onClick={onGetEarlyAccess}
-          className="w-full rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background sm:w-auto"
-        >
-          Get Early Access
-        </button>
-        <Link
-          href="/founding-experts"
-          className="mt-4 text-sm font-medium text-black/60 underline underline-offset-4 hover:text-black dark:text-white/60 dark:hover:text-white"
-        >
-          Are you an expert? Apply to the Founding 100 →
-        </Link>
-      </motion.div>
-      <p className="mt-3 text-xs text-black/40 dark:text-white/40">
-        Early members get first access when bookings open.
-      </p>
-    </section>
+        <div className="absolute inset-x-[30px] bottom-[30px] text-pivot-paper">
+          <blockquote className="font-serif text-[34px] leading-[0.98] font-normal sm:text-[46px] md:text-[58px]">
+            &ldquo;Sometimes the answer isn&apos;t another video. It&apos;s one conversation with the right
+            person.&rdquo;
+          </blockquote>
+          <small className="mt-3.5 block max-w-[450px] text-sm leading-relaxed opacity-80">
+            Pivotroom is building a better way to access lived business experience across Africa and the diaspora.
+          </small>
+        </div>
+      </div>
+    </header>
   );
 }

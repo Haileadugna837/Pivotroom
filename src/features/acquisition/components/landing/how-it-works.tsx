@@ -1,60 +1,46 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { Target, Search, Calendar } from "lucide-react";
-
 const STEPS = [
-  { n: "01", icon: Target, text: "Tell us what you're facing." },
-  { n: "02", icon: Search, text: "Discover people who've already dealt with it." },
-  { n: "03", icon: Calendar, text: "Choose a time and talk one-to-one." },
+  {
+    label: "01 / TELL US",
+    title: "Describe what you're trying to solve.",
+    copy: "It takes under a minute. We care more about the real problem than a perfectly written request.",
+  },
+  {
+    label: "02 / WE LEARN",
+    title: "Your request informs who Pivotroom recruits.",
+    copy: "Repeated demand tells us which expert profiles and categories should be prioritized.",
+  },
+  {
+    label: "03 / YOU GET ACCESS",
+    title: "We notify you when the right access opens.",
+    copy: "When Pivotroom launches or a relevant expert becomes available, early users should be among the first to know.",
+  },
 ];
 
-export function AcquisitionHowItWorks({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
+export function AcquisitionHowItWorks() {
   return (
-    <section
-      id="how-it-works"
-      className="border-t border-black/10 bg-black/[0.02] px-6 py-20 text-center dark:border-white/15 dark:bg-white/[0.03]"
-    >
-      <h2 className="mx-auto max-w-lg text-2xl font-semibold leading-tight sm:text-3xl">
-        One conversation can save months of guessing.
-      </h2>
-
-      <div className="relative mx-auto mt-14 grid max-w-4xl gap-10 sm:grid-cols-3 sm:gap-6">
-        <div
-          aria-hidden="true"
-          className="absolute top-8 right-0 left-0 hidden h-px bg-black/10 sm:block dark:bg-white/15"
-          style={{ marginInline: "16.6%" }}
-        />
-        {STEPS.map((step, i) => {
-          const Icon = step.icon;
-          return (
-            <motion.div
-              key={step.n}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="relative flex flex-col items-center gap-3"
+    <section id="how" className="bg-pivot-olive py-20 text-pivot-paper md:py-28">
+      <div className="mx-auto w-full max-w-[1400px] px-6">
+        <div className="text-[11px] font-semibold tracking-[0.18em] uppercase opacity-90">
+          How early access works
+        </div>
+        <h2 className="mt-2.5 max-w-2xl font-serif text-[42px] leading-[0.94] font-normal tracking-[-0.03em] sm:text-[56px] md:text-[64px]">
+          You tell us the problem. We build the room around real demand.
+        </h2>
+        <div className="mt-12 grid grid-cols-1 border-t border-pivot-paper/45 md:grid-cols-3">
+          {STEPS.map((step, i) => (
+            <article
+              key={step.label}
+              className={`flex min-h-[240px] flex-col pt-5.5 pb-6 ${
+                i < STEPS.length - 1 ? "md:mr-7 md:border-r md:border-pivot-paper/20 md:pr-7" : ""
+              }`}
             >
-              <span className="relative flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-foreground bg-background">
-                <Icon className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
-                <span className="absolute -top-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[11px] font-semibold text-background">
-                  {step.n}
-                </span>
-              </span>
-              <p className="max-w-[16rem] text-base font-medium">{step.text}</p>
-            </motion.div>
-          );
-        })}
+              <small className="opacity-55">{step.label}</small>
+              <h3 className="mt-auto mb-3 font-serif text-[30px] leading-none font-normal">{step.title}</h3>
+              <p className="m-0 text-[13px] leading-relaxed opacity-70">{step.copy}</p>
+            </article>
+          ))}
+        </div>
       </div>
-
-      <button
-        type="button"
-        onClick={onGetEarlyAccess}
-        className="mt-14 rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background"
-      >
-        Get Early Access
-      </button>
     </section>
   );
 }

@@ -42,6 +42,7 @@ export type Database = {
         Row: {
           admin_note: string | null
           categories_requested: string[]
+          company: string | null
           created_at: string
           email: string | null
           id: string
@@ -56,6 +57,8 @@ export type Database = {
           source_page: string | null
           status: string
           updated_at: string
+          urgency: string | null
+          user_type: string | null
           utm_campaign: string | null
           utm_content: string | null
           utm_medium: string | null
@@ -65,6 +68,7 @@ export type Database = {
         Insert: {
           admin_note?: string | null
           categories_requested?: string[]
+          company?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -79,6 +83,8 @@ export type Database = {
           source_page?: string | null
           status?: string
           updated_at?: string
+          urgency?: string | null
+          user_type?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
@@ -88,6 +94,7 @@ export type Database = {
         Update: {
           admin_note?: string | null
           categories_requested?: string[]
+          company?: string | null
           created_at?: string
           email?: string | null
           id?: string
@@ -102,6 +109,8 @@ export type Database = {
           source_page?: string | null
           status?: string
           updated_at?: string
+          urgency?: string | null
+          user_type?: string | null
           utm_campaign?: string | null
           utm_content?: string | null
           utm_medium?: string | null
