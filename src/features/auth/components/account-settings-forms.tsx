@@ -6,8 +6,8 @@ import { updateEmail, updatePassword, type SettingsActionState } from "@/feature
 const initialState: SettingsActionState = {};
 
 function StatusMessage({ state }: { state: SettingsActionState }) {
-  if (state.error) return <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>;
-  if (state.success) return <p className="text-sm text-green-700 dark:text-green-500">{state.success}</p>;
+  if (state.error) return <p className="text-sm text-pivot-danger">{state.error}</p>;
+  if (state.success) return <p className="text-sm text-pivot-olive">{state.success}</p>;
   return null;
 }
 
@@ -29,20 +29,20 @@ export function AccountSettingsForms({
   const forms = (
     <div className="flex flex-col gap-8">
       <div>
-        <h2 className="mb-3 text-sm font-medium">Change email</h2>
+        <h2 className="mb-3 text-sm font-medium text-pivot-ink">Change email</h2>
         <form action={emailAction} className="flex flex-col gap-3">
           <input
             type="email"
             name="email"
             required
             defaultValue={currentEmail}
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
           <StatusMessage state={emailState} />
           <button
             type="submit"
             disabled={emailPending}
-            className="w-fit rounded-md border border-black/10 px-4 py-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
+            className="w-fit rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink disabled:opacity-50"
           >
             {emailPending ? "Saving…" : "Update email"}
           </button>
@@ -51,7 +51,7 @@ export function AccountSettingsForms({
 
       {hasPasswordIdentity && (
         <div>
-          <h2 className="mb-3 text-sm font-medium">Change password</h2>
+          <h2 className="mb-3 text-sm font-medium text-pivot-ink">Change password</h2>
           <form action={passwordAction} className="flex flex-col gap-3">
             <input
               type="password"
@@ -59,7 +59,7 @@ export function AccountSettingsForms({
               required
               minLength={6}
               placeholder="New password"
-              className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
             />
             <input
               type="password"
@@ -67,13 +67,13 @@ export function AccountSettingsForms({
               required
               minLength={6}
               placeholder="Confirm new password"
-              className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
             />
             <StatusMessage state={passwordState} />
             <button
               type="submit"
               disabled={passwordPending}
-              className="w-fit rounded-md border border-black/10 px-4 py-2 text-sm font-medium disabled:opacity-50 dark:border-white/15"
+              className="w-fit rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink disabled:opacity-50"
             >
               {passwordPending ? "Saving…" : "Update password"}
             </button>
@@ -86,15 +86,11 @@ export function AccountSettingsForms({
   if (title) {
     return (
       <div className="flex flex-col gap-3">
-        <h2 className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-          {title}
-        </h2>
+        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">{title}</h2>
         {forms}
       </div>
     );
   }
 
-  return (
-    <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">{forms}</div>
-  );
+  return <div className="mt-8 border-t border-pivot-line pt-6">{forms}</div>;
 }

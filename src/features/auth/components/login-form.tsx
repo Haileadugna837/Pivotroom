@@ -36,7 +36,7 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
         placeholder="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
       <input
         type="password"
@@ -44,13 +44,13 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
         placeholder="Password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-pivot-danger">{error}</p>}
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+        className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper disabled:opacity-50"
       >
         {loading ? "Signing in…" : "Sign in"}
       </button>

@@ -7,17 +7,17 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <div className="mx-auto flex min-h-[60vh] max-w-md flex-1 flex-col items-center justify-center gap-4 px-4 text-center">
-      <h1 className="text-4xl font-semibold tracking-tight">Something went wrong</h1>
-      <p className="text-black/60 dark:text-white/60">
-        An unexpected error occurred. Please try again.
-      </p>
-      <button
-        onClick={reset}
-        className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
-      >
-        Try again
-      </button>
+    <div className="flex min-h-[60vh] flex-1 flex-col items-center justify-center gap-4 bg-pivot-paper px-4 text-center">
+      <div className="mx-auto flex max-w-md flex-col items-center gap-4">
+        <h1 className="font-serif text-4xl font-normal text-pivot-ink">Something went wrong</h1>
+        <p className="text-pivot-ink-2">An unexpected error occurred. Please try again.</p>
+        <button
+          onClick={reset}
+          className="rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper"
+        >
+          Try again
+        </button>
+      </div>
     </div>
   );
 }

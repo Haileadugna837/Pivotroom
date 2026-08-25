@@ -15,21 +15,23 @@ export default async function SignupPage({
   const { next } = await searchParams;
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center gap-6 px-4">
-      <h1 className="text-xl font-semibold">Create your Pivotroom.africa account</h1>
-      <GoogleButton next={next} />
-      <div className="flex items-center gap-3 text-xs text-black/40 dark:text-white/40">
-        <div className="h-px flex-1 bg-black/10 dark:bg-white/15" />
-        or
-        <div className="h-px flex-1 bg-black/10 dark:bg-white/15" />
+    <div className="flex min-h-[70vh] flex-col justify-center bg-pivot-paper px-4">
+      <div className="mx-auto flex w-full max-w-sm flex-col gap-6">
+        <h1 className="text-xl font-semibold text-pivot-ink">Create your Pivotroom.africa account</h1>
+        <GoogleButton next={next} />
+        <div className="flex items-center gap-3 text-xs text-pivot-muted">
+          <div className="h-px flex-1 bg-pivot-line" />
+          or
+          <div className="h-px flex-1 bg-pivot-line" />
+        </div>
+        <SignupForm next={next} />
+        <p className="text-sm text-pivot-ink-2">
+          Already have an account?{" "}
+          <Link href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"} className="underline">
+            Sign in
+          </Link>
+        </p>
       </div>
-      <SignupForm next={next} />
-      <p className="text-sm text-black/60 dark:text-white/60">
-        Already have an account?{" "}
-        <Link href={next ? `/login?next=${encodeURIComponent(next)}` : "/login"} className="underline">
-          Sign in
-        </Link>
-      </p>
     </div>
   );
 }

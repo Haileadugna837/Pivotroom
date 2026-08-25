@@ -7,11 +7,12 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Privacy Policy</h1>
-      <p className="mb-8 text-sm text-black/50 dark:text-white/50">Last updated {new Date().getFullYear()}</p>
+    <div className="bg-pivot-paper px-6 py-10">
+      <div className="mx-auto max-w-2xl">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Privacy Policy</h1>
+      <p className="mb-8 text-sm text-pivot-muted">Last updated {new Date().getFullYear()}</p>
 
-      <div className="flex flex-col gap-6 text-sm text-black/80 dark:text-white/80">
+      <div className="flex flex-col gap-6 text-sm text-pivot-ink-2">
         <section>
           <h2 className="mb-2 font-medium">What we collect</h2>
           <p>
@@ -101,6 +102,7 @@ export default function PrivacyPage() {
           <h2 className="mb-2 font-medium">Questions</h2>
           <p>Reach out via the Contact us link in the footer with any privacy questions or requests.</p>
         </section>
+      </div>
       </div>
     </div>
   );
