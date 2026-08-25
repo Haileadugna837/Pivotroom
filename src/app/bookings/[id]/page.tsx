@@ -55,23 +55,19 @@ export default async function BookingDetailPage({
   const review = isClient && booking.status === "completed" ? await getReviewForBooking(id) : null;
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-10">
-      <h1 className="text-xl font-semibold">Booking</h1>
-      {error && (
-        <p className="mt-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-          {error}
-        </p>
-      )}
-      <dl className="mt-4 space-y-2 text-sm">
+    <div className="mx-auto max-w-lg bg-pivot-paper px-4 py-10">
+      <h1 className="text-xl font-semibold text-pivot-ink">Booking</h1>
+      {error && <p className="mt-3 rounded-md bg-pivot-danger/10 px-3 py-2 text-sm text-pivot-danger">{error}</p>}
+      <dl className="mt-4 space-y-2 text-sm text-pivot-ink">
         {isClient && booking.expertName && (
           <div className="flex justify-between">
-            <dt className="text-black/50 dark:text-white/50">Expert</dt>
+            <dt className="text-pivot-muted">Expert</dt>
             <dd>{booking.expertName}</dd>
           </div>
         )}
         {isExpert && booking.clientName && (
           <div className="flex justify-between">
-            <dt className="text-black/50 dark:text-white/50">Client</dt>
+            <dt className="text-pivot-muted">Client</dt>
             <dd>{booking.clientName}</dd>
           </div>
         )}
@@ -79,30 +75,30 @@ export default async function BookingDetailPage({
           <>
             {booking.expertName && (
               <div className="flex justify-between">
-                <dt className="text-black/50 dark:text-white/50">Expert</dt>
+                <dt className="text-pivot-muted">Expert</dt>
                 <dd>{booking.expertName}</dd>
               </div>
             )}
             {booking.clientName && (
               <div className="flex justify-between">
-                <dt className="text-black/50 dark:text-white/50">Client</dt>
+                <dt className="text-pivot-muted">Client</dt>
                 <dd>{booking.clientName}</dd>
               </div>
             )}
           </>
         )}
         <div className="flex justify-between">
-          <dt className="text-black/50 dark:text-white/50">When</dt>
+          <dt className="text-pivot-muted">When</dt>
           <dd>{new Date(booking.start_time).toLocaleString()}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-black/50 dark:text-white/50">Price</dt>
+          <dt className="text-pivot-muted">Price</dt>
           <dd>
             {booking.price != null ? `${booking.currency} ${booking.price}` : "—"}
           </dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-black/50 dark:text-white/50">Status</dt>
+          <dt className="text-pivot-muted">Status</dt>
           <dd>{STATUS_LABEL[booking.status] ?? booking.status}</dd>
         </div>
       </dl>
@@ -112,7 +108,7 @@ export default async function BookingDetailPage({
           href={booking.meet_link}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-6 inline-block rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+          className="mt-6 inline-block rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper"
         >
           Join Google Meet
         </a>
@@ -121,16 +117,13 @@ export default async function BookingDetailPage({
       {isClient && canCancelConfirmed && (
         <form action={cancelBooking} className="mt-3">
           <input type="hidden" name="booking_id" value={booking.id} />
-          <button
-            type="submit"
-            className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
-          >
+          <button type="submit" className="text-sm text-pivot-muted underline hover:text-pivot-ink">
             Cancel this booking
           </button>
         </form>
       )}
       {isClient && booking.status === "confirmed" && !canCancelConfirmed && (
-        <p className="mt-3 text-xs text-black/50 dark:text-white/50">
+        <p className="mt-3 text-xs text-pivot-muted">
           This session starts within 2 hours, so it can no longer be cancelled here — use Contact
           Us in the footer if something&apos;s come up.
         </p>
@@ -146,30 +139,27 @@ export default async function BookingDetailPage({
             <input type="hidden" name="booking_id" value={booking.id} />
             <button
               type="submit"
-              className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink"
             >
               Mark session completed
             </button>
           </form>
         ) : (
-          <p className="mt-4 text-xs text-black/50 dark:text-white/50">
+          <p className="mt-4 text-xs text-pivot-muted">
             You can mark this completed once the session ends at{" "}
             {new Date(booking.end_time).toLocaleString()}.
           </p>
         ))}
 
       {booking.status === "pending_payment" && (
-        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-          <h2 className="mb-2 text-sm font-medium">Pay for this session</h2>
+        <div className="mt-8 border-t border-pivot-line pt-6">
+          <h2 className="mb-2 text-sm font-medium text-pivot-ink">Pay for this session</h2>
           <PaymentInstructions price={booking.price} currency={booking.currency} />
           <PaymentProofForm bookingId={booking.id} />
           {isClient && (
             <form action={cancelBooking} className="mt-4">
               <input type="hidden" name="booking_id" value={booking.id} />
-              <button
-                type="submit"
-                className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
-              >
+              <button type="submit" className="text-sm text-pivot-muted underline hover:text-pivot-ink">
                 Cancel this booking
               </button>
             </form>
@@ -178,28 +168,24 @@ export default async function BookingDetailPage({
       )}
 
       {proof && booking.status !== "pending_payment" && (
-        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-          <h2 className="mb-2 text-sm font-medium">Payment proof</h2>
-          <p className="text-sm text-black/60 dark:text-white/60">
+        <div className="mt-8 border-t border-pivot-line pt-6">
+          <h2 className="mb-2 text-sm font-medium text-pivot-ink">Payment proof</h2>
+          <p className="text-sm text-pivot-ink-2">
             {/* ph-mask: PostHog session-replay text masking (className, not a
                 capture-blocking mechanism) — a transaction ID rendered as
                 plain text isn't covered by the default input-value masking
                 that already protects the payment-proof/payout forms. */}
             Transaction <span className="ph-mask">{proof.transaction_id}</span> — {proof.status}
           </p>
-          {proof.admin_note && (
-            <p className="mt-1 text-sm text-black/60 dark:text-white/60">
-              Note: {proof.admin_note}
-            </p>
-          )}
+          {proof.admin_note && <p className="mt-1 text-sm text-pivot-ink-2">Note: {proof.admin_note}</p>}
         </div>
       )}
 
       {isClient && booking.status === "completed" && (
-        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-          <h2 className="mb-2 text-sm font-medium">Leave a review</h2>
+        <div className="mt-8 border-t border-pivot-line pt-6">
+          <h2 className="mb-2 text-sm font-medium text-pivot-ink">Leave a review</h2>
           {review ? (
-            <p className="text-sm text-black/60 dark:text-white/60">
+            <p className="text-sm text-pivot-ink-2">
               You rated this session {review.rating} ★
               {review.comment ? ` — ${review.comment}` : ""}
             </p>

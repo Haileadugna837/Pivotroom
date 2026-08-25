@@ -11,7 +11,7 @@ export function ReviewForm({ bookingId, expertId }: { bookingId: string; expertI
           name="rating"
           required
           defaultValue="5"
-          className="mt-1 w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          className="mt-1 w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
         >
           {[5, 4, 3, 2, 1].map((n) => (
             <option key={n} value={n}>
@@ -24,11 +24,11 @@ export function ReviewForm({ bookingId, expertId }: { bookingId: string; expertI
         name="comment"
         rows={3}
         placeholder="How was your session? (optional)"
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
       <button
         type="submit"
-        className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+        className="w-fit rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper"
       >
         Submit review
       </button>

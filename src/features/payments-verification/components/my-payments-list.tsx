@@ -19,17 +19,17 @@ const PAYMENT_LABEL: Record<string, string> = {
 
 export function MyPaymentsList({ rows }: { rows: Row[] }) {
   if (rows.length === 0) {
-    return <p className="text-sm text-black/50 dark:text-white/50">No bookings yet.</p>;
+    return <p className="text-sm text-pivot-muted">No bookings yet.</p>;
   }
 
   return (
     <ul className="flex flex-col gap-3">
       {rows.map((r) => (
-        <li key={r.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+        <li key={r.id} className="rounded-lg border border-pivot-line p-4 text-sm text-pivot-ink">
           <div className="flex items-center justify-between gap-4">
             <div>
               <p className="font-medium">{r.clientName ?? "Client"}</p>
-              <p className="text-black/60 dark:text-white/60">
+              <p className="text-pivot-ink-2">
                 {new Date(r.startTime).toLocaleString()} —{" "}
                 {r.price != null ? `${r.currency} ${r.price}` : "—"}
               </p>
@@ -41,7 +41,7 @@ export function MyPaymentsList({ rows }: { rows: Row[] }) {
                   : "No payment submitted yet"}
               </p>
               {r.payoutStatus && (
-                <p className="text-black/60 dark:text-white/60">
+                <p className="text-pivot-ink-2">
                   Payout:{" "}
                   {r.payoutStatus === "paid"
                     ? `Paid${r.paidAt ? ` on ${new Date(r.paidAt).toLocaleDateString()}` : ""}`

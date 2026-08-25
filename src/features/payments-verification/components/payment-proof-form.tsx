@@ -8,24 +8,21 @@ export function PaymentProofForm({ bookingId }: { bookingId: string }) {
         name="transaction_id"
         required
         placeholder="Transaction ID"
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
       <input
         name="payer_name"
         required
         placeholder="Name on payment"
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
       <input
         name="payment_date"
         type="date"
         required
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
-      <button
-        type="submit"
-        className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
-      >
+      <button type="submit" className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper">
         Submit payment proof
       </button>
     </form>

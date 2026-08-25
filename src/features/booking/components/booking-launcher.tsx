@@ -46,29 +46,23 @@ export function BookingLauncher({
     <>
       {/* Mobile: tap to open the popup picker. Desktop has its own inline
           panel below (md:hidden here, hidden md:block there) instead. */}
-      <div id="book-a-session" className="mt-8 border-t border-black/10 pt-6 dark:border-white/15 md:hidden">
-        <h2 className="mb-3 text-sm font-medium">Book a session</h2>
-        {error && (
-          <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+      <div id="book-a-session" className="mt-8 border-t border-pivot-line pt-6 md:hidden">
+        <h2 className="mb-3 text-sm font-medium text-pivot-ink">Book a session</h2>
+        {error && <p className="mb-3 rounded-md bg-pivot-danger/10 px-3 py-2 text-sm text-pivot-danger">{error}</p>}
         {!isSignedIn ? (
-          <p className="text-sm">
+          <p className="text-sm text-pivot-ink">
             <a href={loginHref} className="underline">
               Sign in
             </a>{" "}
             to book a session.
           </p>
         ) : !hasAvailability ? (
-          <p className="text-sm text-black/60 dark:text-white/60">
-            This expert has no available times right now.
-          </p>
+          <p className="text-sm text-pivot-ink-2">This expert has no available times right now.</p>
         ) : (
           <button
             type="button"
             onClick={() => setOpen(true)}
-            className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+            className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper"
           >
             Choose a time
           </button>
@@ -76,24 +70,18 @@ export function BookingLauncher({
       </div>
 
       {/* Desktop: always-visible inline panel, no click needed to open it. */}
-      <div className="hidden rounded-xl border border-black/10 p-5 md:col-start-2 md:row-start-1 md:block md:sticky md:top-10 dark:border-white/15">
-        <h2 className="mb-3 text-sm font-medium">Book a session</h2>
-        {error && (
-          <p className="mb-3 rounded-md bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-950 dark:text-red-400">
-            {error}
-          </p>
-        )}
+      <div className="hidden rounded-xl border border-pivot-line p-5 md:col-start-2 md:row-start-1 md:block md:sticky md:top-10">
+        <h2 className="mb-3 text-sm font-medium text-pivot-ink">Book a session</h2>
+        {error && <p className="mb-3 rounded-md bg-pivot-danger/10 px-3 py-2 text-sm text-pivot-danger">{error}</p>}
         {!isSignedIn ? (
-          <p className="text-sm">
+          <p className="text-sm text-pivot-ink">
             <a href={loginHref} className="underline">
               Sign in
             </a>{" "}
             to book a session.
           </p>
         ) : !hasAvailability ? (
-          <p className="text-sm text-black/60 dark:text-white/60">
-            This expert has no available times right now.
-          </p>
+          <p className="text-sm text-pivot-ink-2">This expert has no available times right now.</p>
         ) : (
           <BookingPicker {...pickerProps} />
         )}
@@ -104,28 +92,25 @@ export function BookingLauncher({
           straight back to the picker once they've signed in. */}
       {hasAvailability && (
         <div
-          className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between border-t border-black/10 bg-background/95 px-4 py-3 backdrop-blur md:hidden"
+          className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between border-t border-pivot-line bg-pivot-paper/95 px-4 py-3 backdrop-blur md:hidden"
           style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
         >
           <div className="flex flex-col leading-tight">
-            <span className="text-base font-semibold">
+            <span className="text-base font-semibold text-pivot-ink">
               {pricePer15Min != null ? `${currency} ${pricePer15Min}` : "Rate not set"}
             </span>
-            <span className="text-xs text-black/50 dark:text-white/50">Session</span>
+            <span className="text-xs text-pivot-muted">Session</span>
           </div>
           {isSignedIn ? (
             <button
               type="button"
               onClick={() => setOpen(true)}
-              className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background"
+              className="rounded-md bg-pivot-ink px-5 py-2.5 text-sm font-medium text-pivot-paper"
             >
               Book a session
             </button>
           ) : (
-            <a
-              href={loginHref}
-              className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background"
-            >
+            <a href={loginHref} className="rounded-md bg-pivot-ink px-5 py-2.5 text-sm font-medium text-pivot-paper">
               Log in to book
             </a>
           )}
