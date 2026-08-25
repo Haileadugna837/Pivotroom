@@ -30,15 +30,15 @@ const TABS: { key: PayoutTab; label: string }[] = [
 export function PayoutsList({ payouts, activeTab }: { payouts: Payout[]; activeTab: PayoutTab }) {
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2 border-b border-black/10 pb-3 dark:border-white/15">
+      <div className="mb-4 flex flex-wrap gap-2 border-b border-pivot-line pb-3">
         {TABS.map((t) => (
           <Link
             key={t.key}
             href={`/admin/payouts?tab=${t.key}`}
             className={`rounded-md px-3 py-1.5 text-sm ${
               activeTab === t.key
-                ? "bg-foreground text-background"
-                : "text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+                ? "bg-pivot-ink text-pivot-paper"
+                : "text-pivot-muted hover:bg-pivot-paper-2"
             }`}
           >
             {t.label}
@@ -47,17 +47,17 @@ export function PayoutsList({ payouts, activeTab }: { payouts: Payout[]; activeT
       </div>
 
       {payouts.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No payouts in this view.</p>
+        <p className="text-sm text-pivot-muted">No payouts in this view.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {payouts.map((p) => (
-            <li key={p.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <li key={p.id} className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="font-medium">
+                  <p className="font-medium text-pivot-ink">
                     {p.expertProfile?.full_name ?? p.expertProfile?.email ?? "Unknown expert"}
                   </p>
-                  <p className="text-black/60 dark:text-white/60">
+                  <p className="text-pivot-ink-2">
                     {p.bookings ? new Date(p.bookings.start_time).toLocaleString() : ""} —{" "}
                     {p.amount != null ? `${p.bookings?.currency} ${p.amount}` : "no amount"}
                   </p>
@@ -65,21 +65,21 @@ export function PayoutsList({ payouts, activeTab }: { payouts: Payout[]; activeT
                 {p.status === "unpaid" ? (
                   <form action={markPayoutPaid}>
                     <input type="hidden" name="payout_id" value={p.id} />
-                    <button className="rounded-md bg-foreground px-3 py-1.5 text-background">
+                    <button className="rounded-md bg-pivot-ink px-3 py-1.5 text-pivot-paper">
                       Mark paid
                     </button>
                   </form>
                 ) : (
-                  <span className="rounded-full bg-black/5 px-3 py-1.5 text-xs dark:bg-white/10">
+                  <span className="rounded-full bg-pivot-olive/10 px-3 py-1.5 text-xs text-pivot-olive">
                     Paid {p.paid_at ? new Date(p.paid_at).toLocaleDateString() : ""}
                   </span>
                 )}
               </div>
               <details className="mt-2">
-                <summary className="cursor-pointer text-xs text-black/50 dark:text-white/50">
+                <summary className="cursor-pointer text-xs text-pivot-muted">
                   Details
                 </summary>
-                <div className="mt-2 space-y-1 border-t border-black/10 pt-2 text-black/70 dark:border-white/15 dark:text-white/70">
+                <div className="mt-2 space-y-1 border-t border-pivot-line pt-2 text-pivot-ink-2">
                   <p>Expert email: {p.expertProfile?.email ?? "—"}</p>
                   <p>
                     Client: {p.clientProfile?.full_name ?? "—"} ({p.clientProfile?.email ?? "—"})
@@ -91,7 +91,7 @@ export function PayoutsList({ payouts, activeTab }: { payouts: Payout[]; activeT
                     </p>
                   )}
                   <p>Payout amount: {p.amount != null ? `${p.bookings?.currency} ${p.amount}` : "—"}</p>
-                  <p className="font-medium text-black dark:text-white">Pay to:</p>
+                  <p className="font-medium text-pivot-ink">Pay to:</p>
                   <p>Account name: {p.expertPayoutInfo?.payout_account_name ?? "Not provided"}</p>
                   <p>Account number: {p.expertPayoutInfo?.payout_account_number ?? "Not provided"}</p>
                 </div>

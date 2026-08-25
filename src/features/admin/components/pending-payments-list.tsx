@@ -25,7 +25,7 @@ type PendingProof = {
 
 export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
   if (!proofs.length) {
-    return <p className="text-sm text-black/50 dark:text-white/50">No pending payments.</p>;
+    return <p className="text-sm text-pivot-muted">No pending payments.</p>;
   }
 
   return (
@@ -33,7 +33,7 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
       <form id={BULK_FORM_ID} action={verifyPaymentsBulk} className="mb-3">
         <button
           type="submit"
-          className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+          className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink"
         >
           Verify &amp; confirm selected
         </button>
@@ -51,7 +51,7 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
           price: booking?.price ?? null,
         });
         return (
-          <li key={p.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+          <li key={p.id} className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
             <div className="flex items-start gap-2">
               <input
                 type="checkbox"
@@ -62,15 +62,15 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
                 className="mt-1 h-4 w-4 shrink-0"
               />
               <div className="min-w-0 flex-1">
-            <p className="font-medium">
+            <p className="font-medium text-pivot-ink">
               {p.expertProfile?.full_name ?? "Unknown expert"} ← {p.clientProfile?.full_name ?? "Unknown client"}
             </p>
-            <p>
+            <p className="text-pivot-ink">
               Txn <span className="font-mono">{p.transaction_id}</span> — {p.payer_name} —{" "}
               {p.payment_date}
             </p>
             {booking && (
-              <p className="text-black/60 dark:text-white/60">
+              <p className="text-pivot-ink-2">
                 {new Date(booking.start_time).toLocaleString()} —{" "}
                 {booking.price != null ? `${booking.currency} ${booking.price}` : "no price"}
               </p>
@@ -84,14 +84,14 @@ export function PendingPaymentsList({ proofs }: { proofs: PendingProof[] }) {
                 <input type="hidden" name="start_time" value={booking?.start_time ?? ""} />
                 <input type="hidden" name="end_time" value={booking?.end_time ?? ""} />
                 <input type="hidden" name="price" value={booking?.price ?? ""} />
-                <button className="rounded-md bg-foreground px-3 py-1.5 text-background">
+                <button className="rounded-md bg-pivot-ink px-3 py-1.5 text-pivot-paper">
                   Verify &amp; confirm
                 </button>
               </form>
               <form action={rejectPayment}>
                 <input type="hidden" name="proof_id" value={p.id} />
                 <input type="hidden" name="booking_id" value={p.booking_id} />
-                <button className="rounded-md border border-black/10 px-3 py-1.5 dark:border-white/15">
+                <button className="rounded-md border border-pivot-line px-3 py-1.5 text-pivot-ink">
                   Reject
                 </button>
               </form>

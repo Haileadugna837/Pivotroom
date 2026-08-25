@@ -6,9 +6,9 @@ import { getAcquisitionSummaryForAdminHome } from "@/features/acquisition/server
 export default async function AdminDashboardPage() {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
-      <div className="mx-auto max-w-4xl px-6 py-10">
-        <h1 className="text-xl font-semibold">Dashboard</h1>
-        <p className="mt-4 text-sm text-amber-700 dark:text-amber-500">
+      <div className="mx-auto max-w-4xl bg-pivot-paper px-6 py-10">
+        <h1 className="text-xl font-semibold text-pivot-ink">Dashboard</h1>
+        <p className="mt-4 text-sm text-pivot-accent">
           `SUPABASE_SERVICE_ROLE_KEY` is not set — admin queries cannot run yet.
         </p>
       </div>
@@ -18,8 +18,8 @@ export default async function AdminDashboardPage() {
   const [metrics, acquisition] = await Promise.all([getDashboardMetrics(), getAcquisitionSummaryForAdminHome()]);
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-10">
-      <h1 className="mb-6 text-xl font-semibold">Dashboard</h1>
+    <div className="mx-auto max-w-4xl bg-pivot-paper px-6 py-10">
+      <h1 className="mb-6 text-xl font-semibold text-pivot-ink">Dashboard</h1>
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
         <MetricCard label="Total experts" value={metrics.totalExperts} />
         <MetricCard label="Approved experts" value={metrics.approvedExperts} />
@@ -31,29 +31,29 @@ export default async function AdminDashboardPage() {
         <MetricCard label="Avg. views per expert" value={metrics.avgViewsPerExpert.toFixed(1)} />
       </div>
 
-      <div className="mt-8 rounded-lg border border-black/10 p-4 dark:border-white/15">
+      <div className="mt-8 rounded-lg border border-pivot-line p-4">
         <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-medium">Early Access</p>
-          <Link href="/admin/acquisition/analytics" className="text-xs underline">
+          <p className="text-sm font-medium text-pivot-ink">Early Access</p>
+          <Link href="/admin/acquisition/analytics" className="text-xs text-pivot-ink underline">
             View Analytics
           </Link>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           <div>
-            <p className="text-lg font-semibold">{acquisition.leads}</p>
-            <p className="text-xs text-black/50 dark:text-white/50">Users</p>
+            <p className="text-lg font-semibold text-pivot-ink">{acquisition.leads}</p>
+            <p className="text-xs text-pivot-muted">Users</p>
           </div>
           <div>
-            <p className="text-lg font-semibold">{acquisition.applications}</p>
-            <p className="text-xs text-black/50 dark:text-white/50">Experts</p>
+            <p className="text-lg font-semibold text-pivot-ink">{acquisition.applications}</p>
+            <p className="text-xs text-pivot-muted">Experts</p>
           </div>
           <div>
-            <p className="text-lg font-semibold">{acquisition.nominations}</p>
-            <p className="text-xs text-black/50 dark:text-white/50">Nominations</p>
+            <p className="text-lg font-semibold text-pivot-ink">{acquisition.nominations}</p>
+            <p className="text-xs text-pivot-muted">Nominations</p>
           </div>
           <div>
-            <p className="text-lg font-semibold">+{acquisition.leadsThisWeek}</p>
-            <p className="text-xs text-black/50 dark:text-white/50">This Week</p>
+            <p className="text-lg font-semibold text-pivot-ink">+{acquisition.leadsThisWeek}</p>
+            <p className="text-xs text-pivot-muted">This Week</p>
           </div>
         </div>
       </div>

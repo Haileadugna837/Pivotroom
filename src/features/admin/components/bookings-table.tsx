@@ -32,15 +32,15 @@ export function BookingsTable({
 }) {
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2 border-b border-black/10 pb-3 dark:border-white/15">
+      <div className="mb-4 flex flex-wrap gap-2 border-b border-pivot-line pb-3">
         {TABS.map((t) => (
           <Link
             key={t.key}
             href={`/admin/bookings?tab=${t.key}`}
             className={`rounded-md px-3 py-1.5 text-sm ${
               activeTab === t.key
-                ? "bg-foreground text-background"
-                : "text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+                ? "bg-pivot-ink text-pivot-paper"
+                : "text-pivot-muted hover:bg-pivot-paper-2"
             }`}
           >
             {t.label}
@@ -49,12 +49,12 @@ export function BookingsTable({
       </div>
 
       {bookings.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No bookings in this view.</p>
+        <p className="text-sm text-pivot-muted">No bookings in this view.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
-              <tr className="border-b border-black/10 text-black/50 dark:border-white/15 dark:text-white/50">
+              <tr className="border-b border-pivot-line text-pivot-muted">
                 <th className="py-2 pr-4 font-medium">When</th>
                 <th className="py-2 pr-4 font-medium">Client</th>
                 <th className="py-2 pr-4 font-medium">Expert</th>
@@ -64,7 +64,7 @@ export function BookingsTable({
             </thead>
             <tbody>
               {bookings.map((b) => (
-                <tr key={b.id} className="border-b border-black/5 dark:border-white/10">
+                <tr key={b.id} className="border-b border-pivot-line text-pivot-ink">
                   <td className="py-2 pr-4">
                     <Link href={`/bookings/${b.id}`} className="hover:underline">
                       {new Date(b.start_time).toLocaleString()}
