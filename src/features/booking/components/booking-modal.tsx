@@ -25,16 +25,16 @@ export function BookingModal({ onClose, ...pickerProps }: BookingModalProps) {
         role="dialog"
         aria-modal="true"
         aria-label="Request a time"
-        className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-background sm:max-w-md sm:rounded-2xl"
+        className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-pivot-white text-pivot-ink sm:max-w-md sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/15">
+        <div className="flex items-center justify-between border-b border-pivot-line px-5 py-4">
           <h2 className="text-lg font-semibold">Request a time</h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+            className="text-pivot-muted hover:text-pivot-ink"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />

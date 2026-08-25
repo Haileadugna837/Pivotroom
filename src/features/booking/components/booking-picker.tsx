@@ -66,8 +66,8 @@ function computeSlotsByDate(availability: AvailabilityWindow[], durationMinutes:
 }
 
 const buttonBase = "rounded-lg px-2.5 py-2.5 text-sm font-medium transition-colors";
-const buttonInactive = "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:hover:bg-indigo-900";
-const buttonActive = "bg-indigo-600 text-white";
+const buttonInactive = "bg-pivot-paper-2 text-pivot-ink hover:bg-pivot-paper-2/70";
+const buttonActive = "bg-pivot-ink text-pivot-paper";
 
 export type BookingPickerProps = {
   expertId: string;
@@ -100,7 +100,7 @@ export function BookingPicker({
   return (
     <div className="flex flex-col gap-4">
       <div>
-        <p className="mb-2 text-sm font-medium">1) Select the call duration</p>
+        <p className="mb-2 text-sm font-medium text-pivot-ink">1) Select the call duration</p>
         <div className="grid grid-cols-2 gap-2">
           {DURATIONS.map((d) => (
             <button
@@ -116,16 +116,16 @@ export function BookingPicker({
       </div>
 
       <div>
-        <p className="mb-2 text-sm font-medium">2) Select a time for your video session</p>
+        <p className="mb-2 text-sm font-medium text-pivot-ink">2) Select a time for your video session</p>
         {slotsByDate.size === 0 ? (
-          <p className="text-sm text-black/60 dark:text-white/60">
+          <p className="text-sm text-pivot-ink-2">
             No times fit this duration — try a shorter session.
           </p>
         ) : (
           <div className="flex flex-col gap-4">
             {Array.from(slotsByDate.entries()).map(([date, times]) => (
               <div key={date}>
-                <p className="mb-2 text-sm text-black/60 dark:text-white/60">{formatDateHeader(date)}</p>
+                <p className="mb-2 text-sm text-pivot-ink-2">{formatDateHeader(date)}</p>
                 <div className="grid grid-cols-3 gap-2">
                   {times.map((t) => {
                     const active = selection?.date === date && selection.startMinutes === t;
@@ -155,7 +155,7 @@ export function BookingPicker({
 
       <form
         action={createBooking}
-        className="flex items-center justify-between gap-3 border-t border-black/10 pt-4 dark:border-white/15"
+        className="flex items-center justify-between gap-3 border-t border-pivot-line pt-4"
       >
         <input type="hidden" name="expert_id" value={expertId} />
         <input type="hidden" name="date" value={selection?.date ?? ""} />
@@ -163,11 +163,11 @@ export function BookingPicker({
         <input type="hidden" name="duration_minutes" value={duration} />
 
         <div className="flex flex-col leading-tight">
-          <span className="text-base font-semibold">
+          <span className="text-base font-semibold text-pivot-ink">
             {price != null ? `${currency} ${price} • Session` : "Rate not set"}
           </span>
           {count > 0 && (
-            <span className="text-xs text-black/50 dark:text-white/50">
+            <span className="text-xs text-pivot-muted">
               ★ {average?.toFixed(1)} ({count})
             </span>
           )}
@@ -175,7 +175,7 @@ export function BookingPicker({
         <button
           type="submit"
           disabled={!selection}
-          className="rounded-md bg-foreground px-5 py-2.5 text-sm font-medium text-background disabled:opacity-50"
+          className="rounded-md bg-pivot-ink px-5 py-2.5 text-sm font-medium text-pivot-paper disabled:opacity-50"
         >
           Request
         </button>

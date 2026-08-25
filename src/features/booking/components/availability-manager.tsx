@@ -21,7 +21,7 @@ export function AvailabilityManager({ windows }: { windows: AvailabilityWindow[]
             name="date"
             required
             min={new Date().toISOString().slice(0, 10)}
-            className="mt-1 block rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
         <label className="text-sm">
@@ -30,7 +30,7 @@ export function AvailabilityManager({ windows }: { windows: AvailabilityWindow[]
             type="time"
             name="start_time"
             required
-            className="mt-1 block rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
         <label className="text-sm">
@@ -39,19 +39,16 @@ export function AvailabilityManager({ windows }: { windows: AvailabilityWindow[]
             type="time"
             name="end_time"
             required
-            className="mt-1 block rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
-        >
+        <button type="submit" className="rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper">
           Add
         </button>
       </form>
 
       {windows.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">
+        <p className="text-sm text-pivot-muted">
           No upcoming availability set — clients can't book you until you add some.
         </p>
       ) : (
@@ -59,14 +56,14 @@ export function AvailabilityManager({ windows }: { windows: AvailabilityWindow[]
           {windows.map((w) => (
             <li
               key={w.id}
-              className="flex items-center justify-between rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="flex items-center justify-between rounded-md border border-pivot-line px-3 py-2 text-sm text-pivot-ink"
             >
               <span>
                 {w.date} · {w.start_time.slice(0, 5)}–{w.end_time.slice(0, 5)}
               </span>
               <form action={deleteAvailabilityWindow}>
                 <input type="hidden" name="id" value={w.id} />
-                <button type="submit" className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
+                <button type="submit" className="text-pivot-muted hover:text-pivot-ink">
                   Remove
                 </button>
               </form>
