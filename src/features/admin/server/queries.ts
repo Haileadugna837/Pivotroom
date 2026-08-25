@@ -298,7 +298,9 @@ export async function getNomineesForAdmin() {
 
   const { data: nominations, error: nomError } = await admin
     .from("nominations")
-    .select("id, nominee_id, nominator_id, reason, links, created_at");
+    .select(
+      "id, nominee_id, nominator_id, reason, links, created_at, nominee_title, nominee_location, company, social_url, topic, categories_requested, nominator_name, nominator_phone, nominator_email, nominator_relationship, intro_comfort",
+    );
   if (nomError) throw nomError;
 
   // nominator_id is nullable — anonymous nominations submitted from the
@@ -325,7 +327,9 @@ export async function getNomineesForAdmin() {
         nominations: list
           .map((n) => ({
             ...n,
-            nominatorName: n.nominator_id ? (nominatorById.get(n.nominator_id) ?? "Unknown") : "Anonymous",
+            nominatorName: n.nominator_id
+              ? (nominatorById.get(n.nominator_id) ?? "Unknown")
+              : (n.nominator_name ?? "Anonymous"),
           }))
           .sort((a, b) => b.created_at.localeCompare(a.created_at)),
         count: list.length,

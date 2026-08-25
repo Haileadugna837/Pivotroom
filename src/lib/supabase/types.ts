@@ -1157,42 +1157,66 @@ export type Database = {
       }
       nominations: {
         Row: {
+          categories_requested: string[]
           company: string | null
           created_at: string
           id: string
+          intro_comfort: string | null
           landing_session_id: string | null
           links: string[]
+          nominator_email: string | null
           nominator_id: string | null
           nominator_lead_id: string | null
+          nominator_name: string | null
+          nominator_phone: string | null
+          nominator_relationship: string | null
           nominee_id: string
+          nominee_location: string | null
+          nominee_title: string | null
           reason: string
           social_url: string | null
           source: string
           topic: string | null
         }
         Insert: {
+          categories_requested?: string[]
           company?: string | null
           created_at?: string
           id?: string
+          intro_comfort?: string | null
           landing_session_id?: string | null
           links?: string[]
+          nominator_email?: string | null
           nominator_id?: string | null
           nominator_lead_id?: string | null
+          nominator_name?: string | null
+          nominator_phone?: string | null
+          nominator_relationship?: string | null
           nominee_id: string
+          nominee_location?: string | null
+          nominee_title?: string | null
           reason: string
           social_url?: string | null
           source?: string
           topic?: string | null
         }
         Update: {
+          categories_requested?: string[]
           company?: string | null
           created_at?: string
           id?: string
+          intro_comfort?: string | null
           landing_session_id?: string | null
           links?: string[]
+          nominator_email?: string | null
           nominator_id?: string | null
           nominator_lead_id?: string | null
+          nominator_name?: string | null
+          nominator_phone?: string | null
+          nominator_relationship?: string | null
           nominee_id?: string
+          nominee_location?: string | null
+          nominee_title?: string | null
           reason?: string
           social_url?: string | null
           source?: string
