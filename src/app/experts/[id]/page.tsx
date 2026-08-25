@@ -79,19 +79,19 @@ export default async function ExpertDetailPage({
     : null;
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-10 pb-24 md:pb-10">
+    <div className="mx-auto max-w-5xl bg-pivot-paper px-4 py-10 pb-24 md:pb-10">
       <CapturePageEvent
         event="expert_viewed"
         properties={{ expert_id: expert.id, expert_name: name, category_id: expert.primary_category_id }}
       />
       <div className="md:grid md:grid-cols-[1fr_380px] md:items-start md:gap-10">
         <div className="mx-auto w-full max-w-lg md:col-start-1 md:row-start-1 md:mx-0">
-          <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 md:aspect-[4/5] dark:bg-white/10">
+          <div className="relative mx-auto aspect-[3/4] w-full overflow-hidden rounded-xl bg-pivot-paper-2 md:aspect-[4/5]">
             {expert.photo_url ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={expert.photo_url} alt={name} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center text-5xl font-semibold text-black/20 dark:text-white/20">
+              <div className="flex h-full w-full items-center justify-center text-5xl font-semibold text-pivot-muted">
                 {name.charAt(0).toUpperCase()}
               </div>
             )}
@@ -105,7 +105,7 @@ export default async function ExpertDetailPage({
 
           <div className="mt-4 flex items-center justify-between gap-2">
             <div className="flex items-center gap-1.5">
-              <h1 className="text-2xl font-semibold">{name}</h1>
+              <h1 className="text-2xl font-semibold text-pivot-ink">{name}</h1>
               <VerifiedBadge gold={donatesToNgo} size={16} />
             </div>
             <div className="flex items-center gap-2">
@@ -115,7 +115,7 @@ export default async function ExpertDetailPage({
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
                 >
                   <SocialIcon platform={link.platform} className="h-4 w-4" />
                 </a>
@@ -124,25 +124,21 @@ export default async function ExpertDetailPage({
             </div>
           </div>
 
-          {expert.headline && (
-            <p className="mt-1 text-base text-black/60 dark:text-white/60">{expert.headline}</p>
-          )}
+          {expert.headline && <p className="mt-1 text-base text-pivot-ink-2">{expert.headline}</p>}
 
           {count > 0 && (
-            <p className="mt-3 text-base">
-              ★ {average?.toFixed(1)} <span className="text-black/50 dark:text-white/50">({count})</span>
+            <p className="mt-3 text-base text-pivot-ink">
+              ★ {average?.toFixed(1)} <span className="text-pivot-muted">({count})</span>
             </p>
           )}
 
           {donationMessage && (
-            <div className="mt-3 rounded-2xl bg-indigo-50 px-5 py-4 text-center text-sm font-medium text-indigo-900 dark:bg-indigo-950/40 dark:text-indigo-200">
+            <div className="mt-3 rounded-2xl bg-pivot-olive/10 px-5 py-4 text-center text-sm font-medium text-pivot-olive">
               {donationMessage}
             </div>
           )}
 
-          {expert.bio && (
-            <p className="mt-3 text-base text-black/70 dark:text-white/70">{expert.bio}</p>
-          )}
+          {expert.bio && <p className="mt-3 text-base text-pivot-ink-2">{expert.bio}</p>}
 
           <WhatToExpect
             expectations={expectations}
@@ -150,7 +146,7 @@ export default async function ExpertDetailPage({
             className="mt-4 md:hidden"
           />
 
-          <p className="mt-4 text-lg font-semibold">
+          <p className="mt-4 text-lg font-semibold text-pivot-ink">
             {expert.price_per_15_min != null
               ? `${expert.currency} ${expert.price_per_15_min} • 15 min`
               : "Rate not set"}
@@ -178,21 +174,21 @@ export default async function ExpertDetailPage({
       </div>
 
       {bookableTopics.length > 0 && (
-        <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-          <h2 className="mb-3 text-sm font-medium">What you can book {name} for</h2>
+        <div className="mt-8 border-t border-pivot-line pt-6">
+          <h2 className="mb-3 text-sm font-medium text-pivot-ink">What you can book {name} for</h2>
           <ul className="flex flex-col gap-3">
             {bookableTopics.map((t) => (
-              <li key={t.id} className="rounded-lg border border-black/10 p-3 text-sm dark:border-white/15">
+              <li key={t.id} className="rounded-lg border border-pivot-line p-3 text-sm text-pivot-ink">
                 <p className="font-medium">{t.title}</p>
-                <p className="mt-1 text-black/60 dark:text-white/60">{t.description}</p>
+                <p className="mt-1 text-pivot-muted">{t.description}</p>
               </li>
             ))}
           </ul>
         </div>
       )}
 
-      <div className="mt-8 border-t border-black/10 pt-6 dark:border-white/15">
-        <h2 className="mb-3 text-sm font-medium">Reviews</h2>
+      <div className="mt-8 border-t border-pivot-line pt-6">
+        <h2 className="mb-3 text-sm font-medium text-pivot-ink">Reviews</h2>
         <ReviewList reviews={reviews} average={average} count={count} />
       </div>
 

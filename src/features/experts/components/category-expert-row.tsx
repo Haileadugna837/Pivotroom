@@ -35,17 +35,14 @@ export function CategoryExpertRow({
   return (
     <div id={`category-${categoryId}`} className="scroll-mt-20">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-xl font-semibold">
+        <h2 className="text-xl font-semibold text-pivot-ink">
           {categoryName}.{" "}
-          <span className="font-normal text-black/50 dark:text-white/50">
+          <span className="font-normal text-pivot-muted">
             {tagline ?? `Connect with vetted ${categoryName.toLowerCase()} experts over video.`}
           </span>
         </h2>
         {seeAllHref && (
-          <Link
-            href={seeAllHref}
-            className="shrink-0 text-sm font-medium hover:underline"
-          >
+          <Link href={seeAllHref} className="shrink-0 text-sm font-medium text-pivot-ink hover:underline">
             See all →
           </Link>
         )}

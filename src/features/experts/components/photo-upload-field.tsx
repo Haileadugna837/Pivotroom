@@ -54,14 +54,14 @@ export function PhotoUploadField({
 
   return (
     <div>
-      <p className="mb-2 text-sm font-medium">{label}</p>
+      <p className="mb-2 text-sm font-medium text-pivot-ink">{label}</p>
       <div className="flex items-center gap-4">
-        <div className="h-28 w-24 shrink-0 overflow-hidden rounded-md bg-black/5 dark:bg-white/10">
+        <div className="h-28 w-24 shrink-0 overflow-hidden rounded-md bg-pivot-paper-2">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={preview} alt="" className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-xs text-black/40 dark:text-white/40">
+            <div className="flex h-full w-full items-center justify-center text-xs text-pivot-muted">
               No photo
             </div>
           )}
@@ -69,7 +69,7 @@ export function PhotoUploadField({
         <div className="flex flex-col gap-2">
           <label
             htmlFor={inputId}
-            className="w-fit cursor-pointer rounded-md border border-black/10 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+            className="w-fit cursor-pointer rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink hover:bg-pivot-paper-2"
           >
             {preview ? "Change photo" : "Upload photo"}
           </label>
@@ -82,12 +82,10 @@ export function PhotoUploadField({
             onChange={handleChange}
             className="sr-only"
           />
-          {busy && <p className="text-xs text-black/50 dark:text-white/50">Processing…</p>}
-          {!busy && fileName && (
-            <p className="text-xs text-black/50 dark:text-white/50">{fileName}</p>
-          )}
-          {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <p className="text-xs text-black/50 dark:text-white/50">JPG, PNG, or WEBP.</p>
+          {busy && <p className="text-xs text-pivot-muted">Processing…</p>}
+          {!busy && fileName && <p className="text-xs text-pivot-muted">{fileName}</p>}
+          {error && <p className="text-xs text-pivot-danger">{error}</p>}
+          <p className="text-xs text-pivot-muted">JPG, PNG, or WEBP.</p>
         </div>
       </div>
     </div>

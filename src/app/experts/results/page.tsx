@@ -63,7 +63,7 @@ export default async function FinderResultsPage({
   if (session.subcategory_id) changeAnswersParams.set("subcategory", session.subcategory_id);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
+    <div className="mx-auto max-w-6xl bg-pivot-paper px-4 py-10">
       <CapturePageEvent
         event="finder_results_viewed"
         properties={{
@@ -73,35 +73,35 @@ export default async function FinderResultsPage({
           problem: session.problem,
         }}
       />
-      <Link
-        href="/"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
-      >
+      <Link href="/" className="mb-6 inline-flex items-center gap-1.5 text-sm text-pivot-muted hover:text-pivot-ink">
         ← Home
       </Link>
 
-      <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">
+      <h1 className="font-serif text-2xl font-normal leading-tight text-pivot-ink sm:text-3xl">
         {problemText ? `Experts who can help you with ${problemText.toLowerCase()}` : "Experts who can help you"}
       </h1>
-      {breadcrumb && <p className="mt-1 text-sm text-black/50 dark:text-white/50">{breadcrumb}</p>}
+      {breadcrumb && <p className="mt-1 text-sm text-pivot-muted">{breadcrumb}</p>}
       {identityText && problemText && (
-        <p className="mt-3 max-w-xl text-sm text-black/60 dark:text-white/60">
+        <p className="mt-3 max-w-xl text-sm text-pivot-ink-2">
           Best for {identityText.toLowerCase()}s looking to {problemText.toLowerCase()}.
         </p>
       )}
 
-      <div className="mb-8 mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-4 dark:border-white/15">
-        <Link href={`/?${changeAnswersParams.toString()}#find-expert`} className="text-sm font-medium hover:underline">
+      <div className="mb-8 mt-6 flex flex-wrap items-center justify-between gap-3 border-b border-pivot-line pb-4">
+        <Link
+          href={`/?${changeAnswersParams.toString()}#find-expert`}
+          className="text-sm font-medium text-pivot-ink hover:underline"
+        >
           Change Answers
         </Link>
-        <form method="GET" className="flex items-center gap-2 text-sm">
+        <form method="GET" className="flex items-center gap-2 text-sm text-pivot-ink">
           <input type="hidden" name="s" value={sessionId} />
           <label className="flex items-center gap-2">
             Sort by
             <select
               name="sort"
               defaultValue={sort}
-              className="rounded-md border border-black/10 bg-transparent px-2 py-1.5 text-sm dark:border-white/15"
+              className="rounded-md border border-pivot-line bg-transparent px-2 py-1.5 text-sm text-pivot-ink"
             >
               {SORT_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
@@ -110,17 +110,14 @@ export default async function FinderResultsPage({
               ))}
             </select>
           </label>
-          <button
-            type="submit"
-            className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
-          >
+          <button type="submit" className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink">
             Apply
           </button>
         </form>
       </div>
 
       {sortedExperts.length === 0 ? (
-        <p className="text-sm text-black/60 dark:text-white/60">No experts match right now.</p>
+        <p className="text-sm text-pivot-ink-2">No experts match right now.</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {sortedExperts.map((expert) => (

@@ -26,7 +26,7 @@ export function ShareButton({ title }: { title: string }) {
       onClick={handleShare}
       aria-label={copied ? "Link copied!" : "Share"}
       title={copied ? "Link copied!" : "Share"}
-      className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+      className="flex h-9 w-9 items-center justify-center rounded-full border border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
         <circle cx="18" cy="5" r="2.2" stroke="currentColor" strokeWidth="1.5" />

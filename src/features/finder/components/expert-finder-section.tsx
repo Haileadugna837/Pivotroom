@@ -22,9 +22,9 @@ type Category = { id: string; name: string; parent_id: string | null };
 type Step = "identity" | "problem" | "category" | "matching" | "found" | "not_found" | "contact_submitted";
 
 const OPTION_BUTTON =
-  "rounded-2xl border px-4 py-3 text-left text-sm font-medium transition hover:border-black/30 dark:hover:border-white/40";
-const OPTION_SELECTED = "border-foreground bg-foreground text-background";
-const OPTION_UNSELECTED = "border-black/10 dark:border-white/15";
+  "rounded-2xl border px-4 py-3 text-left text-sm font-medium transition hover:border-pivot-ink/30";
+const OPTION_SELECTED = "border-pivot-ink bg-pivot-ink text-pivot-paper";
+const OPTION_UNSELECTED = "border-pivot-line text-pivot-ink";
 
 function OptionGrid({
   options,
@@ -160,11 +160,11 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
   return (
     <section
       id="find-expert"
-      className="scroll-mt-20 rounded-3xl border border-black/10 bg-black/[0.015] px-5 py-10 dark:border-white/15 dark:bg-white/[0.02] sm:px-10"
+      className="scroll-mt-20 rounded-3xl border border-pivot-line bg-pivot-paper-2 px-5 py-10 sm:px-10"
     >
       <div className="mx-auto max-w-xl text-center">
-        <h2 className="text-2xl font-semibold">Find the right expert for what you need</h2>
-        <p className="mt-2 text-black/60 dark:text-white/60">
+        <h2 className="text-2xl font-semibold text-pivot-ink">Find the right expert for what you need</h2>
+        <p className="mt-2 text-pivot-ink-2">
           Not sure who to book? Tell us what you need help with and we&apos;ll point you to the right people.
         </p>
       </div>
@@ -172,18 +172,18 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
       <div className="mx-auto mt-8 max-w-xl">
         {step === "identity" && (
           <div>
-            <p className="mb-3 text-center text-sm font-medium">Who are you?</p>
+            <p className="mb-3 text-center text-sm font-medium text-pivot-ink">Who are you?</p>
             <OptionGrid options={FINDER_IDENTITIES} selected={identity} onSelect={setIdentity} />
             <div className="mt-5 flex flex-col items-center gap-3">
               <button
                 type="button"
                 onClick={handleContinueFromIdentity}
                 disabled={!identity}
-                className="w-full max-w-xs rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background disabled:opacity-40 sm:w-auto"
+                className="w-full max-w-xs rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper disabled:opacity-40 sm:w-auto"
               >
                 Continue
               </button>
-              <Link href="/experts" className="text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
+              <Link href="/experts" className="text-sm text-pivot-muted hover:text-pivot-ink">
                 Skip &amp; Browse Everyone
               </Link>
             </div>
@@ -192,13 +192,13 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
 
         {step === "problem" && (
           <div>
-            <p className="mb-3 text-center text-sm font-medium">What would you like help with?</p>
+            <p className="mb-3 text-center text-sm font-medium text-pivot-ink">What would you like help with?</p>
             <OptionGrid options={problemOptions} selected={problem} onSelect={handleSelectProblem} />
             <div className="mt-5 text-center">
               <button
                 type="button"
                 onClick={() => setStep("identity")}
-                className="text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+                className="text-sm text-pivot-muted hover:text-pivot-ink"
               >
                 ← Back
               </button>
@@ -208,7 +208,9 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
 
         {step === "category" && (
           <div>
-            <p className="mb-3 text-center text-sm font-medium">Which area is closest to what you need?</p>
+            <p className="mb-3 text-center text-sm font-medium text-pivot-ink">
+              Which area is closest to what you need?
+            </p>
             <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
               {topLevelCategories.map((c) => (
                 <button
@@ -227,13 +229,11 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
 
             {subcategories.length > 0 && (
               <div className="mt-4">
-                <p className="mb-2 text-center text-xs text-black/50 dark:text-white/50">
-                  Optional — narrow it down
-                </p>
+                <p className="mb-2 text-center text-xs text-pivot-muted">Optional — narrow it down</p>
                 <select
                   value={subcategoryId ?? ""}
                   onChange={(e) => setSubcategoryId(e.target.value || null)}
-                  className="w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+                  className="w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
                 >
                   <option value="">Any area within {topLevelCategories.find((c) => c.id === categoryId)?.name}</option>
                   {subcategories.map((s) => (
@@ -250,14 +250,14 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
                 type="button"
                 onClick={handleFindExperts}
                 disabled={!categoryId || matching}
-                className="w-full max-w-xs rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background disabled:opacity-40 sm:w-auto"
+                className="w-full max-w-xs rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper disabled:opacity-40 sm:w-auto"
               >
                 Find Experts
               </button>
               <button
                 type="button"
                 onClick={() => setStep("problem")}
-                className="text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+                className="text-sm text-pivot-muted hover:text-pivot-ink"
               >
                 ← Back
               </button>
@@ -266,19 +266,19 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
         )}
 
         {step === "matching" && (
-          <p className="py-8 text-center text-sm text-black/60 dark:text-white/60">Finding experts for you…</p>
+          <p className="py-8 text-center text-sm text-pivot-ink-2">Finding experts for you…</p>
         )}
 
         {step === "found" && (
           <div className="text-center">
-            <p className="text-lg font-medium">
+            <p className="text-lg font-medium text-pivot-ink">
               We found {matchCount} {matchCount === 1 ? "expert" : "experts"} who can help.
             </p>
             {previews.length > 0 && (
               <div className="mt-5 flex flex-wrap justify-center gap-4">
                 {previews.map((p) => (
                   <div key={p.id} className="flex w-24 flex-col items-center gap-1.5">
-                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-black/5 text-lg font-semibold text-black/30 dark:bg-white/10 dark:text-white/30">
+                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-pivot-paper-2 text-lg font-semibold text-pivot-muted">
                       {p.photoUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={p.photoUrl} alt="" className="h-full w-full object-cover" />
@@ -286,7 +286,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
                         (p.fullName ?? "?").charAt(0).toUpperCase()
                       )}
                     </div>
-                    <p className="line-clamp-2 text-center text-xs text-black/60 dark:text-white/60">
+                    <p className="line-clamp-2 text-center text-xs text-pivot-ink-2">
                       {p.fullName ?? "Expert"}
                     </p>
                   </div>
@@ -296,7 +296,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
             <button
               type="button"
               onClick={() => router.push(resultsHref())}
-              className="mt-6 inline-block rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
+              className="mt-6 inline-block rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper"
             >
               See Your Matches →
             </button>
@@ -305,8 +305,8 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
 
         {step === "not_found" && (
           <div className="text-center">
-            <p className="text-lg font-medium">We&apos;re finding the right expert for you</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-black/60 dark:text-white/60">
+            <p className="text-lg font-medium text-pivot-ink">We&apos;re finding the right expert for you</p>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-pivot-ink-2">
               We don&apos;t currently have the right expert available for this request. We&apos;ve already saved
               what you told us, so you won&apos;t need to explain it again. Leave your contact details and
               we&apos;ll reach out as soon as a suitable expert becomes available.
@@ -317,7 +317,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Name"
-                className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+                className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
               />
               <input
                 type="tel"
@@ -325,13 +325,13 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="Phone number"
-                className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+                className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
               />
-              {contactError && <p className="text-xs text-red-600 dark:text-red-400">{contactError}</p>}
+              {contactError && <p className="text-xs text-pivot-danger">{contactError}</p>}
               <button
                 type="submit"
                 disabled={submittingContact}
-                className="mt-1 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background disabled:opacity-50"
+                className="mt-1 rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper disabled:opacity-50"
               >
                 {submittingContact ? "Saving…" : "Notify Me"}
               </button>
@@ -341,14 +341,14 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
 
         {step === "contact_submitted" && (
           <div className="text-center">
-            <p className="text-lg font-medium">Request received</p>
-            <p className="mx-auto mt-2 max-w-sm text-sm text-black/60 dark:text-white/60">
+            <p className="text-lg font-medium text-pivot-ink">Request received</p>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-pivot-ink-2">
               We&apos;ve saved your request. When a suitable expert joins Pivotroom, our team will contact you
               using this number.
             </p>
             <Link
               href="/experts"
-              className="mt-5 inline-block rounded-full border border-black/10 px-6 py-3 text-sm font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+              className="mt-5 inline-block rounded-full border border-pivot-line px-6 py-3 text-sm font-medium text-pivot-ink hover:bg-pivot-paper-2"
             >
               Browse Other Experts →
             </Link>
@@ -356,7 +356,7 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
         )}
       </div>
 
-      <p className="mx-auto mt-8 max-w-md text-center text-xs text-black/40 dark:text-white/40">
+      <p className="mx-auto mt-8 max-w-md text-center text-xs text-pivot-muted">
         Your selections may be saved to help us improve expert recommendations and understand what expertise
         people are looking for.
       </p>

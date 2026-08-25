@@ -45,8 +45,8 @@ export default async function ExpertsPage({
   const topExperts = sortExpertsBy(experts, sort, ratings).slice(0, 10);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="mb-6 text-2xl font-semibold leading-tight sm:text-3xl">
+    <div className="mx-auto max-w-6xl bg-pivot-paper px-4 py-10">
+      <h1 className="mb-6 font-serif text-2xl font-normal leading-tight text-pivot-ink sm:text-3xl">
         Choose an expert.
         <br />
         Book a session.
@@ -59,16 +59,16 @@ export default async function ExpertsPage({
       </div>
 
       {experts.length === 0 ? (
-        <p className="text-sm text-black/60 dark:text-white/60">No experts are listed yet.</p>
+        <p className="text-sm text-pivot-ink-2">No experts are listed yet.</p>
       ) : (
         <>
           <SortBar />
 
           {topExperts.length > 0 && (
             <div className="mb-12">
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-xl font-semibold text-pivot-ink">
                 Top Experts.{" "}
-                <span className="font-normal text-black/50 dark:text-white/50">
+                <span className="font-normal text-pivot-muted">
                   Access to the best experts has never been easier
                 </span>
               </h2>
@@ -116,7 +116,7 @@ export default async function ExpertsPage({
       <Link
         href="/experts/search"
         aria-label="Search experts"
-        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-foreground text-background shadow-lg"
+        className="fixed bottom-6 right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-pivot-ink text-pivot-paper shadow-lg"
       >
         <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.8" />

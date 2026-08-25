@@ -28,19 +28,19 @@ export async function ClassicHomepage() {
   ]);
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col bg-pivot-paper">
       {/* Hero */}
       <div className="mx-auto w-full max-w-6xl px-4 pt-6">
-        <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-neutral-900 to-neutral-800 px-6 py-16 text-center text-white sm:py-24">
-          <h1 className="mx-auto max-w-2xl text-3xl font-semibold tracking-tight sm:text-4xl">
+        <div className="overflow-hidden rounded-3xl bg-pivot-ink px-6 py-16 text-center text-pivot-paper sm:py-24">
+          <h1 className="mx-auto max-w-2xl font-serif text-3xl leading-tight font-normal sm:text-4xl">
             Book 1:1 sessions with African experts over video call
           </h1>
-          <p className="mx-auto mt-3 max-w-md text-white/70">
+          <p className="mx-auto mt-3 max-w-md text-pivot-paper/70">
             Find the right expert, book a time, and get real advice on a call.
           </p>
           <Link
             href="/experts"
-            className="mt-6 inline-block rounded-full bg-white px-6 py-3 text-sm font-medium text-black hover:bg-white/90"
+            className="mt-6 inline-block rounded-full bg-pivot-paper px-6 py-3 text-sm font-medium text-pivot-ink hover:bg-pivot-paper/90"
           >
             Find an expert
           </Link>
@@ -89,12 +89,12 @@ export async function ClassicHomepage() {
       ) : (
         <>
           <div className="mx-auto w-full max-w-md px-4 py-16 text-center">
-            <p className="text-black/60 dark:text-white/60">
+            <p className="text-pivot-ink-2">
               New experts are joining every week — browse the full directory to see who&apos;s available now.
             </p>
             <Link
               href="/experts"
-              className="mt-4 inline-block rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
+              className="mt-4 inline-block rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper"
             >
               Browse all experts
             </Link>
@@ -109,18 +109,18 @@ export async function ClassicHomepage() {
       <HowItWorks />
 
       <div className="mx-auto w-full max-w-3xl px-4 py-16 text-center">
-        <h2 className="text-2xl font-semibold">Give everyone access to real expertise</h2>
-        <p className="mt-3 text-black/60 dark:text-white/60">
+        <h2 className="font-serif text-2xl font-normal text-pivot-ink">Give everyone access to real expertise</h2>
+        <p className="mt-3 text-pivot-ink-2">
           Pivotroom.africa connects clients directly with African experts for honest, 1:1 advice over
           video — no waitlists, no gatekeeping.
         </p>
       </div>
 
-      <div className="border-t border-black/10 bg-black/[0.03] px-4 py-14 text-center dark:border-white/15 dark:bg-white/5">
-        <h2 className="text-xl font-semibold">Ready to book your first session?</h2>
+      <div className="border-t border-pivot-line bg-pivot-paper-2 px-4 py-14 text-center">
+        <h2 className="text-xl font-semibold text-pivot-ink">Ready to book your first session?</h2>
         <Link
           href="/experts"
-          className="mt-4 inline-block rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background"
+          className="mt-4 inline-block rounded-full bg-pivot-ink px-6 py-3 text-sm font-medium text-pivot-paper"
         >
           Find an expert
         </Link>

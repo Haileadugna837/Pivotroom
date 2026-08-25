@@ -34,33 +34,33 @@ export function FeaturedExpertCard({
   return (
     <div className="group relative flex w-36 shrink-0 flex-col gap-1.5 sm:w-44">
       <Link href={href} className="contents">
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-pivot-paper-2">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photoUrl} alt={name} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-black/20 dark:text-white/20">
+            <div className="flex h-full w-full items-center justify-center text-3xl font-semibold text-pivot-muted">
               {name.charAt(0).toUpperCase()}
             </div>
           )}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-150 group-hover:bg-black/20 group-hover:opacity-100">
-            <span className="rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-black shadow">
+          <div className="absolute inset-0 flex items-center justify-center bg-pivot-ink/0 opacity-0 transition-all duration-150 group-hover:bg-pivot-ink/20 group-hover:opacity-100">
+            <span className="rounded-full bg-pivot-white px-3 py-1.5 text-xs font-semibold text-pivot-ink shadow">
               See times
             </span>
           </div>
-          <span className="absolute bottom-2 left-2 rounded-full bg-white px-2 py-0.5 text-[10px] font-medium text-black shadow">
+          <span className="absolute bottom-2 left-2 rounded-full bg-pivot-white px-2 py-0.5 text-[10px] font-medium text-pivot-ink shadow">
             Top Expert
           </span>
         </div>
         <div className="mt-1.5 flex items-center gap-1">
-          <h3 className="truncate text-sm font-medium">{name}</h3>
+          <h3 className="truncate text-sm font-medium text-pivot-ink">{name}</h3>
           <VerifiedBadge gold={donatesToNgo} size={13} />
         </div>
-        <p className="text-xs font-medium">
+        <p className="text-xs font-medium text-pivot-ink">
           {pricePer15Min != null ? `${currency} ${pricePer15Min} • Session` : "Rate not set"}
         </p>
         {(headline || bio) && (
-          <p className="line-clamp-2 text-xs text-black/60 dark:text-white/60">{headline ?? bio}</p>
+          <p className="line-clamp-2 text-xs text-pivot-muted">{headline ?? bio}</p>
         )}
       </Link>
       <WishlistHeartButton

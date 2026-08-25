@@ -17,14 +17,11 @@ export function SortBar() {
   const current = searchParams.get("sort") ?? "recommended";
 
   return (
-    <div className="mb-8 flex items-center justify-between border-b border-black/10 pb-4 dark:border-white/15">
-      <Link
-        href="/experts"
-        className="text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
-      >
+    <div className="mb-8 flex items-center justify-between border-b border-pivot-line pb-4">
+      <Link href="/experts" className="text-sm text-pivot-muted hover:text-pivot-ink">
         Reset
       </Link>
-      <label className="flex items-center gap-2 text-sm">
+      <label className="flex items-center gap-2 text-sm text-pivot-ink">
         Sort by
         <select
           value={current}
@@ -32,7 +29,7 @@ export function SortBar() {
             const value = e.target.value;
             router.push(value === "recommended" ? "/experts" : `/experts?sort=${value}`);
           }}
-          className="rounded-md border border-black/10 bg-transparent px-2 py-1.5 text-sm dark:border-white/15"
+          className="rounded-md border border-pivot-line bg-transparent px-2 py-1.5 text-sm text-pivot-ink"
         >
           {SORT_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>
