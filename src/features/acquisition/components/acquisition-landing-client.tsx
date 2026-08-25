@@ -14,8 +14,9 @@ import { AcquisitionBeliefSection } from "@/features/acquisition/components/land
 import { AcquisitionFaqSection } from "@/features/acquisition/components/landing/faq-section";
 import { AcquisitionFinalCtaSection } from "@/features/acquisition/components/landing/final-cta-section";
 import { AcquisitionFooter } from "@/features/acquisition/components/landing/footer";
+import type { ExpertPreviewCard } from "@/features/acquisition/server/queries";
 
-export function AcquisitionLandingClient() {
+export function AcquisitionLandingClient({ experts }: { experts: ExpertPreviewCard[] }) {
   const [prefillProblem, setPrefillProblem] = useState<string | null>(null);
 
   return (
@@ -27,7 +28,7 @@ export function AcquisitionLandingClient() {
       <AcquisitionJoinSection prefillProblem={prefillProblem} />
       <AcquisitionWhySection />
       <AcquisitionProblemsSection onSelect={setPrefillProblem} />
-      <AcquisitionPeopleSection />
+      <AcquisitionPeopleSection experts={experts} />
       <AcquisitionHowItWorks />
       <AcquisitionBeliefSection />
       <AcquisitionFaqSection />
