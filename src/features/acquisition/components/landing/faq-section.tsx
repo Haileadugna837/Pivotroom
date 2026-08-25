@@ -1,50 +1,58 @@
+"use client";
+
+import { useState } from "react";
+
 const FAQS = [
   {
-    q: "When is Pivotroom launching?",
-    a: "We're in early access. Members are the first to know as we open bookings.",
+    q: "What am I joining right now?",
+    a: "You're joining Pivotroom's early user list and telling us what kind of help you actually want. This helps shape the marketplace before it fully opens.",
   },
   {
-    q: "Who can become an expert?",
-    a: "Accomplished founders, executives, operators, specialists and creators with real, first-hand experience — reviewed individually, not open self-signup.",
+    q: "Do I have to pay now?",
+    a: "No. Early access is free. Paid bookings would happen later when expert sessions are available.",
   },
   {
-    q: "How much will sessions cost?",
-    a: "Each expert sets their own rate. You'll see the price before you book.",
+    q: "Can I join if I don't know which expert I need?",
+    a: "Yes. Start with the problem. Pivotroom should help narrow down what kind of experience is most relevant.",
   },
   {
-    q: "Will sessions be online or in person?",
-    a: "Sessions happen over video call, so you can connect from anywhere.",
-  },
-  {
-    q: "Can I request a specific expert?",
-    a: "Yes — nominate anyone you'd love to talk to, and we'll factor it into who we recruit next.",
-  },
-  {
-    q: "How are experts selected?",
-    a: "We review real-world experience and accomplishments individually before anyone is approved — see “Real experience. Carefully selected.” above.",
-  },
-  {
-    q: "Can people outside Africa use Pivotroom?",
-    a: "Yes — Pivotroom connects you with experienced African founders, executives and specialists, wherever you're asking from.",
+    q: "Is Pivotroom only for founders?",
+    a: "No. It can support founders, business owners, executives, managers and professionals facing business or career decisions.",
   },
 ];
 
 export function AcquisitionFaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
   return (
-    <section className="mx-auto w-full max-w-2xl px-6 py-16">
-      <h2 className="text-center text-2xl font-semibold leading-tight sm:text-3xl">Frequently asked questions</h2>
-      <div className="mt-10 flex flex-col divide-y divide-black/10 dark:divide-white/15">
-        {FAQS.map((item) => (
-          <details key={item.q} className="group py-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium marker:content-none">
-              {item.q}
-              <span className="shrink-0 text-black/40 transition-transform group-open:rotate-45 dark:text-white/40">
-                +
-              </span>
-            </summary>
-            <p className="mt-2 text-sm text-black/60 dark:text-white/60">{item.a}</p>
-          </details>
-        ))}
+    <section id="faq" className="mx-auto w-full max-w-[1400px] px-6 py-20 md:py-28">
+      <div className="grid grid-cols-1 gap-14 md:grid-cols-[0.55fr_1.45fr]">
+        <div>
+          <div className="text-[11px] font-semibold tracking-[0.18em] text-pivot-accent uppercase">Questions</div>
+          <h2 className="mt-2.5 font-serif text-[42px] leading-[0.94] font-normal tracking-[-0.03em] text-pivot-ink sm:text-[56px] md:text-[64px]">
+            Before you join early.
+          </h2>
+        </div>
+        <div className="border-t border-pivot-ink">
+          {FAQS.map((item, i) => {
+            const open = openIndex === i;
+            return (
+              <div key={item.q} className="border-b border-pivot-line">
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(open ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 py-5 text-left font-serif text-[22px] leading-none font-normal text-pivot-ink sm:text-[27px]"
+                >
+                  {item.q}
+                  <span className="shrink-0 text-2xl text-pivot-muted">{open ? "−" : "+"}</span>
+                </button>
+                {open && (
+                  <p className="pr-0 pb-5.5 text-[13px] leading-relaxed text-pivot-muted sm:pr-10">{item.a}</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

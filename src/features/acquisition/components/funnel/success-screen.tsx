@@ -2,52 +2,27 @@
 
 import { useEffect, useRef, useState } from "react";
 import { recordFunnelEvent } from "@/features/acquisition/server/actions";
-import { NominationForm } from "@/features/acquisition/components/funnel/nomination-form";
 
 const SHARE_MESSAGE =
   "I just joined early access for Pivotroom — 1:1 conversations with experienced African founders, executives and specialists. Join me:";
 
-type Phase = "prompt" | "nominate" | "share";
-
 export function EarlyAccessSuccessScreen({
   sessionId,
   referralCode,
-  leadId,
-  onClose,
 }: {
   sessionId: string;
   referralCode: string;
-  leadId?: string;
-  onClose: () => void;
 }) {
-  const [phase, setPhase] = useState<Phase>("prompt");
   const [copied, setCopied] = useState(false);
   const shareFired = useRef(false);
-  const promptFired = useRef(false);
   const referralUrl =
     typeof window !== "undefined" ? `${window.location.origin}/?ref=${referralCode}` : `/?ref=${referralCode}`;
 
   useEffect(() => {
-    if (promptFired.current) return;
-    promptFired.current = true;
-    recordFunnelEvent(sessionId, "nomination_prompt_shown").catch(() => {});
-  }, [sessionId]);
-
-  useEffect(() => {
-    if (phase !== "share" || shareFired.current) return;
+    if (shareFired.current) return;
     shareFired.current = true;
     recordFunnelEvent(sessionId, "share_link_generated", { referral_code: referralCode }).catch(() => {});
-  }, [phase, sessionId, referralCode]);
-
-  function handleNominateClick() {
-    recordFunnelEvent(sessionId, "nomination_prompt_accepted").catch(() => {});
-    setPhase("nominate");
-  }
-
-  function handleSkipNomination() {
-    recordFunnelEvent(sessionId, "nomination_prompt_skipped").catch(() => {});
-    setPhase("share");
-  }
+  }, [sessionId, referralCode]);
 
   function handleCopy() {
     navigator.clipboard.writeText(referralUrl).then(() => {
@@ -72,76 +47,46 @@ export function EarlyAccessSuccessScreen({
   }
 
   return (
-    <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center px-6 py-10 text-center">
-      <h2 className="text-2xl font-semibold">You&apos;re in.</h2>
-      <p className="mt-3 text-sm text-black/60 dark:text-white/60">
-        You&apos;ll be among the first to hear when Pivotroom opens access to relevant experts.
+    <div className="py-10">
+      <div className="text-[11px] font-semibold tracking-[0.18em] text-pivot-accent uppercase">
+        You&apos;re on the early list
+      </div>
+      <h3 className="mt-2.5 font-serif text-[42px] leading-none font-normal text-pivot-ink sm:text-[50px]">
+        Good. Now we know what you need.
+      </h3>
+      <p className="mt-3 leading-relaxed text-pivot-muted">
+        Pivotroom can use your request to prioritize relevant experts and notify you when access opens or a strong
+        match becomes available.
       </p>
 
-      {phase === "prompt" && (
-        <div className="mt-10 w-full">
-          <p className="text-sm font-medium">Who would you love to speak with?</p>
-          <div className="mt-4 flex flex-col gap-2">
+      <div className="mt-8 rounded-none border border-pivot-line bg-pivot-paper-2 p-5">
+        <p className="text-sm font-medium text-pivot-ink">Invite someone who should know about Pivotroom.</p>
+        <div className="mt-4 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handleWhatsApp}
+            className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-medium text-white"
+          >
+            Share on WhatsApp
+          </button>
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="rounded-full border border-pivot-ink px-5 py-3 text-sm font-medium text-pivot-ink"
+          >
+            {copied ? "Link copied!" : "Copy link"}
+          </button>
+          {typeof navigator !== "undefined" && "share" in navigator && (
             <button
               type="button"
-              onClick={handleNominateClick}
-              className="w-full rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background"
+              onClick={handleNativeShare}
+              className="rounded-full border border-pivot-ink px-5 py-3 text-sm font-medium text-pivot-ink"
             >
-              Nominate Someone
+              More share options
             </button>
-            <button type="button" onClick={handleSkipNomination} className="w-full py-2 text-sm text-black/50 dark:text-white/50">
-              Skip
-            </button>
-          </div>
+          )}
         </div>
-      )}
-
-      {phase === "nominate" && (
-        <div className="mt-8 w-full text-left">
-          <NominationForm sessionId={sessionId} leadId={leadId} onSubmitted={() => setPhase("share")} onSkip={handleSkipNomination} />
-        </div>
-      )}
-
-      {phase === "share" && (
-        <div className="mt-10 w-full rounded-2xl border border-black/10 p-5 dark:border-white/15">
-          <p className="text-sm font-medium">Invite someone who should know about Pivotroom.</p>
-          <div className="mt-4 flex flex-col gap-2">
-            <button
-              type="button"
-              onClick={handleWhatsApp}
-              className="rounded-full bg-[#25D366] px-5 py-3 text-sm font-medium text-white"
-            >
-              Share on WhatsApp
-            </button>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="rounded-full border border-black/10 px-5 py-3 text-sm font-medium dark:border-white/15"
-            >
-              {copied ? "Link copied!" : "Copy link"}
-            </button>
-            {typeof navigator !== "undefined" && "share" in navigator && (
-              <button
-                type="button"
-                onClick={handleNativeShare}
-                className="rounded-full border border-black/10 px-5 py-3 text-sm font-medium dark:border-white/15"
-              >
-                More share options
-              </button>
-            )}
-          </div>
-        </div>
-      )}
-
-      {phase !== "prompt" && (
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-8 text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
-        >
-          Done
-        </button>
-      )}
+      </div>
     </div>
   );
 }

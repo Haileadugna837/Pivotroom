@@ -1,37 +1,31 @@
-"use client";
-
-import Link from "next/link";
-
-export function AcquisitionNav({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
+export function AcquisitionNav() {
   return (
-    <header className="flex items-center justify-between px-6 py-4">
-      <Link href="/" className="flex items-center gap-2 font-semibold" aria-label="Pivotroom.africa">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
-          P
-        </span>
-        <span>Pivotroom.africa</span>
-      </Link>
-      <nav className="flex items-center gap-4 text-sm">
-        <Link href="/experts" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
-          Experts
-        </Link>
-        <a href="#how-it-works" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
-          How It Works
+    <nav className="sticky top-0 z-50 border-b border-pivot-line bg-pivot-paper/90 backdrop-blur-lg">
+      <div className="mx-auto flex min-h-[76px] w-full max-w-[1400px] items-center justify-between gap-6 px-6">
+        <a href="#" className="font-serif text-[30px] text-pivot-ink">
+          pivotroom
         </a>
-        <a href="#for-experts" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
-          For Experts
-        </a>
-        <Link href="/login" className="hidden text-black/70 hover:text-black sm:inline dark:text-white/70 dark:hover:text-white">
-          Sign In
-        </Link>
-        <button
-          type="button"
-          onClick={onGetEarlyAccess}
-          className="rounded-full bg-foreground px-4 py-2 text-sm font-medium text-background"
+        <div className="hidden gap-6 text-sm text-pivot-ink md:flex">
+          <a href="#why" className="hover:text-pivot-accent">
+            Why join early
+          </a>
+          <a href="#problems" className="hover:text-pivot-accent">
+            Use cases
+          </a>
+          <a href="#how" className="hover:text-pivot-accent">
+            How it works
+          </a>
+          <a href="#faq" className="hover:text-pivot-accent">
+            FAQ
+          </a>
+        </div>
+        <a
+          href="#join"
+          className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper"
         >
-          Get Early Access
-        </button>
-      </nav>
-    </header>
+          Get early access ↗
+        </a>
+      </div>
+    </nav>
   );
 }

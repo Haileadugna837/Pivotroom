@@ -1,18 +1,22 @@
-export function AcquisitionFinalCtaSection({ onGetEarlyAccess }: { onGetEarlyAccess: () => void }) {
+export function AcquisitionFinalCtaSection() {
   return (
-    <section className="border-t border-black/10 px-6 py-20 text-center dark:border-white/15">
-      <h2 className="mx-auto max-w-xl text-2xl font-semibold leading-tight sm:text-3xl">
-        Somewhere in Africa, someone has already solved the problem you&apos;re facing.
-      </h2>
-      <p className="mt-3 text-black/60 dark:text-white/60">Get access when Pivotroom opens.</p>
-      <button
-        type="button"
-        onClick={onGetEarlyAccess}
-        className="mt-8 rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background"
-      >
-        Get Early Access
-      </button>
-      <p className="mt-4 text-xs text-black/40 dark:text-white/40">Join early • Request experts • Be first to know</p>
+    <section className="px-6 pb-24">
+      <div className="mx-auto w-full max-w-[1400px]">
+        <div className="grid min-h-[370px] gap-10 bg-pivot-accent px-6 py-14 text-white sm:px-10 md:grid-cols-[1.2fr_0.8fr] md:items-end md:px-16">
+          <h2 className="m-0 font-serif text-[44px] leading-[0.92] font-normal sm:text-[64px] md:text-[76px]">
+            Tell us the problem you wish someone experienced would help you think through.
+          </h2>
+          <div className="max-w-[420px] justify-self-start md:justify-self-end">
+            <p className="leading-relaxed opacity-90">That is the best place to start building Pivotroom around you.</p>
+            <a
+              href="#join"
+              className="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-paper px-[18px] text-sm font-medium text-pivot-ink"
+            >
+              Join early access ↗
+            </a>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

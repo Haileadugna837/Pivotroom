@@ -11,6 +11,22 @@
   --background: #ffffff;
   --foreground: #171717;
   color-scheme: light;
+
+  /* Pivotroom brand tokens — the warm-ivory/deep-brown/burnt-orange/olive
+     editorial palette from the brand design system. Defined globally so
+     any page can adopt them, but --background/--foreground above (and the
+     rest of the site) are untouched for now; only pages that opt in by
+     using these tokens directly (bg-pivot-paper, text-pivot-ink, etc.)
+     pick up the new look. */
+  --pivot-paper: #f3eee5;
+  --pivot-paper-2: #ebe2d6;
+  --pivot-ink: #381615;
+  --pivot-ink-2: #624c46;
+  --pivot-muted: #806d66;
+  --pivot-accent: #c85b2b;
+  --pivot-olive: #5d6246;
+  --pivot-white: #fffaf3;
+  --pivot-line: rgba(56, 22, 21, 0.18);
 }
 
 @theme inline {
@@ -18,12 +34,31 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  --color-pivot-paper: var(--pivot-paper);
+  --color-pivot-paper-2: var(--pivot-paper-2);
+  --color-pivot-ink: var(--pivot-ink);
+  --color-pivot-ink-2: var(--pivot-ink-2);
+  --color-pivot-muted: var(--pivot-muted);
+  --color-pivot-accent: var(--pivot-accent);
+  --color-pivot-olive: var(--pivot-olive);
+  --color-pivot-white: var(--pivot-white);
+  --color-pivot-line: var(--pivot-line);
+  /* Overrides Tailwind's default `font-serif` utility with the brand's
+     display typeface; adds a `font-dm-sans` utility for the brand's body
+     typeface. Both fonts are loaded in layout.tsx alongside Geist. */
+  --font-serif: var(--font-instrument-serif);
+  --font-dm-sans: var(--font-dm-sans);
 }
 
 .dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
