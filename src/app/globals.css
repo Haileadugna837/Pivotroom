@@ -1,15 +1,11 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
   color-scheme: light;
 
   /* Pivotroom brand tokens — the warm-ivory/deep-brown/burnt-orange/olive
      editorial palette from the brand design system. This is the site's one
-     fixed look (no dark-mode variants) — being rolled out across the whole
-     app. --background/--foreground above are a bridge for surfaces not yet
-     migrated and get removed once nothing references them. */
+     fixed look sitewide, no dark-mode variants. */
   --pivot-paper: #f3eee5;
   --pivot-paper-2: #ebe2d6;
   --pivot-ink: #381615;
@@ -23,8 +19,6 @@
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-mono: var(--font-geist-mono);
 
   --color-pivot-paper: var(--pivot-paper);
@@ -49,6 +43,6 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--pivot-paper);
+  color: var(--pivot-ink);
 }
