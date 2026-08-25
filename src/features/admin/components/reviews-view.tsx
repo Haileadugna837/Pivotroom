@@ -31,27 +31,27 @@ export function ReviewsView({ reviews }: { reviews: Review[] }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by expert name…"
-        className="w-full max-w-sm rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="w-full max-w-sm rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
       />
 
-      <p className="text-xs text-black/50 dark:text-white/50">
+      <p className="text-xs text-pivot-muted">
         {results.length} {results.length === 1 ? "review" : "reviews"}
       </p>
 
       {results.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No reviews found.</p>
+        <p className="text-sm text-pivot-muted">No reviews found.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {results.map((r) => (
-            <li key={r.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <li key={r.id} className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <p className="font-medium">
-                    {r.expertName} <span className="font-normal text-black/50 dark:text-white/50">— reviewed by {r.clientName}</span>
+                  <p className="font-medium text-pivot-ink">
+                    {r.expertName} <span className="font-normal text-pivot-muted">— reviewed by {r.clientName}</span>
                   </p>
-                  <p className="mt-1">{r.rating} ★</p>
-                  {r.comment && <p className="mt-1 text-black/70 dark:text-white/70">{r.comment}</p>}
-                  <p className="mt-1 text-xs text-black/40 dark:text-white/40">
+                  <p className="mt-1 text-pivot-ink">{r.rating} ★</p>
+                  {r.comment && <p className="mt-1 text-pivot-ink-2">{r.comment}</p>}
+                  <p className="mt-1 text-xs text-pivot-muted">
                     {new Date(r.created_at).toLocaleDateString()}
                   </p>
                 </div>
@@ -63,8 +63,8 @@ export function ReviewsView({ reviews }: { reviews: Review[] }) {
                     type="submit"
                     className={`rounded-md border px-3 py-1.5 text-sm ${
                       r.hidden
-                        ? "border-black/10 dark:border-white/15"
-                        : "border-black/10 text-black/60 dark:border-white/15 dark:text-white/60"
+                        ? "border-pivot-line text-pivot-ink"
+                        : "border-pivot-line text-pivot-ink-2"
                     }`}
                   >
                     {r.hidden ? "Show publicly" : "Hide"}
@@ -72,7 +72,7 @@ export function ReviewsView({ reviews }: { reviews: Review[] }) {
                 </form>
               </div>
               {r.hidden && (
-                <p className="mt-2 text-xs text-amber-700 dark:text-amber-400">
+                <p className="mt-2 text-xs text-pivot-accent">
                   Hidden — not shown on this expert&apos;s public profile.
                 </p>
               )}

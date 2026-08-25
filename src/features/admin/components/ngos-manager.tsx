@@ -20,58 +20,58 @@ export function NgosManager({ ngos }: { ngos: Ngo[] }) {
 
   return (
     <div className="flex flex-col gap-8">
-      <form action={formAction} className="flex flex-col gap-3 rounded-lg border border-black/10 p-4 dark:border-white/15">
-        <p className="text-sm font-medium">Add an NGO</p>
+      <form action={formAction} className="flex flex-col gap-3 rounded-lg border border-pivot-line p-4">
+        <p className="text-sm font-medium text-pivot-ink">Add an NGO</p>
 
         <PhotoUploadField name="logo" label="Logo" />
 
-        <label className="text-sm">
+        <label className="text-sm text-pivot-ink">
           Name
           <input
             name="name"
             required
-            className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
           />
         </label>
-        <label className="text-sm">
+        <label className="text-sm text-pivot-ink">
           Legal license link
           <input
             name="legal_license_url"
             type="url"
             placeholder="https://..."
-            className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="mt-1 block w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
           />
         </label>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <label className="text-sm">
+          <label className="text-sm text-pivot-ink">
             Payout account name
             <input
               name="payout_account_name"
-              className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="mt-1 block w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
             />
           </label>
-          <label className="text-sm">
+          <label className="text-sm text-pivot-ink">
             Payout account number
             <input
               name="payout_account_number"
-              className="mt-1 block w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="mt-1 block w-full rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
             />
           </label>
         </div>
 
-        {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+        {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
 
         <button
           type="submit"
           disabled={pending}
-          className="w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background disabled:opacity-50"
+          className="w-fit rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper disabled:opacity-50"
         >
           {pending ? "Adding…" : "Add NGO"}
         </button>
       </form>
 
       {ngos.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No NGOs added yet.</p>
+        <p className="text-sm text-pivot-muted">No NGOs added yet.</p>
       ) : (
         <ul className="flex flex-col gap-2">
           {ngos.map((ngo) => (
@@ -87,37 +87,37 @@ function NgoRow({ ngo }: { ngo: Ngo }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <li className="rounded-lg border border-black/10 dark:border-white/15">
+    <li className="rounded-lg border border-pivot-line">
       <div className="flex items-center justify-between gap-3 px-3 py-2">
         <div className="flex items-center gap-3">
           {ngo.logo_url ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={ngo.logo_url} alt="" className="h-9 w-9 rounded-full object-cover" />
           ) : (
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-black/5 text-xs font-medium text-black/40 dark:bg-white/10 dark:text-white/40">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-pivot-paper-2 text-xs font-medium text-pivot-muted">
               {ngo.name.charAt(0).toUpperCase()}
             </div>
           )}
-          <span className="text-sm font-medium">{ngo.name}</span>
+          <span className="text-sm font-medium text-pivot-ink">{ngo.name}</span>
         </div>
         <div className="flex items-center gap-3 text-sm">
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+            className="text-pivot-muted hover:text-pivot-ink"
           >
             {open ? "Hide details" : "Details"}
           </button>
           <form action={deleteNgo}>
             <input type="hidden" name="id" value={ngo.id} />
-            <button className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
+            <button className="text-pivot-muted hover:text-pivot-ink">
               Remove
             </button>
           </form>
         </div>
       </div>
       {open && (
-        <div className="flex flex-col gap-1 border-t border-black/10 px-3 py-2.5 text-xs text-black/60 dark:border-white/15 dark:text-white/60">
+        <div className="flex flex-col gap-1 border-t border-pivot-line px-3 py-2.5 text-xs text-pivot-ink-2">
           <p>
             Legal license:{" "}
             {ngo.legal_license_url ? (

@@ -42,9 +42,9 @@ function displayStatus(status: string, lastActivityAt: string) {
 
 function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="rounded-lg border border-black/10 p-4 dark:border-white/15">
-      <p className="text-2xl font-semibold">{value}</p>
-      <p className="mt-1 text-xs text-black/50 dark:text-white/50">{label}</p>
+    <div className="rounded-lg border border-pivot-line bg-pivot-white p-4">
+      <p className="text-2xl font-semibold text-pivot-ink">{value}</p>
+      <p className="mt-1 text-xs text-pivot-muted">{label}</p>
     </div>
   );
 }
@@ -88,22 +88,22 @@ export default async function ExpertDemandPage({
   const exportFilteredHref = `/api/admin/expert-demand/export${filterQuery ? `?${filterQuery}` : ""}`;
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-10">
+    <div className="mx-auto max-w-6xl bg-pivot-paper px-6 py-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Expert Demand</h1>
-          <p className="mt-1 text-sm text-black/50 dark:text-white/50">
+          <h1 className="text-xl font-semibold text-pivot-ink">Expert Demand</h1>
+          <p className="mt-1 text-sm text-pivot-muted">
             Everything visitors have told the &quot;Find the right expert&quot; homepage tool.
           </p>
         </div>
         <div className="flex gap-2">
           <Link
             href={exportFilteredHref}
-            className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink"
           >
             Export Filtered
           </Link>
-          <Link href={exportAllHref} className="rounded-md bg-foreground px-3 py-1.5 text-sm text-background">
+          <Link href={exportAllHref} className="rounded-md bg-pivot-ink px-3 py-1.5 text-sm text-pivot-paper">
             Export All (Excel)
           </Link>
         </div>
@@ -120,35 +120,35 @@ export default async function ExpertDemandPage({
       </div>
 
       <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/15">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+        <div className="rounded-lg border border-pivot-line bg-pivot-white p-4">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-pivot-muted">
             Most Requested Problems
           </p>
           {stats.topProblems.length === 0 ? (
-            <p className="text-sm text-black/50 dark:text-white/50">No data yet.</p>
+            <p className="text-sm text-pivot-muted">No data yet.</p>
           ) : (
-            <ul className="flex flex-col gap-1.5 text-sm">
+            <ul className="flex flex-col gap-1.5 text-sm text-pivot-ink">
               {stats.topProblems.map((p) => (
                 <li key={p.label} className="flex justify-between">
                   <span>{p.label}</span>
-                  <span className="text-black/50 dark:text-white/50">{p.count}</span>
+                  <span className="text-pivot-muted">{p.count}</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
-        <div className="rounded-lg border border-black/10 p-4 dark:border-white/15">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
+        <div className="rounded-lg border border-pivot-line bg-pivot-white p-4">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wide text-pivot-muted">
             Most Requested Categories
           </p>
           {stats.topCategories.length === 0 ? (
-            <p className="text-sm text-black/50 dark:text-white/50">No data yet.</p>
+            <p className="text-sm text-pivot-muted">No data yet.</p>
           ) : (
-            <ul className="flex flex-col gap-1.5 text-sm">
+            <ul className="flex flex-col gap-1.5 text-sm text-pivot-ink">
               {stats.topCategories.map((c) => (
                 <li key={c.label} className="flex justify-between">
                   <span>{c.label}</span>
-                  <span className="text-black/50 dark:text-white/50">{c.count}</span>
+                  <span className="text-pivot-muted">{c.count}</span>
                 </li>
               ))}
             </ul>
@@ -158,32 +158,32 @@ export default async function ExpertDemandPage({
 
       <form
         method="GET"
-        className="mb-6 flex flex-wrap items-end gap-2 rounded-lg border border-black/10 p-4 dark:border-white/15"
+        className="mb-6 flex flex-wrap items-end gap-2 rounded-lg border border-pivot-line bg-pivot-white p-4"
       >
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           From
           <input
             type="date"
             name="from"
             defaultValue={params.from ?? ""}
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           />
         </label>
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           To
           <input
             type="date"
             name="to"
             defaultValue={params.to ?? ""}
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           />
         </label>
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           Identity
           <select
             name="identity"
             defaultValue={params.identity ?? ""}
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           >
             <option value="">Any</option>
             {FINDER_IDENTITIES.map((i) => (
@@ -193,12 +193,12 @@ export default async function ExpertDemandPage({
             ))}
           </select>
         </label>
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           Result
           <select
             name="result"
             defaultValue={params.result ?? ""}
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           >
             {RESULT_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -207,12 +207,12 @@ export default async function ExpertDemandPage({
             ))}
           </select>
         </label>
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           Status
           <select
             name="status"
             defaultValue={params.status ?? ""}
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           >
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -221,33 +221,33 @@ export default async function ExpertDemandPage({
             ))}
           </select>
         </label>
-        <label className="text-xs">
+        <label className="text-xs text-pivot-ink">
           Search name / phone
           <input
             type="text"
             name="q"
             defaultValue={params.q ?? ""}
             placeholder="Keyword"
-            className="mt-1 block rounded-md border border-black/10 px-2 py-1.5 text-sm dark:border-white/15"
+            className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none"
           />
         </label>
-        <button type="submit" className="rounded-md bg-foreground px-4 py-1.5 text-sm text-background">
+        <button type="submit" className="rounded-md bg-pivot-ink px-4 py-1.5 text-sm text-pivot-paper">
           Filter
         </button>
         {filterQuery && (
-          <Link href="/admin/expert-demand" className="text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white">
+          <Link href="/admin/expert-demand" className="text-sm text-pivot-muted hover:text-pivot-ink">
             Clear
           </Link>
         )}
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No finder sessions match this filter.</p>
+        <p className="text-sm text-pivot-muted">No finder sessions match this filter.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[760px] border-collapse text-sm">
             <thead>
-              <tr className="border-b border-black/10 text-left text-xs uppercase tracking-wide text-black/40 dark:border-white/15 dark:text-white/40">
+              <tr className="border-b border-pivot-line text-left text-xs uppercase tracking-wide text-pivot-muted">
                 <th className="py-2 pr-3">Date</th>
                 <th className="py-2 pr-3">Visitor</th>
                 <th className="py-2 pr-3">Who They Are</th>
@@ -261,7 +261,7 @@ export default async function ExpertDemandPage({
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.id} className="border-b border-black/5 dark:border-white/10">
+                <tr key={row.id} className="border-b border-pivot-line text-pivot-ink">
                   <td className="py-2 pr-3 whitespace-nowrap">
                     {new Date(row.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                   </td>
@@ -291,17 +291,17 @@ export default async function ExpertDemandPage({
           <Link
             href={pageHref(Math.max(1, page - 1))}
             aria-disabled={page <= 1}
-            className={`rounded-md border border-black/10 px-3 py-1.5 dark:border-white/15 ${page <= 1 ? "pointer-events-none opacity-40" : ""}`}
+            className={`rounded-md border border-pivot-line px-3 py-1.5 text-pivot-ink ${page <= 1 ? "pointer-events-none opacity-40" : ""}`}
           >
             Previous
           </Link>
-          <span className="text-black/50 dark:text-white/50">
+          <span className="text-pivot-muted">
             Page {page} of {totalPages}
           </span>
           <Link
             href={pageHref(Math.min(totalPages, page + 1))}
             aria-disabled={page >= totalPages}
-            className={`rounded-md border border-black/10 px-3 py-1.5 dark:border-white/15 ${page >= totalPages ? "pointer-events-none opacity-40" : ""}`}
+            className={`rounded-md border border-pivot-line px-3 py-1.5 text-pivot-ink ${page >= totalPages ? "pointer-events-none opacity-40" : ""}`}
           >
             Next
           </Link>

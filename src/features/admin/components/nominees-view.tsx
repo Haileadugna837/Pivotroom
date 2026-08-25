@@ -41,10 +41,10 @@ const STATUS_OPTIONS: { value: string; label: string }[] = [
 ];
 
 const STATUS_STYLE: Record<string, string> = {
-  pending: "text-black/50 dark:text-white/50",
-  in_review: "text-blue-700 dark:text-blue-400",
-  added: "text-emerald-700 dark:text-emerald-400",
-  declined: "text-black/40 dark:text-white/40",
+  pending: "text-pivot-muted",
+  in_review: "text-pivot-accent",
+  added: "text-pivot-olive",
+  declined: "text-pivot-muted",
 };
 
 export function NomineesView({
@@ -55,7 +55,7 @@ export function NomineesView({
   approvedExperts: ApprovedExpert[];
 }) {
   if (nominees.length === 0) {
-    return <p className="text-sm text-black/50 dark:text-white/50">No nominations yet.</p>;
+    return <p className="text-sm text-pivot-muted">No nominations yet.</p>;
   }
 
   return (
@@ -85,12 +85,12 @@ function NomineeRow({
   const [pendingStatus, setPendingStatus] = useState(nominee.status);
 
   return (
-    <li className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+    <li className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-medium">{nominee.name ?? "Unnamed nominee"}</p>
-            <span className="rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10">
+            <p className="font-medium text-pivot-ink">{nominee.name ?? "Unnamed nominee"}</p>
+            <span className="rounded-full bg-pivot-paper-2 px-2 py-0.5 text-xs text-pivot-ink">
               {nominee.count} {nominee.count === 1 ? "nomination" : "nominations"}
             </span>
           </div>
@@ -102,7 +102,7 @@ function NomineeRow({
         <button
           type="button"
           onClick={() => setExpanded((e) => !e)}
-          className="text-xs text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
+          className="text-xs text-pivot-muted underline hover:text-pivot-ink"
         >
           {expanded ? "Hide nominations" : "View nominations"}
         </button>
@@ -114,7 +114,7 @@ function NomineeRow({
           name="status"
           defaultValue={nominee.status}
           onChange={(e) => setPendingStatus(e.target.value)}
-          className="rounded-md border border-black/10 px-2.5 py-1.5 text-xs dark:border-white/15"
+          className="rounded-md border border-pivot-line bg-pivot-paper px-2.5 py-1.5 text-xs text-pivot-ink outline-none"
         >
           {STATUS_OPTIONS.map((s) => (
             <option key={s.value} value={s.value}>
@@ -126,7 +126,7 @@ function NomineeRow({
           <select
             name="resolved_expert_id"
             defaultValue={nominee.resolved_expert_id ?? ""}
-            className="rounded-md border border-black/10 px-2.5 py-1.5 text-xs dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-2.5 py-1.5 text-xs text-pivot-ink outline-none"
           >
             <option value="">Link to expert account (optional)</option>
             {approvedExperts.map((e) => (
@@ -136,7 +136,7 @@ function NomineeRow({
             ))}
           </select>
         )}
-        <button type="submit" className="rounded-md bg-foreground px-3 py-1.5 text-xs font-medium text-background">
+        <button type="submit" className="rounded-md bg-pivot-ink px-3 py-1.5 text-xs font-medium text-pivot-paper">
           Update status
         </button>
       </form>
@@ -148,7 +148,7 @@ function NomineeRow({
             name="target_id"
             defaultValue=""
             required
-            className="rounded-md border border-black/10 px-2.5 py-1.5 text-xs dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-2.5 py-1.5 text-xs text-pivot-ink outline-none"
           >
             <option value="" disabled>
               Merge into…
@@ -159,31 +159,31 @@ function NomineeRow({
               </option>
             ))}
           </select>
-          <button type="submit" className="rounded-md border border-black/10 px-3 py-1.5 text-xs dark:border-white/15">
+          <button type="submit" className="rounded-md border border-pivot-line px-3 py-1.5 text-xs text-pivot-ink">
             Merge
           </button>
         </form>
       )}
 
       {expanded && (
-        <ul className="mt-3 flex flex-col gap-2 border-t border-black/10 pt-3 dark:border-white/15">
+        <ul className="mt-3 flex flex-col gap-2 border-t border-pivot-line pt-3">
           {nominee.nominations.map((n) => (
-            <li key={n.id} className="text-xs">
+            <li key={n.id} className="text-xs text-pivot-ink">
               <p className="font-medium">
                 {n.nominatorName}{" "}
-                <span className="font-normal text-black/40 dark:text-white/40">
+                <span className="font-normal text-pivot-muted">
                   · {new Date(n.created_at).toLocaleDateString()}
                 </span>
               </p>
               {(n.nominee_title || n.company || n.nominee_location) && (
-                <p className="mt-0.5 text-black/50 dark:text-white/50">
+                <p className="mt-0.5 text-pivot-muted">
                   {[n.nominee_title, n.company, n.nominee_location].filter(Boolean).join(" · ")}
                 </p>
               )}
-              <p className="mt-0.5 text-black/70 dark:text-white/70">{n.reason}</p>
-              {n.topic && <p className="mt-0.5 text-black/60 dark:text-white/60">Topic: {n.topic}</p>}
+              <p className="mt-0.5 text-pivot-ink-2">{n.reason}</p>
+              {n.topic && <p className="mt-0.5 text-pivot-ink-2">Topic: {n.topic}</p>}
               {n.categories_requested.length > 0 && (
-                <p className="mt-0.5 text-black/60 dark:text-white/60">
+                <p className="mt-0.5 text-pivot-ink-2">
                   Categories: {n.categories_requested.join(", ")}
                 </p>
               )}
@@ -202,7 +202,7 @@ function NomineeRow({
                 </a>
               )}
               {(n.nominator_phone || n.nominator_email || n.nominator_relationship || n.intro_comfort) && (
-                <p className="mt-1 text-black/50 dark:text-white/50">
+                <p className="mt-1 text-pivot-muted">
                   Nominator:{" "}
                   {[n.nominator_phone, n.nominator_email, n.nominator_relationship, n.intro_comfort]
                     .filter(Boolean)
