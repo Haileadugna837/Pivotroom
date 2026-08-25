@@ -1,3 +1,5 @@
+import { EarlyAccessCtaLink } from "@/features/acquisition/components/landing/early-access-cta-link";
+
 export function AcquisitionFinalCtaSection() {
   return (
     <section className="px-6 pb-24">
@@ -8,12 +10,9 @@ export function AcquisitionFinalCtaSection() {
           </h2>
           <div className="max-w-[420px] justify-self-start md:justify-self-end">
             <p className="leading-relaxed opacity-90">That is the best place to start building Pivotroom around you.</p>
-            <a
-              href="#join"
-              className="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-paper px-[18px] text-sm font-medium text-pivot-ink"
-            >
+            <EarlyAccessCtaLink className="mt-6 inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-paper px-[18px] text-sm font-medium text-pivot-ink">
               Join early access ↗
-            </a>
+            </EarlyAccessCtaLink>
           </div>
         </div>
       </div>
