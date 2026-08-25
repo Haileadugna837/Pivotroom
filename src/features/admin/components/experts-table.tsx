@@ -29,7 +29,7 @@ function ActionsForStatus({ expertId, status }: { expertId: string; status: stri
     <div className="flex flex-wrap gap-2">
       <Link
         href={`/admin/experts/${expertId}`}
-        className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink"
       >
         Edit
       </Link>
@@ -37,13 +37,13 @@ function ActionsForStatus({ expertId, status }: { expertId: string; status: stri
         <>
           <form action={approveExpert}>
             <input type="hidden" name="expert_id" value={expertId} />
-            <button className="rounded-md bg-foreground px-3 py-1.5 text-sm text-background">
+            <button className="rounded-md bg-pivot-ink px-3 py-1.5 text-sm text-pivot-paper">
               Approve
             </button>
           </form>
           <form action={rejectExpert}>
             <input type="hidden" name="expert_id" value={expertId} />
-            <button className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15">
+            <button className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink">
               Reject
             </button>
           </form>
@@ -52,7 +52,7 @@ function ActionsForStatus({ expertId, status }: { expertId: string; status: stri
       {status === "approved" && (
         <form action={suspendExpert}>
           <input type="hidden" name="expert_id" value={expertId} />
-          <button className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15">
+          <button className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink">
             Suspend
           </button>
         </form>
@@ -60,7 +60,7 @@ function ActionsForStatus({ expertId, status }: { expertId: string; status: stri
       {(status === "rejected" || status === "suspended") && (
         <form action={approveExpert}>
           <input type="hidden" name="expert_id" value={expertId} />
-          <button className="rounded-md bg-foreground px-3 py-1.5 text-sm text-background">
+          <button className="rounded-md bg-pivot-ink px-3 py-1.5 text-sm text-pivot-paper">
             Approve
           </button>
         </form>
@@ -72,15 +72,15 @@ function ActionsForStatus({ expertId, status }: { expertId: string; status: stri
 export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; activeTab: ExpertTab }) {
   return (
     <div>
-      <div className="mb-4 flex flex-wrap gap-2 border-b border-black/10 pb-3 dark:border-white/15">
+      <div className="mb-4 flex flex-wrap gap-2 border-b border-pivot-line pb-3">
         {TABS.map((t) => (
           <Link
             key={t.key}
             href={`/admin/experts?tab=${t.key}`}
             className={`rounded-md px-3 py-1.5 text-sm ${
               activeTab === t.key
-                ? "bg-foreground text-background"
-                : "text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+                ? "bg-pivot-ink text-pivot-paper"
+                : "text-pivot-muted hover:bg-pivot-paper-2"
             }`}
           >
             {t.label}
@@ -89,14 +89,14 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
       </div>
 
       {experts.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No experts in this view.</p>
+        <p className="text-sm text-pivot-muted">No experts in this view.</p>
       ) : (
         <>
           {activeTab === "pending" && (
             <form id={BULK_FORM_ID} action={approveExpertsBulk} className="mb-3">
               <button
                 type="submit"
-                className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+                className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink"
               >
                 Approve selected
               </button>
@@ -104,7 +104,7 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
           )}
           <ul className="flex flex-col gap-3">
           {experts.map((e) => (
-            <li key={e.id} className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+            <li key={e.id} className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="flex gap-3">
                   {activeTab === "pending" && (
@@ -125,27 +125,27 @@ export function ExpertsTable({ experts, activeTab }: { experts: Expert[]; active
                       className="h-16 w-12 shrink-0 rounded-md object-cover"
                     />
                   ) : (
-                    <div className="flex h-16 w-12 shrink-0 items-center justify-center rounded-md bg-black/5 text-sm font-medium text-black/30 dark:bg-white/10 dark:text-white/30">
+                    <div className="flex h-16 w-12 shrink-0 items-center justify-center rounded-md bg-pivot-paper-2 text-sm font-medium text-pivot-muted">
                       {(e.profile?.full_name ?? "?").charAt(0).toUpperCase()}
                     </div>
                   )}
                   <div>
-                  <p className="font-medium">{e.profile?.full_name ?? e.profile?.email ?? e.id}</p>
-                  <p className="text-black/50 dark:text-white/50">{e.profile?.email}</p>
+                  <p className="font-medium text-pivot-ink">{e.profile?.full_name ?? e.profile?.email ?? e.id}</p>
+                  <p className="text-pivot-muted">{e.profile?.email}</p>
                   {e.categoryNames.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">
                       {e.categoryNames.map((name) => (
                         <span
                           key={name}
-                          className="inline-block rounded-full bg-black/5 px-2 py-0.5 text-xs dark:bg-white/10"
+                          className="inline-block rounded-full bg-pivot-paper-2 px-2 py-0.5 text-xs text-pivot-ink"
                         >
                           {name}
                         </span>
                       ))}
                     </div>
                   )}
-                  {e.headline && <p className="mt-2">{e.headline}</p>}
-                  <p className="mt-1 text-black/50 dark:text-white/50">
+                  {e.headline && <p className="mt-2 text-pivot-ink">{e.headline}</p>}
+                  <p className="mt-1 text-pivot-muted">
                     {e.price_per_15_min != null ? `${e.currency} ${e.price_per_15_min} / 15 min` : "No rate set"}
                     {" · "}
                     {e.status}

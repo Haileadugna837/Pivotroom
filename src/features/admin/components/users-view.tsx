@@ -13,9 +13,9 @@ type User = {
 };
 
 const STATUS_STYLE: Record<string, string> = {
-  active: "text-emerald-700 dark:text-emerald-400",
-  restricted: "text-amber-700 dark:text-amber-400",
-  suspended: "text-red-700 dark:text-red-400",
+  active: "text-pivot-olive",
+  restricted: "text-pivot-accent",
+  suspended: "text-pivot-danger",
 };
 
 export function UsersView({ users }: { users: User[] }) {
@@ -36,15 +36,15 @@ export function UsersView({ users }: { users: User[] }) {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search by name or email…"
-        className="w-full max-w-sm rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="w-full max-w-sm border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
       />
 
-      <p className="text-xs text-black/50 dark:text-white/50">
+      <p className="text-xs text-pivot-muted">
         {results.length} {results.length === 1 ? "user" : "users"}
       </p>
 
       {results.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">No users found.</p>
+        <p className="text-sm text-pivot-muted">No users found.</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {results.map((u) => (
@@ -60,7 +60,7 @@ function UserRow({ user }: { user: User }) {
   const [editing, setEditing] = useState(false);
 
   return (
-    <li className="rounded-lg border border-black/10 p-4 text-sm dark:border-white/15">
+    <li className="rounded-lg border border-pivot-line bg-pivot-white p-4 text-sm">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           {editing ? (
@@ -76,29 +76,29 @@ function UserRow({ user }: { user: User }) {
                 name="full_name"
                 defaultValue={user.full_name ?? ""}
                 autoFocus
-                className="rounded-md border border-black/10 px-2 py-1 text-sm dark:border-white/15"
+                className="border border-pivot-line bg-pivot-paper px-2 py-1 text-sm text-pivot-ink outline-none"
               />
-              <button type="submit" className="text-xs underline">
+              <button type="submit" className="text-xs text-pivot-ink underline">
                 Save
               </button>
-              <button type="button" onClick={() => setEditing(false)} className="text-xs text-black/50 underline dark:text-white/50">
+              <button type="button" onClick={() => setEditing(false)} className="text-xs text-pivot-muted underline">
                 Cancel
               </button>
             </form>
           ) : (
-            <p className="flex items-center gap-2 font-medium">
+            <p className="flex items-center gap-2 font-medium text-pivot-ink">
               {user.full_name ?? "(no name)"}
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="text-xs font-normal text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white"
+                className="text-xs font-normal text-pivot-muted underline hover:text-pivot-ink"
               >
                 Edit
               </button>
             </p>
           )}
-          <p className="text-black/50 dark:text-white/50">{user.email}</p>
-          <p className="mt-1 text-xs text-black/40 dark:text-white/40">
+          <p className="text-pivot-muted">{user.email}</p>
+          <p className="mt-1 text-xs text-pivot-muted">
             {user.expertStatus ? `Expert (${user.expertStatus})` : "Client"} · joined{" "}
             {new Date(user.created_at).toLocaleDateString()}
           </p>
@@ -113,7 +113,7 @@ function UserRow({ user }: { user: User }) {
               <form action={setUserAccountStatus}>
                 <input type="hidden" name="id" value={user.id} />
                 <input type="hidden" name="status" value="active" />
-                <button className="rounded-md border border-black/10 px-2.5 py-1 text-xs dark:border-white/15">
+                <button className="rounded-md border border-pivot-line px-2.5 py-1 text-xs text-pivot-ink">
                   Reactivate
                 </button>
               </form>
@@ -122,7 +122,7 @@ function UserRow({ user }: { user: User }) {
               <form action={setUserAccountStatus}>
                 <input type="hidden" name="id" value={user.id} />
                 <input type="hidden" name="status" value="restricted" />
-                <button className="rounded-md border border-black/10 px-2.5 py-1 text-xs dark:border-white/15">
+                <button className="rounded-md border border-pivot-line px-2.5 py-1 text-xs text-pivot-ink">
                   Restrict
                 </button>
               </form>
@@ -131,7 +131,7 @@ function UserRow({ user }: { user: User }) {
               <form action={setUserAccountStatus}>
                 <input type="hidden" name="id" value={user.id} />
                 <input type="hidden" name="status" value="suspended" />
-                <button className="rounded-md border border-red-200 px-2.5 py-1 text-xs text-red-700 dark:border-red-900 dark:text-red-400">
+                <button className="rounded-md border border-pivot-danger/30 px-2.5 py-1 text-xs text-pivot-danger">
                   Suspend
                 </button>
               </form>

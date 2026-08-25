@@ -10,9 +10,9 @@ export default async function AdminBookingsPage({
 }) {
   if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
     return (
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <h1 className="text-xl font-semibold">Bookings</h1>
-        <p className="mt-4 text-sm text-amber-700 dark:text-amber-500">
+      <div className="mx-auto max-w-5xl bg-pivot-paper px-6 py-10">
+        <h1 className="text-xl font-semibold text-pivot-ink">Bookings</h1>
+        <p className="mt-4 text-sm text-pivot-accent">
           `SUPABASE_SERVICE_ROLE_KEY` is not set — admin queries cannot run yet.
         </p>
       </div>
@@ -25,8 +25,8 @@ export default async function AdminBookingsPage({
   const bookings = await getAllBookingsForAdmin(activeTab);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
-      <h1 className="mb-6 text-xl font-semibold">Bookings</h1>
+    <div className="mx-auto max-w-5xl bg-pivot-paper px-6 py-10">
+      <h1 className="mb-6 text-xl font-semibold text-pivot-ink">Bookings</h1>
       <BookingsTable bookings={bookings} activeTab={activeTab} />
     </div>
   );

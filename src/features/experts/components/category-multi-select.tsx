@@ -51,14 +51,14 @@ export function CategoryMultiSelect({ categories, name, initialSelectedIds = [] 
             return (
               <span
                 key={id}
-                className="flex items-center gap-1 rounded-full bg-foreground px-3 py-1 text-xs font-medium text-background"
+                className="flex items-center gap-1 rounded-full bg-pivot-ink px-3 py-1 text-xs font-medium text-pivot-paper"
               >
                 {category.name}
                 <button
                   type="button"
                   onClick={() => removeCategory(id)}
                   aria-label={`Remove ${category.name}`}
-                  className="ml-0.5 text-background/70 hover:text-background"
+                  className="ml-0.5 text-pivot-paper/70 hover:text-pivot-paper"
                 >
                   ×
                 </button>
@@ -75,20 +75,20 @@ export function CategoryMultiSelect({ categories, name, initialSelectedIds = [] 
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Search a category, press Enter to add it"
-          className="w-full rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+          className="w-full border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink outline-none"
         />
         {matches.length > 0 && (
-          <ul className="absolute inset-x-0 top-[calc(100%+4px)] z-10 max-h-56 overflow-y-auto rounded-md border border-black/10 bg-white text-sm shadow-lg dark:border-white/15 dark:bg-neutral-900">
+          <ul className="absolute inset-x-0 top-[calc(100%+4px)] z-10 max-h-56 overflow-y-auto rounded-md border border-pivot-line bg-pivot-white text-sm shadow-lg">
             {matches.map((c) => (
               <li key={c.id}>
                 <button
                   type="button"
                   onClick={() => addCategory(c.id)}
-                  className="block w-full px-3 py-2 text-left hover:bg-black/5 dark:hover:bg-white/10"
+                  className="block w-full px-3 py-2 text-left text-pivot-ink hover:bg-pivot-paper-2"
                 >
                   {c.name}
                   {c.parent_id && (
-                    <span className="ml-1 text-xs text-black/40 dark:text-white/40">
+                    <span className="ml-1 text-xs text-pivot-muted">
                       under {categoryById.get(c.parent_id)?.name}
                     </span>
                   )}
