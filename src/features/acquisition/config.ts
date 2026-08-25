@@ -51,11 +51,7 @@ export const ACQUISITION_CATEGORIES: AcquisitionCategory[] = [
   {
     key: "industry_expertise",
     label: "Industry expertise",
-    // TODO: no live DB access from this session to confirm the real
-    // "Industry & Specialized Expertise" top-level category id — left
-    // unmapped (reported as "Unmapped" in admin demand-gap analytics, same
-    // convention the old "something_else" key used) until it's filled in.
-    mappedCategoryIds: [],
+    mappedCategoryIds: ["1e6c7ee8-b81f-4d13-9a1a-b4b11b3895cf"], // Industry & Specialized Expertise
   },
 ];
 
