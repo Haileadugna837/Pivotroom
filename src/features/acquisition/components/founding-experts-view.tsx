@@ -24,11 +24,11 @@ export function FoundingExpertsView({ applicationCount }: { applicationCount: nu
   }
 
   return (
-    <div className="flex flex-1 flex-col bg-neutral-900 text-white">
+    <div className="flex flex-1 flex-col bg-pivot-paper font-dm-sans text-pivot-ink">
       <CaptureAcquisitionVisit />
       <div className="flex min-h-[100svh] flex-col">
         <div className="px-6 py-4">
-          <Link href="/" className="text-sm text-white/50 hover:text-white">
+          <Link href="/" className="text-sm text-pivot-muted hover:text-pivot-ink">
             ← Home
           </Link>
         </div>

@@ -15,7 +15,7 @@ export function FoundingExpertsHero({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="text-xs font-medium uppercase tracking-wide text-white/50"
+        className="text-xs font-semibold uppercase tracking-[0.18em] text-pivot-accent"
       >
         The Founding 100
       </motion.p>
@@ -23,7 +23,7 @@ export function FoundingExpertsHero({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.05 }}
-        className="mx-auto mt-4 max-w-xl text-3xl font-semibold leading-tight sm:text-4xl md:text-5xl"
+        className="mx-auto mt-4 max-w-xl font-serif text-4xl leading-[0.98] font-normal text-pivot-ink sm:text-5xl md:text-6xl"
       >
         Your experience could save someone months of mistakes.
       </motion.h1>
@@ -31,7 +31,7 @@ export function FoundingExpertsHero({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-3 text-lg text-white/70"
+        className="mt-3 text-lg text-pivot-ink-2"
       >
         Become a Founding Expert.
       </motion.h2>
@@ -39,7 +39,7 @@ export function FoundingExpertsHero({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.15 }}
-        className="mx-auto mt-5 max-w-xl text-sm text-white/60 sm:text-base"
+        className="mx-auto mt-5 max-w-xl text-sm text-pivot-muted sm:text-base"
       >
         Pivotroom is selecting its first group of accomplished founders, executives, operators, specialists,
         creators and professionals for private one-to-one conversations. We&apos;re building the first 100
@@ -53,12 +53,12 @@ export function FoundingExpertsHero({
         <button
           type="button"
           onClick={onApply}
-          className="mt-9 rounded-full bg-white px-8 py-3.5 text-sm font-medium text-black"
+          className="mt-9 rounded-full bg-pivot-ink px-8 py-3.5 text-sm font-medium text-pivot-paper"
         >
           Apply as a Founding Expert
         </button>
         {applicationCount > 0 && (
-          <p className="mt-3 text-xs text-white/40">{applicationCount} applications received so far.</p>
+          <p className="mt-3 text-xs text-pivot-muted">{applicationCount} applications received so far.</p>
         )}
       </motion.div>
     </section>

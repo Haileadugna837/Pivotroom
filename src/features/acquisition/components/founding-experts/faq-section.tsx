@@ -31,16 +31,18 @@ const FAQS = [
 
 export function FoundingExpertsFaq() {
   return (
-    <section className="border-t border-white/10 bg-white/[0.02] px-6 py-20">
-      <h2 className="text-center text-2xl font-semibold leading-tight sm:text-3xl">Frequently asked questions</h2>
-      <div className="mx-auto mt-10 flex max-w-2xl flex-col divide-y divide-white/10">
+    <section className="border-t border-pivot-line bg-pivot-paper-2 px-6 py-20">
+      <h2 className="text-center font-serif text-3xl leading-tight font-normal text-pivot-ink sm:text-4xl">
+        Frequently asked questions
+      </h2>
+      <div className="mx-auto mt-10 flex max-w-2xl flex-col divide-y divide-pivot-line">
         {FAQS.map((item) => (
           <details key={item.q} className="group py-4">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium marker:content-none">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-sm font-medium text-pivot-ink marker:content-none">
               {item.q}
-              <span className="shrink-0 text-white/40 transition-transform group-open:rotate-45">+</span>
+              <span className="shrink-0 text-pivot-accent transition-transform group-open:rotate-45">+</span>
             </summary>
-            <p className="mt-2 text-sm text-white/60">{item.a}</p>
+            <p className="mt-2 text-sm text-pivot-ink-2">{item.a}</p>
           </details>
         ))}
       </div>

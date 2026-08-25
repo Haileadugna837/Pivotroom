@@ -122,18 +122,11 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
   const stepNumber = { contact: 1, type: 2, expertise: 3, experience: 4, success: 4 }[step];
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-background text-foreground">
+    <div className="fixed inset-0 z-50 flex flex-col bg-pivot-white text-pivot-ink">
       {step !== "success" && (
-        <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/15">
-          <span className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-            {stepNumber} of 4
-          </span>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
-          >
+        <div className="flex items-center justify-between border-b border-pivot-line px-5 py-4">
+          <span className="text-xs font-medium uppercase tracking-wide text-pivot-muted">{stepNumber} of 4</span>
+          <button type="button" onClick={onClose} aria-label="Close" className="text-pivot-muted hover:text-pivot-ink">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
             </svg>
@@ -150,7 +143,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -160,7 +153,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setPhone(e.target.value)}
                 type="tel"
                 inputMode="tel"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -170,7 +163,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 inputMode="email"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -180,7 +173,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onChange={(e) => setLinkedin(e.target.value)}
                 type="url"
                 placeholder="https://linkedin.com/in/…"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -189,7 +182,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
                 type="url"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -198,15 +191,15 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={instagram}
                 onChange={(e) => setInstagram(e.target.value)}
                 type="url"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
           </div>
-          {error && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          {error && <p className="mt-4 text-sm text-pivot-danger">{error}</p>}
           <button
             type="button"
             onClick={handleContactContinue}
-            className="mt-6 w-full rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background"
+            className="mt-6 w-full rounded-full bg-pivot-ink px-6 py-3.5 text-sm font-medium text-pivot-paper"
           >
             Continue
           </button>
@@ -224,8 +217,8 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 onClick={() => setProfessionalType(t)}
                 className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   professionalType === t
-                    ? "border-foreground bg-foreground text-background"
-                    : "border-black/10 text-black/70 hover:bg-black/5 dark:border-white/15 dark:text-white/70 dark:hover:bg-white/10"
+                    ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                    : "border-pivot-line text-pivot-ink-2 hover:bg-pivot-paper-2"
                 }`}
               >
                 {t}
@@ -237,7 +230,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
             <select
               value={professionalTypeSecondary}
               onChange={(e) => setProfessionalTypeSecondary(e.target.value)}
-              className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+              className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
             >
               <option value="">None</option>
               {PROFESSIONAL_TYPES.filter((t) => t !== professionalType).map((t) => (
@@ -247,11 +240,11 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               ))}
             </select>
           </label>
-          {error && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          {error && <p className="mt-4 text-sm text-pivot-danger">{error}</p>}
           <button
             type="button"
             onClick={handleTypeContinue}
-            className="mt-auto w-full rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background"
+            className="mt-auto w-full rounded-full bg-pivot-ink px-6 py-3.5 text-sm font-medium text-pivot-paper"
           >
             Continue
           </button>
@@ -261,7 +254,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
       {step === "expertise" && (
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 py-8">
           <h2 className="text-xl font-semibold">What can people speak with you about?</h2>
-          <p className="mt-1 text-sm text-black/50 dark:text-white/50">
+          <p className="mt-1 text-sm text-pivot-muted">
             Choose up to {MAX_EXPERTISE_TOPICS}, or add your own.
           </p>
           <div className="mt-6 flex flex-wrap gap-2">
@@ -274,8 +267,8 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                   onClick={() => toggleTopic(topic)}
                   className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                     active
-                      ? "border-foreground bg-foreground text-background"
-                      : "border-black/10 text-black/70 hover:bg-black/5 dark:border-white/15 dark:text-white/70 dark:hover:bg-white/10"
+                      ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                      : "border-pivot-line text-pivot-ink-2 hover:bg-pivot-paper-2"
                   }`}
                 >
                   {topic}
@@ -294,24 +287,24 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 }
               }}
               placeholder="Add your own topic"
-              className="flex-1 rounded-lg border border-black/10 bg-background px-4 py-2.5 text-sm text-foreground dark:border-white/15"
+              className="flex-1 rounded-lg border border-pivot-line bg-pivot-paper px-4 py-2.5 text-sm text-pivot-ink"
             />
             <button
               type="button"
               onClick={addCustomTopic}
-              className="rounded-lg border border-black/10 px-4 py-2.5 text-sm font-medium dark:border-white/15"
+              className="rounded-lg border border-pivot-line px-4 py-2.5 text-sm font-medium text-pivot-ink"
             >
               Add
             </button>
           </div>
           {topics.length > 0 && (
-            <p className="mt-3 text-xs text-black/50 dark:text-white/50">Selected: {topics.join(", ")}</p>
+            <p className="mt-3 text-xs text-pivot-muted">Selected: {topics.join(", ")}</p>
           )}
-          {error && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          {error && <p className="mt-4 text-sm text-pivot-danger">{error}</p>}
           <button
             type="button"
             onClick={handleExpertiseContinue}
-            className="mt-auto w-full rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background"
+            className="mt-auto w-full rounded-full bg-pivot-ink px-6 py-3.5 text-sm font-medium text-pivot-paper"
           >
             Continue
           </button>
@@ -331,7 +324,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
             value={experienceText}
             onChange={(e) => setExperienceText(e.target.value)}
             rows={4}
-            className="mt-4 w-full resize-none rounded-xl border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+            className="mt-4 w-full resize-none rounded-xl border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
           />
           <div className="mt-4 flex flex-col gap-4">
             <label className="text-sm">
@@ -339,7 +332,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={currentRole}
                 onChange={(e) => setCurrentRole(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -347,7 +340,7 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
               <input
                 value={currentCompany}
                 onChange={(e) => setCurrentCompany(e.target.value)}
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
             <label className="text-sm">
@@ -356,15 +349,15 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
                 value={yearsExperience}
                 onChange={(e) => setYearsExperience(e.target.value.replace(/\D/g, ""))}
                 inputMode="numeric"
-                className="mt-1 block w-full rounded-lg border border-black/10 bg-background px-4 py-3 text-sm text-foreground dark:border-white/15"
+                className="mt-1 block w-full rounded-lg border border-pivot-line bg-pivot-paper px-4 py-3 text-sm text-pivot-ink"
               />
             </label>
           </div>
-          {error && <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>}
+          {error && <p className="mt-4 text-sm text-pivot-danger">{error}</p>}
           <button
             type="submit"
             disabled={pending}
-            className="mt-6 w-full rounded-full bg-foreground px-6 py-3.5 text-sm font-medium text-background disabled:opacity-50"
+            className="mt-6 w-full rounded-full bg-pivot-ink px-6 py-3.5 text-sm font-medium text-pivot-paper disabled:opacity-50"
           >
             {pending ? "Submitting…" : "Submit Founding Expert Application"}
           </button>
@@ -373,15 +366,15 @@ export function FoundingExpertModal({ sessionId, onClose }: { sessionId: string;
 
       {step === "success" && (
         <div className="mx-auto flex max-w-md flex-1 flex-col items-center justify-center px-6 py-10 text-center">
-          <h2 className="text-2xl font-semibold">Application received.</h2>
-          <p className="mt-3 text-sm text-black/60 dark:text-white/60">
+          <h2 className="text-2xl font-semibold text-pivot-ink">Application received.</h2>
+          <p className="mt-3 text-sm text-pivot-ink-2">
             Our team reviews Founding Expert applications individually. We&apos;ll contact you if we need
             additional information or when your application moves forward.
           </p>
           <button
             type="button"
             onClick={onClose}
-            className="mt-8 rounded-full bg-foreground px-8 py-3.5 text-sm font-medium text-background"
+            className="mt-8 rounded-full bg-pivot-ink px-8 py-3.5 text-sm font-medium text-pivot-paper"
           >
             Return Home
           </button>
