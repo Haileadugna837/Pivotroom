@@ -1,3 +1,5 @@
+import { EarlyAccessCtaLink } from "@/features/acquisition/components/landing/early-access-cta-link";
+
 export function AcquisitionNav() {
   return (
     <nav className="sticky top-0 z-50 border-b border-pivot-line bg-pivot-paper/90 backdrop-blur-lg">
@@ -19,12 +21,9 @@ export function AcquisitionNav() {
             FAQ
           </a>
         </div>
-        <a
-          href="#join"
-          className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper"
-        >
+        <EarlyAccessCtaLink className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper">
           Get early access ↗
-        </a>
+        </EarlyAccessCtaLink>
       </div>
     </nav>
   );

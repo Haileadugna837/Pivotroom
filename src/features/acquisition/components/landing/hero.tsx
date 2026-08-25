@@ -1,3 +1,5 @@
+import { EarlyAccessCtaLink } from "@/features/acquisition/components/landing/early-access-cta-link";
+
 const PROOFS = [
   { title: "Problem-first", copy: "Start with what you need help solving." },
   { title: "Curated access", copy: "Meet experience relevant to your situation." },
@@ -19,12 +21,9 @@ export function AcquisitionHero() {
           executives, investors and operators who have already faced problems like yours.
         </p>
         <div className="mt-3 flex flex-wrap gap-3">
-          <a
-            href="#join"
-            className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper"
-          >
+          <EarlyAccessCtaLink className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper">
             Join early access ↗
-          </a>
+          </EarlyAccessCtaLink>
           <a
             href="#problems"
             className="inline-flex min-h-[46px] items-center justify-center rounded-full border border-pivot-ink px-[18px] text-sm font-medium text-pivot-ink"
