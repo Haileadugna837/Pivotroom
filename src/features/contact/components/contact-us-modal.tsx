@@ -241,16 +241,16 @@ function OptionRow({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center gap-3 rounded-lg border border-black/10 px-4 py-3 text-left hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+      className="flex w-full items-center gap-3 rounded-lg border border-pivot-line px-4 py-3 text-left hover:bg-pivot-paper-2"
     >
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-black/5 text-black/70 dark:bg-white/10 dark:text-white/70">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-pivot-paper-2 text-pivot-ink-2">
         <Icon name={icon} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-sm font-medium">{title}</span>
-        <span className="block text-xs text-black/50 dark:text-white/50">{subtitle}</span>
+        <span className="block text-sm font-medium text-pivot-ink">{title}</span>
+        <span className="block text-xs text-pivot-muted">{subtitle}</span>
       </span>
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0 text-black/30 dark:text-white/30">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true" className="shrink-0 text-pivot-muted">
         <path d="M7.5 5l5 5-5 5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </button>
@@ -290,17 +290,17 @@ export function ContactUsModal({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-label="Contact us"
-        className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-background sm:max-w-md sm:rounded-2xl"
+        className="flex max-h-[85vh] w-full flex-col rounded-t-2xl bg-pivot-white text-pivot-ink sm:max-w-md sm:rounded-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-black/10 px-5 py-4 dark:border-white/15">
+        <div className="flex items-center justify-between border-b border-pivot-line px-5 py-4">
           <div className="flex items-center gap-2">
             {step !== "audience" && (
               <button
                 type="button"
                 onClick={goBack}
                 aria-label="Back"
-                className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+                className="text-pivot-muted hover:text-pivot-ink"
               >
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none" aria-hidden="true">
                   <path
@@ -315,14 +315,14 @@ export function ContactUsModal({ onClose }: { onClose: () => void }) {
             )}
             <div>
               <h2 className="text-lg font-semibold">Contact us</h2>
-              <p className="text-xs text-black/40 dark:text-white/40">Step {stepNumber} of 3</p>
+              <p className="text-xs text-pivot-muted">Step {stepNumber} of 3</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+            className="text-pivot-muted hover:text-pivot-ink"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
               <path d="M5 5l10 10M15 5L5 15" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
@@ -374,28 +374,24 @@ export function ContactUsModal({ onClose }: { onClose: () => void }) {
 
           {step === "contact" && (
             <div className="flex flex-col gap-4">
-              <p className="text-sm text-black/60 dark:text-white/60">
+              <p className="text-sm text-pivot-ink-2">
                 Got it{topic ? ` — ${topic.title.toLowerCase()}` : ""}. Here&apos;s the fastest way to
                 reach us:
               </p>
 
-              <div className="rounded-lg border border-black/10 p-4 dark:border-white/15">
-                <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-                  Email
-                </p>
-                <a href={mailtoHref} className="mt-1 block text-sm font-medium underline">
+              <div className="rounded-lg border border-pivot-line p-4">
+                <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Email</p>
+                <a href={mailtoHref} className="mt-1 block text-sm font-medium text-pivot-ink underline">
                   {ADMIN_EMAIL}
                 </a>
 
-                <p className="mt-4 text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-                  Phone
-                </p>
-                <p className="mt-1 text-sm text-black/60 dark:text-white/60">
+                <p className="mt-4 text-xs font-medium uppercase tracking-wide text-pivot-muted">Phone</p>
+                <p className="mt-1 text-sm text-pivot-ink-2">
                   Not listed yet — email is the fastest way to reach us.
                 </p>
               </div>
 
-              <p className="text-xs text-black/50 dark:text-white/50">
+              <p className="text-xs text-pivot-muted">
                 We&apos;ve pre-filled the subject line so your message reaches the right place. We
                 typically reply within 1–2 business days.
               </p>

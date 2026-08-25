@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Instrument_Serif, DM_Sans } from "next/font/google";
+import { Geist_Mono, Instrument_Serif, DM_Sans } from "next/font/google";
 import { getUser } from "@/lib/supabase/server";
 import { isAdminEmail } from "@/lib/admin";
 import { Header } from "@/features/auth/components/header";
@@ -8,11 +8,6 @@ import { PostHogIdentify } from "@/components/posthog-identify";
 import { ChromeGate } from "@/components/chrome-gate";
 import { getAcquisitionLandingEnabled } from "@/features/marketing/server/queries";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -33,11 +28,6 @@ const dmSans = DM_Sans({
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-
-// Applies the stored theme preference before first paint, so the page never
-// flashes light-then-dark (or vice versa) while React hydrates. Static
-// string, no user input involved.
-const THEME_INIT_SCRIPT = `(function(){try{var t=localStorage.getItem('theme')||'system';var d=t==='dark'||(t==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);}catch(e){}})();`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -62,12 +52,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${dmSans.variable} h-full antialiased`}
+      className={`${geistMono.variable} ${instrumentSerif.variable} ${dmSans.variable} h-full antialiased`}
     >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-      </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col font-dm-sans">
         <PostHogIdentify
           user={user ? { id: user.id, email: user.email ?? "", isAdmin: isAdminEmail(user.email) } : null}
         />
