@@ -29,7 +29,7 @@ const GROUPS: { icon: LucideIcon; title: string; items: string[] }[] = [
 export function FoundingExpertsBenefits() {
   return (
     <section className="px-6 py-20">
-      <h2 className="mx-auto max-w-lg text-center text-2xl font-semibold leading-tight sm:text-3xl">
+      <h2 className="mx-auto max-w-lg text-center font-serif text-3xl leading-tight font-normal text-pivot-ink sm:text-4xl">
         What you get as a Founding Expert.
       </h2>
 
@@ -43,16 +43,16 @@ export function FoundingExpertsBenefits() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6"
+              className="rounded-2xl border border-pivot-line bg-pivot-white p-6"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/20">
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-pivot-line text-pivot-accent">
                 <Icon className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
               </span>
-              <p className="mt-4 text-sm font-semibold">{group.title}</p>
-              <ul className="mt-3 space-y-2 text-left text-sm text-white/60">
+              <p className="mt-4 text-sm font-semibold text-pivot-ink">{group.title}</p>
+              <ul className="mt-3 space-y-2 text-left text-sm text-pivot-ink-2">
                 {group.items.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-white/40" />
+                    <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-pivot-accent" />
                     {item}
                   </li>
                 ))}

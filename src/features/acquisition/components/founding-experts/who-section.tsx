@@ -11,7 +11,7 @@ export function FoundingExpertsWho() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.5 }}
-        className="mx-auto max-w-lg text-2xl font-semibold leading-tight sm:text-3xl"
+        className="mx-auto max-w-lg font-serif text-3xl leading-tight font-normal text-pivot-ink sm:text-4xl"
       >
         We&apos;re not looking for job titles.
       </motion.h2>
@@ -20,7 +20,7 @@ export function FoundingExpertsWho() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.5, delay: 0.1 }}
-        className="mx-auto mt-4 max-w-lg text-sm text-white/60 sm:text-base"
+        className="mx-auto mt-4 max-w-lg text-sm text-pivot-muted sm:text-base"
       >
         We&apos;re looking for people who&apos;ve actually done things — built, scaled, sold, invested, failed
         forward, and figured out what actually works.
@@ -36,7 +36,7 @@ export function FoundingExpertsWho() {
         {PROFESSIONAL_TYPES.map((type) => (
           <span
             key={type}
-            className="rounded-full border border-white/15 px-4 py-2 text-sm font-medium text-white/80"
+            className="rounded-full border border-pivot-line bg-pivot-white px-4 py-2 text-sm font-medium text-pivot-ink-2"
           >
             {type}
           </span>
