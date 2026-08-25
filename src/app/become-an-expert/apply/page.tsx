@@ -38,12 +38,14 @@ export default async function BecomeAnExpertApplyPage({
   const [categoryTree, industryGroups] = await Promise.all([getExpertiseCategoryTree(), getIndustryDirectory()]);
 
   return (
-    <div className="mx-auto max-w-lg px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Apply to become an expert</h1>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
-        Your profile will be reviewed by an admin before it appears publicly.
-      </p>
-      <ExpertOnboardingWizard categoryTree={categoryTree} industryGroups={industryGroups} inviteToken={token} />
+    <div className="bg-pivot-paper px-6 py-10">
+      <div className="mx-auto max-w-lg">
+        <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Apply to become an expert</h1>
+        <p className="mb-6 text-sm text-pivot-muted">
+          Your profile will be reviewed by an admin before it appears publicly.
+        </p>
+        <ExpertOnboardingWizard categoryTree={categoryTree} industryGroups={industryGroups} inviteToken={token} />
+      </div>
     </div>
   );
 }

@@ -12,19 +12,21 @@ export default async function ResetPasswordPage() {
   const user = await getUser();
 
   return (
-    <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center gap-6 px-4">
-      <h1 className="text-xl font-semibold">Set a new password</h1>
-      {user ? (
-        <ResetPasswordForm />
-      ) : (
-        <p className="text-sm text-black/60 dark:text-white/60">
-          This link has expired or was already used.{" "}
-          <Link href="/forgot-password" className="underline">
-            Request a new one
-          </Link>
-          .
-        </p>
-      )}
+    <div className="flex min-h-[70vh] flex-col justify-center bg-pivot-paper px-4">
+      <div className="mx-auto flex w-full max-w-sm flex-col gap-6">
+        <h1 className="text-xl font-semibold text-pivot-ink">Set a new password</h1>
+        {user ? (
+          <ResetPasswordForm />
+        ) : (
+          <p className="text-sm text-pivot-ink-2">
+            This link has expired or was already used.{" "}
+            <Link href="/forgot-password" className="underline">
+              Request a new one
+            </Link>
+            .
+          </p>
+        )}
+      </div>
     </div>
   );
 }

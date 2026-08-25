@@ -17,7 +17,7 @@ export function GoogleButton({ next = "/dashboard" }: { next?: string }) {
     <button
       type="button"
       onClick={signInWithGoogle}
-      className="flex w-full items-center justify-center gap-2 rounded-md border border-black/10 px-4 py-2 text-sm font-medium hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+      className="flex w-full items-center justify-center gap-2 rounded-md border border-pivot-line px-4 py-2 text-sm font-medium text-pivot-ink hover:bg-pivot-paper-2"
     >
       <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
         <path
