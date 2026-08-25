@@ -22,9 +22,9 @@ export default async function ExpertAvailabilityPage() {
     TIMEZONE_OPTIONS.find((tz) => tz.value === expertProfile.timezone)?.label ?? expertProfile.timezone;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-10">
-      <h1 className="text-xl font-semibold">Availability</h1>
-      <p className="mt-1 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-2xl bg-pivot-paper px-6 py-10">
+      <h1 className="text-xl font-semibold text-pivot-ink">Availability</h1>
+      <p className="mt-1 text-sm text-pivot-muted">
         Times below are in your timezone — {timezoneLabel}. Change it on your{" "}
         <a href="/dashboard/expert/profile" className="underline">
           profile
@@ -36,15 +36,15 @@ export default async function ExpertAvailabilityPage() {
         {!calendarConnected ? (
           <a
             href="/api/integrations/google/connect"
-            className="inline-block w-fit rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background"
+            className="inline-block w-fit rounded-md bg-pivot-ink px-4 py-2 text-sm font-medium text-pivot-paper"
           >
             Connect Google Calendar
           </a>
         ) : (
           <>
-            <p className="text-sm text-black/60 dark:text-white/60">Google Calendar connected.</p>
+            <p className="text-sm text-pivot-ink-2">Google Calendar connected.</p>
             <form action={disconnectGoogleCalendar}>
-              <button type="submit" className="text-sm text-black/50 underline hover:text-black dark:text-white/50 dark:hover:text-white">
+              <button type="submit" className="text-sm text-pivot-muted underline hover:text-pivot-ink">
                 Disconnect
               </button>
             </form>

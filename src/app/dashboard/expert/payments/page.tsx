@@ -14,9 +14,9 @@ export default async function ExpertPaymentsPage() {
   const rows = await getMyPaymentsAsExpert();
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="mb-2 text-xl font-semibold">Payments</h1>
-      <p className="mb-6 text-sm text-black/50 dark:text-white/50">
+    <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+      <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Payments</h1>
+      <p className="mb-6 text-sm text-pivot-muted">
         Payout status is set by admin after a session is completed and paid out.
       </p>
       <MyPaymentsList rows={rows} />

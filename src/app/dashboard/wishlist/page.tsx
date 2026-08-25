@@ -14,10 +14,10 @@ export default async function WishlistPage() {
   ]);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-10">
-      <h1 className="text-xl font-semibold">My Wishlist</h1>
+    <div className="mx-auto max-w-3xl bg-pivot-paper px-6 py-10">
+      <h1 className="text-xl font-semibold text-pivot-ink">My Wishlist</h1>
       {experts.length === 0 ? (
-        <p className="mt-4 text-sm text-black/60 dark:text-white/60">
+        <p className="mt-4 text-sm text-pivot-ink-2">
           You haven&apos;t saved any experts yet. Tap the heart icon on an expert&apos;s photo to add them here.
         </p>
       ) : (

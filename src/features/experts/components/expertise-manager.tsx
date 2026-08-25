@@ -31,9 +31,9 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-black/10 p-4 dark:border-white/15">
+    <div className="rounded-lg border border-pivot-line p-4">
       <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-sm font-semibold">{title}</h2>
+        <h2 className="text-sm font-semibold text-pivot-ink">{title}</h2>
         {action}
       </div>
       {children}
@@ -43,7 +43,7 @@ function Card({
 
 function PendingBanner() {
   return (
-    <p className="mb-3 rounded-md bg-amber-50 px-3 py-2 text-xs text-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
+    <p className="mb-3 rounded-md bg-pivot-accent/10 px-3 py-2 text-xs text-pivot-accent">
       A change is pending admin review — your current profile stays visible until then.
     </p>
   );
@@ -88,7 +88,7 @@ function PrimaryExpertiseCard({
           <p className="text-sm font-medium">{category?.name ?? "Not set"}</p>
           <div className="mt-1 flex flex-wrap gap-1.5">
             {expertiseNames.map((name) => (
-              <span key={name} className="rounded-full bg-black/5 px-2.5 py-1 text-xs dark:bg-white/10">
+              <span key={name} className="rounded-full bg-pivot-paper-2 px-2.5 py-1 text-xs text-pivot-ink-2">
                 {name}
               </span>
             ))}
@@ -118,20 +118,20 @@ function PrimaryExpertiseCard({
           {draftExpertiseIds.map((id) => (
             <input key={id} type="hidden" name="expertise_ids" value={id} />
           ))}
-          {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
-          {state.success && <p className="text-sm text-green-700 dark:text-green-500">{state.success}</p>}
+          {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
+          {state.success && <p className="text-sm text-pivot-olive">{state.success}</p>}
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50"
+              className="rounded-md bg-pivot-ink px-4 py-2 text-xs font-medium text-pivot-paper disabled:opacity-50"
             >
               {pending ? "Saving…" : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-md border border-black/10 px-4 py-2 text-xs dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-xs text-pivot-ink"
             >
               Close
             </button>
@@ -188,7 +188,7 @@ function SecondaryExpertiseCard({
           <p className="text-sm font-medium">{category?.name}</p>
           <div className="mt-1 flex flex-wrap gap-1.5">
             {expertiseNames.map((name) => (
-              <span key={name} className="rounded-full bg-black/5 px-2.5 py-1 text-xs dark:bg-white/10">
+              <span key={name} className="rounded-full bg-pivot-paper-2 px-2.5 py-1 text-xs text-pivot-ink-2">
                 {name}
               </span>
             ))}
@@ -219,20 +219,20 @@ function SecondaryExpertiseCard({
           {draftExpertiseIds.map((id) => (
             <input key={id} type="hidden" name="expertise_ids" value={id} />
           ))}
-          {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
-          {state.success && <p className="text-sm text-green-700 dark:text-green-500">{state.success}</p>}
+          {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
+          {state.success && <p className="text-sm text-pivot-olive">{state.success}</p>}
           <div className="flex flex-wrap items-center gap-3">
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50"
+              className="rounded-md bg-pivot-ink px-4 py-2 text-xs font-medium text-pivot-paper disabled:opacity-50"
             >
               {pending ? "Saving…" : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-md border border-black/10 px-4 py-2 text-xs dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-xs text-pivot-ink"
             >
               Cancel
             </button>
@@ -243,7 +243,7 @@ function SecondaryExpertiseCard({
                   setDraftCategoryId(null);
                   setDraftExpertiseIds([]);
                 }}
-                className="text-xs text-black/50 underline dark:text-white/50"
+                className="text-xs text-pivot-muted underline"
               >
                 Remove secondary expertise
               </button>
@@ -281,10 +281,10 @@ function IndustryCard({
       {!editing ? (
         <div className="flex flex-wrap gap-1.5">
           {initialSelections.length === 0 && (
-            <p className="text-sm text-black/50 dark:text-white/50">No industries selected.</p>
+            <p className="text-sm text-pivot-muted">No industries selected.</p>
           )}
           {initialSelections.map((s) => (
-            <span key={s.industryId} className="rounded-full bg-black/5 px-2.5 py-1 text-xs dark:bg-white/10">
+            <span key={s.industryId} className="rounded-full bg-pivot-paper-2 px-2.5 py-1 text-xs text-pivot-ink-2">
               {allIndustries.find((i) => i.id === s.industryId)?.name ?? s.industryId}
             </span>
           ))}
@@ -293,20 +293,20 @@ function IndustryCard({
         <form action={formAction} className="flex flex-col gap-3">
           <IndustryPicker groups={industryGroups} selections={selections} onChange={setSelections} max={8} />
           <input type="hidden" name="industries_json" value={JSON.stringify(selections)} />
-          {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
-          {state.success && <p className="text-sm text-green-700 dark:text-green-500">{state.success}</p>}
+          {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
+          {state.success && <p className="text-sm text-pivot-olive">{state.success}</p>}
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={pending}
-              className="rounded-md bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50"
+              className="rounded-md bg-pivot-ink px-4 py-2 text-xs font-medium text-pivot-paper disabled:opacity-50"
             >
               {pending ? "Saving…" : "Save"}
             </button>
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded-md border border-black/10 px-4 py-2 text-xs dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-xs text-pivot-ink"
             >
               Close
             </button>
@@ -325,27 +325,27 @@ function EditTopicForm({ topic, onClose }: { topic: BookableTopic; onClose: () =
       <input
         name="title"
         defaultValue={topic.title}
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
       <textarea
         name="description"
         defaultValue={topic.description}
         rows={2}
-        className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
       />
-      {state.error && <p className="text-sm text-red-600 dark:text-red-400">{state.error}</p>}
+      {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50"
+          className="rounded-md bg-pivot-ink px-4 py-2 text-xs font-medium text-pivot-paper disabled:opacity-50"
         >
           {pending ? "Saving…" : "Save"}
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-black/10 px-4 py-2 text-xs dark:border-white/15"
+          className="rounded-md border border-pivot-line px-4 py-2 text-xs text-pivot-ink"
         >
           Cancel
         </button>
@@ -391,12 +391,12 @@ function BookableTopicsCard({
       }
     >
       {sorted.length === 0 && !adding && (
-        <p className="text-sm text-black/50 dark:text-white/50">No bookable topics yet.</p>
+        <p className="text-sm text-pivot-muted">No bookable topics yet.</p>
       )}
       {sorted.length > 0 && (
         <ul className="flex flex-col gap-2">
           {sorted.map((t, index) => (
-            <li key={t.id} className="rounded-md border border-black/10 p-3 text-sm dark:border-white/15">
+            <li key={t.id} className="rounded-md border border-pivot-line p-3 text-sm text-pivot-ink">
               {editingId === t.id ? (
                 <EditTopicForm topic={t} onClose={() => setEditingId(null)} />
               ) : (
@@ -404,9 +404,9 @@ function BookableTopicsCard({
                   <div>
                     <p className="font-medium">
                       {t.title}
-                      {!t.active && <span className="ml-1 text-black/40 dark:text-white/40">(disabled)</span>}
+                      {!t.active && <span className="ml-1 text-pivot-muted">(disabled)</span>}
                     </p>
-                    <p className="mt-0.5 text-black/60 dark:text-white/60">{t.description}</p>
+                    <p className="mt-0.5 text-pivot-ink-2">{t.description}</p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-1.5 text-xs">
                     <div className="flex gap-2">
@@ -460,22 +460,22 @@ function BookableTopicsCard({
       {adding && (
         <form
           action={createAction}
-          className="mt-3 flex flex-col gap-2 rounded-md border border-black/10 p-3 dark:border-white/15"
+          className="mt-3 flex flex-col gap-2 rounded-md border border-pivot-line p-3"
         >
           <input
             name="title"
             placeholder="Topic title (e.g. Build My Go-to-Market Strategy)"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
           <textarea
             name="description"
             rows={2}
             placeholder="Short description of what you'll help with"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
           <select
             name="expertise_topic_id"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           >
             {expertiseOptions.map((o) => (
               <option key={o.id} value={o.id}>
@@ -486,7 +486,7 @@ function BookableTopicsCard({
           {industryOptions.length > 0 && (
             <select
               name="industry_id"
-              className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+              className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
             >
               <option value="">Any industry (optional)</option>
               {industryOptions.map((o) => (
@@ -496,19 +496,19 @@ function BookableTopicsCard({
               ))}
             </select>
           )}
-          {createState.error && <p className="text-sm text-red-600 dark:text-red-400">{createState.error}</p>}
+          {createState.error && <p className="text-sm text-pivot-danger">{createState.error}</p>}
           <div className="flex gap-2">
             <button
               type="submit"
               disabled={createPending}
-              className="rounded-md bg-foreground px-4 py-2 text-xs font-medium text-background disabled:opacity-50"
+              className="rounded-md bg-pivot-ink px-4 py-2 text-xs font-medium text-pivot-paper disabled:opacity-50"
             >
               {createPending ? "Adding…" : "Add"}
             </button>
             <button
               type="button"
               onClick={() => setAdding(false)}
-              className="rounded-md border border-black/10 px-4 py-2 text-xs dark:border-white/15"
+              className="rounded-md border border-pivot-line px-4 py-2 text-xs text-pivot-ink"
             >
               Cancel
             </button>

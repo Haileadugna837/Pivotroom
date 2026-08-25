@@ -59,12 +59,12 @@ export function IndustryPicker({
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-xs text-black/50 dark:text-white/50">
+      <p className="text-xs text-pivot-muted">
         {selectedIds.length} of {max} industries selected
       </p>
 
       {groups.length === 0 ? (
-        <p className="text-sm text-black/50 dark:text-white/50">
+        <p className="text-sm text-pivot-muted">
           No industries are set up yet — you can skip this step for now and add industries later from My Account.
         </p>
       ) : (
@@ -73,13 +73,13 @@ export function IndustryPicker({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search industries"
-            className="rounded-md border border-black/10 px-3 py-2 text-sm dark:border-white/15"
+            className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-2 text-sm text-pivot-ink"
           />
 
           {searchResults ? (
             <div className="flex flex-col gap-1">
               {searchResults.length === 0 && (
-                <p className="text-sm text-black/40 dark:text-white/40">No matches.</p>
+                <p className="text-sm text-pivot-muted">No matches.</p>
               )}
               {searchResults.map(({ industry, groupName }) => {
                 const selected = selectedIds.includes(industry.id);
@@ -89,14 +89,12 @@ export function IndustryPicker({
                     type="button"
                     disabled={!selected && atMax}
                     onClick={() => toggle(industry.id)}
-                    className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm disabled:cursor-not-allowed disabled:opacity-40 ${
-                      selected
-                        ? "border-foreground bg-black/5 dark:bg-white/10"
-                        : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                    className={`flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm text-pivot-ink disabled:cursor-not-allowed disabled:opacity-40 ${
+                      selected ? "border-pivot-ink bg-pivot-paper-2" : "border-pivot-line hover:bg-pivot-paper-2"
                     }`}
                   >
                     <span>{industry.name}</span>
-                    <span className="text-xs text-black/40 dark:text-white/40">{groupName}</span>
+                    <span className="text-xs text-pivot-muted">{groupName}</span>
                   </button>
                 );
               })}
@@ -104,19 +102,19 @@ export function IndustryPicker({
           ) : (
             <div className="flex flex-col gap-2">
               {groups.map((g) => (
-                <div key={g.id} className="rounded-md border border-black/10 dark:border-white/15">
+                <div key={g.id} className="rounded-md border border-pivot-line">
                   <button
                     type="button"
                     onClick={() => setOpenGroupId(openGroupId === g.id ? null : g.id)}
-                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium"
+                    className="flex w-full items-center justify-between px-3 py-2 text-left text-sm font-medium text-pivot-ink"
                   >
                     <span>{g.name}</span>
-                    <span className="text-xs text-black/40 dark:text-white/40">
+                    <span className="text-xs text-pivot-muted">
                       {openGroupId === g.id ? "Hide" : "Show"}
                     </span>
                   </button>
                   {openGroupId === g.id && (
-                    <div className="flex flex-wrap gap-2 border-t border-black/10 p-3 dark:border-white/15">
+                    <div className="flex flex-wrap gap-2 border-t border-pivot-line p-3">
                       {g.industries.map((i) => {
                         const selected = selectedIds.includes(i.id);
                         return (
@@ -127,8 +125,8 @@ export function IndustryPicker({
                             onClick={() => toggle(i.id)}
                             className={`rounded-full border px-3 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-40 ${
                               selected
-                                ? "border-foreground bg-foreground text-background"
-                                : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                                ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                                : "border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
                             }`}
                           >
                             {i.name}
@@ -145,27 +143,23 @@ export function IndustryPicker({
       )}
 
       {selectedIds.length > 0 && (
-        <div className="flex flex-col gap-2 border-t border-black/10 pt-3 dark:border-white/15">
-          <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">Selected</p>
+        <div className="flex flex-col gap-2 border-t border-pivot-line pt-3">
+          <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Selected</p>
           {selections.map((s) => (
-            <div key={s.industryId} className="flex flex-wrap items-center gap-2 text-sm">
+            <div key={s.industryId} className="flex flex-wrap items-center gap-2 text-sm text-pivot-ink">
               <span className="flex-1">{industryById.get(s.industryId)?.name ?? s.industryId}</span>
               <select
                 value={s.experienceLevel ?? ""}
                 onChange={(e) =>
                   setLevel(s.industryId, (e.target.value || null) as "experienced" | "highly_experienced" | null)
                 }
-                className="rounded-md border border-black/10 px-2 py-1 text-xs dark:border-white/15"
+                className="rounded-md border border-pivot-line bg-pivot-paper px-2 py-1 text-xs text-pivot-ink"
               >
                 <option value="">Experience level (optional)</option>
                 <option value="experienced">Experienced</option>
                 <option value="highly_experienced">Highly Experienced</option>
               </select>
-              <button
-                type="button"
-                onClick={() => toggle(s.industryId)}
-                className="text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
-              >
+              <button type="button" onClick={() => toggle(s.industryId)} className="text-pivot-muted hover:text-pivot-ink">
                 Remove
               </button>
             </div>
@@ -183,11 +177,7 @@ function IndustrySuggestBox({ onSuggest }: { onSuggest: (name: string) => void }
   const [text, setText] = useState("");
   if (!open) {
     return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="w-fit text-xs text-black/50 underline dark:text-white/50"
-      >
+      <button type="button" onClick={() => setOpen(true)} className="w-fit text-xs text-pivot-muted underline">
         Can&apos;t find your industry? Suggest it
       </button>
     );
@@ -198,7 +188,7 @@ function IndustrySuggestBox({ onSuggest }: { onSuggest: (name: string) => void }
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder="e.g. Furniture Manufacturing"
-        className="rounded-md border border-black/10 px-3 py-1.5 text-sm dark:border-white/15"
+        className="rounded-md border border-pivot-line bg-pivot-paper px-3 py-1.5 text-sm text-pivot-ink"
       />
       <button
         type="button"
@@ -208,7 +198,7 @@ function IndustrySuggestBox({ onSuggest }: { onSuggest: (name: string) => void }
           setText("");
           setOpen(false);
         }}
-        className="rounded-md border border-black/10 px-3 py-1.5 text-xs font-medium dark:border-white/15"
+        className="rounded-md border border-pivot-line px-3 py-1.5 text-xs font-medium text-pivot-ink"
       >
         Submit suggestion
       </button>
