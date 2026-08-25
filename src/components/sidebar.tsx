@@ -42,7 +42,7 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
         const groupLabelIsFirst = index === 0;
         const groupLabel = showGroupLabel && (
           <p
-            className={`mb-1 px-3 text-[11px] font-medium uppercase tracking-wide text-black/35 dark:text-white/35 ${
+            className={`mb-1 px-3 text-[11px] font-medium uppercase tracking-wide text-pivot-muted ${
               groupLabelIsFirst ? "mt-0" : "mt-4"
             }`}
           >
@@ -61,9 +61,7 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
                 onClick={() => toggle(item.href)}
                 aria-expanded={isOpen}
                 className={`flex w-full items-center justify-between rounded-md px-3 py-2 text-sm ${
-                  childActive
-                    ? "font-medium text-black dark:text-white"
-                    : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+                  childActive ? "font-medium text-pivot-ink" : "text-pivot-ink-2 hover:bg-pivot-paper-2"
                 }`}
               >
                 {item.label}
@@ -79,7 +77,7 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
                 </svg>
               </button>
               {isOpen && (
-                <div className="ml-2 flex flex-col gap-1 border-l border-black/10 pl-3 dark:border-white/15">
+                <div className="ml-2 flex flex-col gap-1 border-l border-pivot-line pl-3">
                   {item.children.map((child) => {
                     const active = pathname === child.href;
                     return (
@@ -88,9 +86,7 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
                         href={child.href}
                         onClick={onNavigate}
                         className={`block rounded-md px-3 py-2 text-sm ${
-                          active
-                            ? "bg-black/5 font-medium dark:bg-white/10"
-                            : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+                          active ? "bg-pivot-paper-2 font-medium text-pivot-ink" : "text-pivot-ink-2 hover:bg-pivot-paper-2"
                         }`}
                       >
                         {child.label}
@@ -111,9 +107,7 @@ function SidebarNav({ items, onNavigate }: { items: SidebarItem[]; onNavigate?: 
               href={item.href}
               onClick={onNavigate}
               className={`block rounded-md px-3 py-2 text-sm ${
-                active
-                  ? "bg-black/5 font-medium dark:bg-white/10"
-                  : "text-black/70 hover:bg-black/5 dark:text-white/70 dark:hover:bg-white/10"
+                active ? "bg-pivot-paper-2 font-medium text-pivot-ink" : "text-pivot-ink-2 hover:bg-pivot-paper-2"
               }`}
             >
               {item.label}
@@ -165,13 +159,13 @@ export function SidebarLayout({
     <div className="flex flex-1 flex-col md:flex-row">
       {/* Mobile top bar (drawer mode only — bottom-nav mode relies on the global header for context) */}
       {!bottomNav && (
-        <div className="flex items-center justify-between border-b border-black/10 px-4 py-3 md:hidden dark:border-white/15">
-          <span className="text-sm font-medium">{title}</span>
+        <div className="flex items-center justify-between border-b border-pivot-line px-4 py-3 md:hidden">
+          <span className="text-sm font-medium text-pivot-ink">{title}</span>
           <button
             type="button"
             onClick={() => setOpen(true)}
             aria-label="Open menu"
-            className="rounded-md border border-black/10 p-2 dark:border-white/15"
+            className="rounded-md border border-pivot-line p-2 text-pivot-ink"
           >
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
               <path d="M2 4.5h14M2 9h14M2 13.5h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -189,18 +183,11 @@ export function SidebarLayout({
       {open && (
         <div className="fixed inset-0 z-40 md:hidden">
           <div className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col justify-between bg-background px-3 py-6">
+          <aside className="absolute inset-y-0 left-0 flex w-64 flex-col justify-between bg-pivot-white px-3 py-6">
             <div>
               <div className="mb-4 flex items-center justify-between px-3">
-                <p className="text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-                  {title}
-                </p>
-                <button
-                  type="button"
-                  onClick={() => setOpen(false)}
-                  aria-label="Close menu"
-                  className="text-black/50 dark:text-white/50"
-                >
+                <p className="text-xs font-medium uppercase tracking-wide text-pivot-muted">{title}</p>
+                <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="text-pivot-muted">
                   ✕
                 </button>
               </div>
@@ -210,7 +197,7 @@ export function SidebarLayout({
               <form action={signOut}>
                 <button
                   type="submit"
-                  className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+                  className="w-full rounded-md px-3 py-2 text-left text-sm text-pivot-ink-2 hover:bg-pivot-paper-2"
                 >
                   Sign out
                 </button>
@@ -221,18 +208,16 @@ export function SidebarLayout({
       )}
 
       {/* Static desktop sidebar */}
-      <aside className="hidden w-56 shrink-0 flex-col justify-between border-r border-black/10 px-3 py-6 md:flex dark:border-white/15">
+      <aside className="hidden w-56 shrink-0 flex-col justify-between border-r border-pivot-line px-3 py-6 md:flex">
         <div>
-          <p className="mb-4 px-3 text-xs font-medium uppercase tracking-wide text-black/40 dark:text-white/40">
-            {title}
-          </p>
+          <p className="mb-4 px-3 text-xs font-medium uppercase tracking-wide text-pivot-muted">{title}</p>
           <SidebarNav items={items} />
         </div>
         {!hideStandaloneSignOut && (
           <form action={signOut}>
             <button
               type="submit"
-              className="w-full rounded-md px-3 py-2 text-left text-sm text-black/60 hover:bg-black/5 dark:text-white/60 dark:hover:bg-white/10"
+              className="w-full rounded-md px-3 py-2 text-left text-sm text-pivot-ink-2 hover:bg-pivot-paper-2"
             >
               Sign out
             </button>

@@ -15,14 +15,14 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
         </Link>
         <Link
           href="/signup"
-          className="hidden rounded-md bg-foreground px-3 py-1.5 text-background md:inline-block"
+          className="hidden rounded-md bg-pivot-ink px-3 py-1.5 text-pivot-paper md:inline-block"
         >
           Sign up
         </Link>
         <Link
           href="/login"
           aria-label="Sign in"
-          className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+          className="rounded-full border border-pivot-line p-2 md:hidden"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <circle cx="8" cy="5.5" r="2.75" stroke="currentColor" strokeWidth="1.3" />
@@ -49,7 +49,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
         <Link
           href="/dashboard"
           aria-label="Dashboard"
-          className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+          className="rounded-full border border-pivot-line p-2 md:hidden"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M2.5 7.5 8 3l5.5 4.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
@@ -64,7 +64,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
     <form action={signOut}>
       <button
         type="submit"
-        className="hidden items-center gap-1.5 rounded-md border border-black/10 px-3 py-1.5 text-sm hover:bg-black/5 md:inline-flex dark:border-white/15 dark:hover:bg-white/10"
+        className="hidden items-center gap-1.5 rounded-md border border-pivot-line px-3 py-1.5 text-sm hover:bg-pivot-paper-2 md:inline-flex"
       >
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path
@@ -87,7 +87,7 @@ export function HeaderAuthNav({ isSignedIn }: { isSignedIn: boolean }) {
       <button
         type="submit"
         aria-label="Sign out"
-        className="rounded-full border border-black/10 p-2 md:hidden dark:border-white/15"
+        className="rounded-full border border-pivot-line p-2 md:hidden"
       >
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
           <path

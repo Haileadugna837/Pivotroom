@@ -71,14 +71,14 @@ function NavButton({
           <motion.span
             layoutId="pivotroom-active-navigation"
             transition={transition}
-            className="absolute inset-0 rounded-full bg-foreground"
+            className="absolute inset-0 rounded-full bg-pivot-ink"
           />
         )}
         <motion.span
           animate={{ scale: active ? [1, 1.06, 1] : 1 }}
           transition={{ duration: 0.3 }}
           className={`relative z-10 flex items-center justify-center ${
-            active ? "text-background" : "text-black/50 dark:text-white/50"
+            active ? "text-pivot-paper" : "text-pivot-muted"
           }`}
         >
           {renderNavIcon(item, active ? 22 : 23)}
@@ -91,7 +91,7 @@ function NavButton({
     "aria-label": item.label,
     "aria-current": active ? ("page" as const) : undefined,
     className:
-      "flex flex-1 items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/40",
+      "flex flex-1 items-center justify-center rounded-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pivot-ink/40",
   };
 
   if (item.href) {
@@ -121,7 +121,7 @@ export function PivotroomBottomNavigation({
   return (
     <nav
       aria-label="Primary"
-      className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around rounded-t-3xl border-t border-black/10 bg-background px-1 pt-2.5 shadow-[0_-6px_20px_rgba(0,0,0,0.025)] pb-[max(0.625rem,env(safe-area-inset-bottom))] md:hidden dark:border-white/15"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-stretch justify-around rounded-t-3xl border-t border-pivot-line bg-pivot-white px-1 pt-2.5 shadow-[0_-6px_20px_rgba(56,22,21,0.06)] pb-[max(0.625rem,env(safe-area-inset-bottom))] md:hidden"
     >
       {items.map((item) => (
         <NavButton key={item.key} item={item} active={item.key === activeKey} onSelectOverflow={onSelectOverflow} />

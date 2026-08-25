@@ -36,7 +36,7 @@ const SIMPLE_FOOTER_PREFIXES = ["/login", "/signup", "/dashboard", "/admin"];
 
 function SimpleFooter() {
   return (
-    <footer className="mt-auto flex items-center justify-between border-t border-black/10 px-6 py-6 text-sm text-black/50 dark:border-white/15 dark:text-white/50">
+    <footer className="mt-auto flex items-center justify-between border-t border-pivot-line px-6 py-6 text-sm text-pivot-muted">
       <span>© {new Date().getFullYear()} Pivotroom.africa</span>
       <ContactUsLauncher />
     </footer>
@@ -52,19 +52,16 @@ export function Footer() {
   if (useSimpleFooter) return <SimpleFooter />;
 
   return (
-    <footer className="mt-auto bg-black/[0.02] dark:bg-white/[0.03]">
+    <footer className="mt-auto bg-pivot-paper-2">
       <div className="mx-auto max-w-4xl px-6 pb-8 pt-10">
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:divide-x sm:divide-black/10 dark:sm:divide-white/15">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-4 sm:divide-x sm:divide-pivot-line">
           {COLUMNS.map((col) => (
             <div key={col.header} className="flex flex-col items-center text-center">
-              <p className="mb-3 text-xs font-bold uppercase tracking-wider">{col.header}</p>
+              <p className="mb-3 text-xs font-bold uppercase tracking-wider text-pivot-ink">{col.header}</p>
               <ul className="flex flex-col gap-2.5">
                 {col.links.map((link) => (
                   <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
-                    >
+                    <Link href={link.href} className="text-sm text-pivot-muted hover:text-pivot-ink">
                       {link.label}
                     </Link>
                   </li>
@@ -73,9 +70,9 @@ export function Footer() {
             </div>
           ))}
           <div className="flex flex-col items-center text-center">
-            <p className="mb-3 text-xs font-bold uppercase tracking-wider">Support</p>
+            <p className="mb-3 text-xs font-bold uppercase tracking-wider text-pivot-ink">Support</p>
             <ul className="flex flex-col gap-2.5">
-              <li className="text-sm text-black/60 [&_button]:text-black/60 [&_button]:no-underline [&_button:hover]:text-black dark:text-white/60 dark:[&_button]:text-white/60 dark:[&_button:hover]:text-white">
+              <li className="text-sm text-pivot-muted [&_button]:text-pivot-muted [&_button]:no-underline [&_button:hover]:text-pivot-ink">
                 <ContactUsLauncher />
               </li>
             </ul>
@@ -83,13 +80,13 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-black/10 dark:border-white/15">
-        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-6 py-4 text-xs text-black/50 dark:text-white/50">
+      <div className="border-t border-pivot-line">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-center gap-x-4 gap-y-2 px-6 py-4 text-xs text-pivot-muted">
           <span>© {new Date().getFullYear()} Pivotroom.africa</span>
-          <Link href="/privacy" className="hover:text-black dark:hover:text-white">
+          <Link href="/privacy" className="hover:text-pivot-ink">
             Privacy Policy
           </Link>
-          <Link href="/terms" className="hover:text-black dark:hover:text-white">
+          <Link href="/terms" className="hover:text-pivot-ink">
             Terms of Service
           </Link>
         </div>
