@@ -32,31 +32,29 @@ export function ExpertCard({
   return (
     <div className="group relative flex flex-col gap-2">
       <Link href={href} className="contents">
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/10">
+        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-xl bg-pivot-paper-2">
           {photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={photoUrl} alt={fullName ?? "Expert"} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center text-4xl font-semibold text-black/20 dark:text-white/20">
+            <div className="flex h-full w-full items-center justify-center text-4xl font-semibold text-pivot-muted">
               {(fullName ?? "?").charAt(0).toUpperCase()}
             </div>
           )}
-          <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-all duration-150 group-hover:bg-black/20 group-hover:opacity-100">
-            <span className="rounded-full bg-white px-4 py-2 text-sm font-semibold text-black shadow">
+          <div className="absolute inset-0 flex items-center justify-center bg-pivot-ink/0 opacity-0 transition-all duration-150 group-hover:bg-pivot-ink/20 group-hover:opacity-100">
+            <span className="rounded-full bg-pivot-white px-4 py-2 text-sm font-semibold text-pivot-ink shadow">
               See times
             </span>
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <h3 className="font-medium">{fullName ?? "Expert"}</h3>
+          <h3 className="font-medium text-pivot-ink">{fullName ?? "Expert"}</h3>
           <VerifiedBadge gold={donatesToNgo} />
         </div>
-        <p className="text-sm font-medium">
+        <p className="text-sm font-medium text-pivot-ink">
           {pricePer15Min != null ? `${currency} ${pricePer15Min} • 15 min` : "Rate not set"}
         </p>
-        {(headline || bio) && (
-          <p className="line-clamp-2 text-sm text-black/60 dark:text-white/60">{headline ?? bio}</p>
-        )}
+        {(headline || bio) && <p className="line-clamp-2 text-sm text-pivot-muted">{headline ?? bio}</p>}
       </Link>
       <WishlistHeartButton
         expertId={expertId}

@@ -25,16 +25,14 @@ export function CategoryIconGrid({ categories }: { categories: CategoryDirectory
           <Link
             key={category.id}
             href={`/experts/category/${category.id}`}
-            className="rounded-2xl border border-black/10 p-4 transition hover:border-black/20 hover:shadow-sm dark:border-white/15 dark:hover:border-white/25"
+            className="rounded-2xl border border-pivot-line p-4 transition hover:border-pivot-ink/20 hover:shadow-sm"
           >
-            <span className="text-sm font-medium">{category.name}</span>
+            <span className="text-sm font-medium text-pivot-ink">{category.name}</span>
             <div className="mt-2 flex items-start gap-2.5">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-foreground text-background">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-pivot-ink text-pivot-paper">
                 {getCategoryIcon(category.name)}
               </div>
-              {previewText && (
-                <p className="text-xs leading-snug text-black/50 dark:text-white/50">{previewText}</p>
-              )}
+              {previewText && <p className="text-xs leading-snug text-pivot-muted">{previewText}</p>}
             </div>
           </Link>
         );

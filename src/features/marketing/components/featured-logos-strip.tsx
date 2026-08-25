@@ -4,8 +4,8 @@ export function FeaturedLogosStrip({ logos }: { logos: FeaturedLogo[] }) {
   if (logos.length === 0) return null;
 
   return (
-    <div className="mt-10 border-t border-white/10 pt-6">
-      <p className="mb-4 text-xs font-medium uppercase tracking-wide text-white/50">Featured on</p>
+    <div className="mt-10 border-t border-pivot-paper/15 pt-6">
+      <p className="mb-4 text-xs font-medium uppercase tracking-wide text-pivot-paper/60">Featured on</p>
       <div className="flex gap-8 overflow-x-auto pb-1">
         {logos.map((logo) => {
           const img = (

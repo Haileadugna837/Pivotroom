@@ -16,7 +16,7 @@ export function VerifiedBadge({ gold = false, size = 14, className = "" }: Verif
       className={className}
     >
       <title>{gold ? "Booking this expert helps fund a foundation they support" : "Approved expert"}</title>
-      <circle cx="10" cy="10" r="10" fill="currentColor" className={gold ? "text-amber-400" : "text-blue-500"} />
+      <circle cx="10" cy="10" r="10" fill="currentColor" className={gold ? "text-pivot-accent" : "text-pivot-olive"} />
       <path
         d="M6 10.5l2.5 2.5L14 7.5"
         stroke="white"

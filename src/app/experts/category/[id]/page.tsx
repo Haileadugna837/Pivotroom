@@ -60,14 +60,14 @@ export default async function CategoryPage({
   ]);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-6xl bg-pivot-paper px-4 py-8">
       <CapturePageEvent
         event="category_viewed"
         properties={{ category_id: category.id, category_name: category.name }}
       />
       <Link
         href="/experts"
-        className="mb-6 inline-flex items-center gap-1.5 text-sm text-black/60 hover:text-black dark:text-white/60 dark:hover:text-white"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-pivot-muted hover:text-pivot-ink"
       >
         <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           <path d="M12 4l-6 6 6 6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
@@ -76,14 +76,12 @@ export default async function CategoryPage({
       </Link>
 
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-foreground text-background">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-pivot-ink text-pivot-paper">
           {getCategoryIcon(category.name)}
         </div>
         <div>
-          <h1 className="text-2xl font-semibold leading-tight">{category.name}</h1>
-          {category.tagline && (
-            <p className="text-sm text-black/50 dark:text-white/50">{category.tagline}</p>
-          )}
+          <h1 className="text-2xl font-semibold leading-tight text-pivot-ink">{category.name}</h1>
+          {category.tagline && <p className="text-sm text-pivot-muted">{category.tagline}</p>}
         </div>
       </div>
 
@@ -93,8 +91,8 @@ export default async function CategoryPage({
             href={`/experts/category/${category.id}`}
             className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium ${
               selectedSubs.size === 0
-                ? "border-foreground bg-foreground text-background"
-                : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                : "border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
             }`}
           >
             All
@@ -105,8 +103,8 @@ export default async function CategoryPage({
               href={subcategoryHref(s.id)}
               className={`shrink-0 rounded-full border px-3.5 py-1.5 text-sm font-medium ${
                 selectedSubs.has(s.id)
-                  ? "border-foreground bg-foreground text-background"
-                  : "border-black/10 hover:bg-black/5 dark:border-white/15 dark:hover:bg-white/10"
+                  ? "border-pivot-ink bg-pivot-ink text-pivot-paper"
+                  : "border-pivot-line text-pivot-ink hover:bg-pivot-paper-2"
               }`}
             >
               {s.name}
@@ -115,12 +113,12 @@ export default async function CategoryPage({
         </div>
       )}
 
-      <p className="mb-4 text-sm text-black/50 dark:text-white/50">
+      <p className="mb-4 text-sm text-pivot-muted">
         {visibleExperts.length} {visibleExperts.length === 1 ? "expert" : "experts"}
       </p>
 
       {visibleExperts.length === 0 ? (
-        <p className="text-sm text-black/60 dark:text-white/60">No experts in this category yet.</p>
+        <p className="text-sm text-pivot-ink-2">No experts in this category yet.</p>
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {visibleExperts.map((expert) => (
