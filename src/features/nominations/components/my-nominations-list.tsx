@@ -25,7 +25,7 @@ export function MyNominationsList({ nominations }: { nominations: Nomination[] }
     return (
       <p className="text-sm text-pivot-ink-2">
         You haven&apos;t nominated anyone yet.{" "}
-        <a href="/nominate" className="underline">
+        <a href="/nominate-an-expert" className="underline">
           Nominate an expert
         </a>
         .

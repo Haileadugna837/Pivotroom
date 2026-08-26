@@ -1,6 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getUser } from "@/lib/supabase/server";
 import type { TablesInsert } from "@/lib/supabase/types";
 import { normalizePhone } from "@/features/acquisition/lib/phone";
 
@@ -284,9 +285,13 @@ export async function submitFoundingExpertApplication(
 
 export type SubmitNominationAnonymousState = { error?: string; success?: boolean };
 
-// Anonymous-friendly nomination — no sign-in required. Reuses the existing
-// nominees/nominations tables (extended in Round 1 with nullable
-// name/nominator_id) so admin reviews both origins in one place.
+// Anonymous-friendly nomination — no sign-in required, but if the
+// submitter happens to be signed in, nominator_id is stamped too so it
+// still shows up on their own /dashboard/nominations list. Reuses the
+// existing nominees/nominations tables (extended in Round 1 with nullable
+// name/nominator_id) so admin reviews both origins in one place. This is
+// now the app's only nomination entry point — the old signed-in-only
+// /nominate page/submitNomination action were retired in favor of this one.
 export async function submitNominationAnonymous(
   sessionId: string,
   input: {
@@ -326,6 +331,7 @@ export async function submitNominationAnonymous(
   }
 
   const admin = createAdminClient();
+  const user = await getUser();
 
   const { data: existingNominee } = await admin.from("nominees").select("id").ilike("name", nomineeName).maybeSingle();
 
@@ -356,6 +362,7 @@ export async function submitNominationAnonymous(
     nominator_email: input.nominatorEmail?.trim() || null,
     nominator_relationship: input.nominatorRelationship,
     intro_comfort: input.introComfort || null,
+    nominator_id: user?.id ?? null,
     source: "acquisition_landing",
     landing_session_id: sessionId,
   });
