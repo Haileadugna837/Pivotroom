@@ -29,7 +29,7 @@ export function FeaturedExpertCard({
   isSignedIn,
   donatesToNgo = false,
 }: FeaturedExpertCardProps) {
-  const name = fullName ?? "Expert";
+  const name = fullName ?? headline ?? "Expert";
 
   return (
     <div className="group relative flex w-36 shrink-0 flex-col gap-1.5 sm:w-44">

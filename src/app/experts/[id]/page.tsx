@@ -33,7 +33,7 @@ export async function generateMetadata({
   const expert = await getApprovedExpertById(id);
   if (!expert) return { title: "Expert not found" };
 
-  const name = expert.profile?.full_name ?? "Expert";
+  const name = expert.profile?.full_name ?? expert.headline ?? "Expert";
   const description = expert.headline ?? `Book a 1:1 session with ${name} on Pivotroom.africa.`;
 
   return {
@@ -69,7 +69,7 @@ export default async function ExpertDetailPage({
   ]);
   const donatesToNgo = ngoDonation != null;
 
-  const name = expert.profile?.full_name ?? "Expert";
+  const name = expert.profile?.full_name ?? expert.headline ?? "Expert";
   const loginHref = `/login?next=${encodeURIComponent(`/experts/${expert.id}?openBooking=1`)}`;
   const expectations = expert.expectations ?? [];
   const exampleQuestions = expert.example_questions ?? [];
