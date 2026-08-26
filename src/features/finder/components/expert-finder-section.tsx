@@ -16,6 +16,7 @@ import {
   upsertFinderSession,
   type FinderMatchPreview,
 } from "@/features/finder/server/actions";
+import { formatListDisplayName } from "@/features/experts/lib/format-name";
 
 type Category = { id: string; name: string; parent_id: string | null };
 
@@ -276,21 +277,24 @@ export function ExpertFinderSection({ categories }: { categories: Category[] }) 
             </p>
             {previews.length > 0 && (
               <div className="mt-5 flex flex-wrap justify-center gap-4">
-                {previews.map((p) => (
-                  <div key={p.id} className="flex w-24 flex-col items-center gap-1.5">
-                    <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-pivot-paper-2 text-lg font-semibold text-pivot-muted">
-                      {p.photoUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={p.photoUrl} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        (p.fullName ?? "?").charAt(0).toUpperCase()
-                      )}
+                {previews.map((p) => {
+                  const name = formatListDisplayName(p.fullName, p.headline);
+                  return (
+                    <div key={p.id} className="flex w-24 flex-col items-center gap-1.5">
+                      <div className="flex h-14 w-14 items-center justify-center overflow-hidden rounded-full bg-pivot-paper-2 text-lg font-semibold text-pivot-muted">
+                        {p.photoUrl ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={p.photoUrl} alt="" className="h-full w-full object-cover" />
+                        ) : (
+                          name.charAt(0).toUpperCase()
+                        )}
+                      </div>
+                      <p className="line-clamp-2 text-center text-xs text-pivot-ink-2">
+                        {name}
+                      </p>
                     </div>
-                    <p className="line-clamp-2 text-center text-xs text-pivot-ink-2">
-                      {p.fullName ?? "Expert"}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
             <button
