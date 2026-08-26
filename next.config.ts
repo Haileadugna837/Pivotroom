@@ -7,6 +7,17 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "8mb",
     },
   },
+  async redirects() {
+    return [
+      {
+        // /nominate was retired in favor of /nominate-an-expert — keep old
+        // links/bookmarks working instead of 404ing.
+        source: "/nominate",
+        destination: "/nominate-an-expert",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
