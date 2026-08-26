@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { WishlistHeartButton } from "@/features/wishlist/components/wishlist-heart-button";
 import { VerifiedBadge } from "@/features/experts/components/verified-badge";
+import { formatListDisplayName } from "@/features/experts/lib/format-name";
 
 type ExpertCardProps = {
   expertId: string;
@@ -29,7 +30,7 @@ export function ExpertCard({
   isSignedIn,
   donatesToNgo = false,
 }: ExpertCardProps) {
-  const displayName = fullName ?? headline ?? "Expert";
+  const displayName = formatListDisplayName(fullName, headline);
 
   return (
     <div className="group relative flex flex-col gap-2">
