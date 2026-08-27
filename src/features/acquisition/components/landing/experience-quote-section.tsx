@@ -2,7 +2,7 @@ export function AcquisitionExperienceQuoteSection() {
   return (
     <section className="border-b border-pivot-line bg-pivot-paper">
       <div className="mx-auto grid w-full max-w-[1400px] items-center gap-10 px-6 py-16 md:grid-cols-[0.85fr_1.15fr] md:gap-16 md:py-24">
-        <div className="relative mx-auto flex h-[300px] w-full max-w-[380px] items-end justify-center overflow-hidden rounded-2xl bg-pivot-paper-2 sm:h-[380px] md:h-[440px] md:max-w-none">
+        <div className="relative mx-auto flex h-[300px] w-full max-w-[380px] items-end justify-center sm:h-[380px] md:h-[440px] md:max-w-none">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/acquisition/ermyas-amelga.webp"
