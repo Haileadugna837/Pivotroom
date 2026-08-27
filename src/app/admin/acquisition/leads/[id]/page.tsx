@@ -48,6 +48,8 @@ export default async function AcquisitionLeadDetailPage({ params }: { params: Pr
           <dd>{lead.raw_phone ?? "—"}</dd>
           <dt className="text-pivot-muted">Email</dt>
           <dd>{lead.email ?? "—"}</dd>
+          <dt className="text-pivot-muted">Company / organization</dt>
+          <dd>{lead.company ?? "—"}</dd>
         </dl>
       </section>
 
@@ -56,6 +58,10 @@ export default async function AcquisitionLeadDetailPage({ params }: { params: Pr
         <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-pivot-ink">
           <dt className="text-pivot-muted">Categories</dt>
           <dd>{lead.categories_requested.map(acquisitionCategoryLabel).join(", ") || "—"}</dd>
+          <dt className="text-pivot-muted">Who they are</dt>
+          <dd>{lead.user_type ?? "—"}</dd>
+          <dt className="text-pivot-muted">Urgency</dt>
+          <dd>{lead.urgency ?? "—"}</dd>
           <dt className="text-pivot-muted">Written problem</dt>
           <dd>{lead.problem_text ?? "—"}</dd>
         </dl>
