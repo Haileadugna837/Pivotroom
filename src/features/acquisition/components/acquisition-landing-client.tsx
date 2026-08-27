@@ -7,6 +7,7 @@ import { AcquisitionHero } from "@/features/acquisition/components/landing/hero"
 import { AcquisitionSignalBar } from "@/features/acquisition/components/landing/signal-bar";
 import { AcquisitionJoinSection } from "@/features/acquisition/components/landing/join-section";
 import { AcquisitionWhySection } from "@/features/acquisition/components/landing/why-section";
+import { AcquisitionExperienceQuoteSection } from "@/features/acquisition/components/landing/experience-quote-section";
 import { AcquisitionProblemsSection } from "@/features/acquisition/components/landing/problems-section";
 import { AcquisitionPeopleSection } from "@/features/acquisition/components/landing/people-section";
 import { AcquisitionHowItWorks } from "@/features/acquisition/components/landing/how-it-works";
@@ -27,6 +28,7 @@ export function AcquisitionLandingClient({ experts }: { experts: ExpertPreviewCa
       <AcquisitionSignalBar />
       <AcquisitionJoinSection prefillProblem={prefillProblem} />
       <AcquisitionWhySection />
+      <AcquisitionExperienceQuoteSection />
       <AcquisitionProblemsSection onSelect={setPrefillProblem} />
       <AcquisitionPeopleSection experts={experts} />
       <AcquisitionHowItWorks />
