@@ -36,6 +36,15 @@ export async function notifyExpertInvite({ email, inviteUrl }: { email: string; 
   });
 }
 
+export async function notifyExpertApplicationAccepted({ email, name }: { email: string; name: string }) {
+  const loginUrl = `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/login`;
+  await sendEmail({
+    to: email,
+    subject: "Your Pivotroom expert application was accepted",
+    html: `<p>Hi ${name},</p><p>Your application to become a Pivotroom expert has been accepted.</p><p>Log in and complete your profile to get published: <a href="${loginUrl}">${loginUrl}</a></p>`,
+  });
+}
+
 export async function notifyAdminPaymentSubmitted(bookingId: string) {
   await sendEmail({
     to: ADMIN_EMAILS,

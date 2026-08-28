@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.15"
+    PostgrestVersion: "14.5"
   }
   public: {
     Tables: {
@@ -318,6 +318,128 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expert_applications: {
+        Row: {
+          admin_note: string | null
+          applicant_user_id: string | null
+          categories_requested: string[]
+          created_at: string
+          current_company: string | null
+          current_role: string | null
+          email: string | null
+          experience_text: string
+          expert_invite_id: string | null
+          expertise_topics: string[]
+          id: string
+          initial_availability: string | null
+          instagram_url: string | null
+          invited_at: string | null
+          linkedin_url: string | null
+          name: string
+          normalized_phone: string | null
+          preferred_price_etb: number | null
+          problems_solved_text: string | null
+          professional_type: string | null
+          professional_type_secondary: string | null
+          raw_phone: string | null
+          session_id: string | null
+          source_page: string | null
+          status: string
+          updated_at: string
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          website_url: string | null
+          why_join_text: string | null
+          years_experience: number | null
+          years_experience_range: string | null
+        }
+        Insert: {
+          admin_note?: string | null
+          applicant_user_id?: string | null
+          categories_requested?: string[]
+          created_at?: string
+          current_company?: string | null
+          current_role?: string | null
+          email?: string | null
+          experience_text: string
+          expert_invite_id?: string | null
+          expertise_topics?: string[]
+          id?: string
+          initial_availability?: string | null
+          instagram_url?: string | null
+          invited_at?: string | null
+          linkedin_url?: string | null
+          name: string
+          normalized_phone?: string | null
+          preferred_price_etb?: number | null
+          problems_solved_text?: string | null
+          professional_type?: string | null
+          professional_type_secondary?: string | null
+          raw_phone?: string | null
+          session_id?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          why_join_text?: string | null
+          years_experience?: number | null
+          years_experience_range?: string | null
+        }
+        Update: {
+          admin_note?: string | null
+          applicant_user_id?: string | null
+          categories_requested?: string[]
+          created_at?: string
+          current_company?: string | null
+          current_role?: string | null
+          email?: string | null
+          experience_text?: string
+          expert_invite_id?: string | null
+          expertise_topics?: string[]
+          id?: string
+          initial_availability?: string | null
+          instagram_url?: string | null
+          invited_at?: string | null
+          linkedin_url?: string | null
+          name?: string
+          normalized_phone?: string | null
+          preferred_price_etb?: number | null
+          problems_solved_text?: string | null
+          professional_type?: string | null
+          professional_type_secondary?: string | null
+          raw_phone?: string | null
+          session_id?: string | null
+          source_page?: string | null
+          status?: string
+          updated_at?: string
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          website_url?: string | null
+          why_join_text?: string | null
+          years_experience?: number | null
+          years_experience_range?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "founding_expert_applications_expert_invite_id_fkey"
+            columns: ["expert_invite_id"]
+            isOneToOne: false
+            referencedRelation: "expert_invites"
             referencedColumns: ["id"]
           },
         ]
@@ -955,107 +1077,6 @@ export type Database = {
           name?: string
         }
         Relationships: []
-      }
-      founding_expert_applications: {
-        Row: {
-          admin_note: string | null
-          created_at: string
-          current_company: string | null
-          current_role: string | null
-          email: string | null
-          experience_text: string
-          expert_invite_id: string | null
-          expertise_topics: string[]
-          id: string
-          instagram_url: string | null
-          invited_at: string | null
-          linkedin_url: string | null
-          name: string
-          normalized_phone: string | null
-          professional_type: string
-          professional_type_secondary: string | null
-          raw_phone: string | null
-          session_id: string | null
-          source_page: string | null
-          status: string
-          updated_at: string
-          utm_campaign: string | null
-          utm_content: string | null
-          utm_medium: string | null
-          utm_source: string | null
-          utm_term: string | null
-          website_url: string | null
-          years_experience: number | null
-        }
-        Insert: {
-          admin_note?: string | null
-          created_at?: string
-          current_company?: string | null
-          current_role?: string | null
-          email?: string | null
-          experience_text: string
-          expert_invite_id?: string | null
-          expertise_topics?: string[]
-          id?: string
-          instagram_url?: string | null
-          invited_at?: string | null
-          linkedin_url?: string | null
-          name: string
-          normalized_phone?: string | null
-          professional_type: string
-          professional_type_secondary?: string | null
-          raw_phone?: string | null
-          session_id?: string | null
-          source_page?: string | null
-          status?: string
-          updated_at?: string
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
-          website_url?: string | null
-          years_experience?: number | null
-        }
-        Update: {
-          admin_note?: string | null
-          created_at?: string
-          current_company?: string | null
-          current_role?: string | null
-          email?: string | null
-          experience_text?: string
-          expert_invite_id?: string | null
-          expertise_topics?: string[]
-          id?: string
-          instagram_url?: string | null
-          invited_at?: string | null
-          linkedin_url?: string | null
-          name?: string
-          normalized_phone?: string | null
-          professional_type?: string
-          professional_type_secondary?: string | null
-          raw_phone?: string | null
-          session_id?: string | null
-          source_page?: string | null
-          status?: string
-          updated_at?: string
-          utm_campaign?: string | null
-          utm_content?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-          utm_term?: string | null
-          website_url?: string | null
-          years_experience?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "founding_expert_applications_expert_invite_id_fkey"
-            columns: ["expert_invite_id"]
-            isOneToOne: false
-            referencedRelation: "expert_invites"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       industries: {
         Row: {

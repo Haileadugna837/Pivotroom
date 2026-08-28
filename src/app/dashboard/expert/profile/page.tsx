@@ -24,11 +24,16 @@ export default async function ExpertProfilePage() {
     return (
       <div className="mx-auto max-w-lg bg-pivot-paper px-6 py-10">
         <h1 className="mb-2 text-xl font-semibold text-pivot-ink">Expert Application</h1>
-        <p className="text-sm text-pivot-ink-2">
-          Becoming an expert on Pivotroom.africa is currently invite-only. If you&apos;ve received
-          an invite link by email, use it to apply — otherwise use the Contact Us link in the
-          footer if you&apos;d like to be considered.
+        <p className="mb-6 text-sm text-pivot-ink-2">
+          You haven&apos;t applied to become an expert yet. Applications are reviewed before you get
+          access to build a public profile.
         </p>
+        <Link
+          href="/become-an-expert"
+          className="inline-block rounded-md bg-pivot-ink px-5 py-2.5 text-sm font-medium text-pivot-paper"
+        >
+          Apply to become an expert
+        </Link>
       </div>
     );
   }

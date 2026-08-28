@@ -3,10 +3,11 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getApplicationByIdForAdmin } from "@/features/acquisition/server/admin-queries";
 import { updateApplicationNote, updateApplicationStatus } from "@/features/acquisition/server/admin-actions";
-import { ApproveInviteForm } from "@/features/acquisition/components/admin/approve-invite-form";
+import { acquisitionCategoryLabel } from "@/features/acquisition/config";
+import { AcceptApplicationForm } from "@/features/acquisition/components/admin/accept-application-form";
 
 export const metadata: Metadata = {
-  title: "Founding Expert Application",
+  title: "Expert Application",
 };
 
 const STATUS_OPTIONS = ["New", "Under Review", "Shortlisted", "Contacted", "Approved", "Waitlisted", "Rejected", "Onboarding", "Published"];
@@ -52,22 +53,41 @@ export default async function AcquisitionApplicationDetailPage({ params }: { par
       <section className="mt-6">
         <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Professional Information</h2>
         <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-pivot-ink">
-          <dt className="text-pivot-muted">Type</dt>
-          <dd>
-            {application.professional_type}
-            {application.professional_type_secondary && ` / ${application.professional_type_secondary}`}
-          </dd>
           <dt className="text-pivot-muted">Current position</dt>
           <dd>{[application.current_role, application.current_company].filter(Boolean).join(" @ ") || "—"}</dd>
           <dt className="text-pivot-muted">Years of experience</dt>
-          <dd>{application.years_experience ?? "—"}</dd>
+          <dd>{application.years_experience_range ?? "—"}</dd>
+          <dt className="text-pivot-muted">Preferred starting price</dt>
+          <dd>{application.preferred_price_etb != null ? `${application.preferred_price_etb} ETB` : "—"}</dd>
+          <dt className="text-pivot-muted">Initial availability</dt>
+          <dd>{application.initial_availability ?? "—"}</dd>
         </dl>
       </section>
 
       <section className="mt-6">
-        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Expertise</h2>
-        <p className="mt-2 text-sm text-pivot-ink">{application.expertise_topics.join(", ") || "—"}</p>
+        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Categories</h2>
+        <p className="mt-2 text-sm text-pivot-ink">
+          {(application.categories_requested ?? []).map(acquisitionCategoryLabel).join(", ") || "—"}
+        </p>
+      </section>
+
+      <section className="mt-6">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
+          What people should come to them for
+        </h2>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-pivot-ink-2">{application.problems_solved_text ?? "—"}</p>
+      </section>
+
+      <section className="mt-6">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">
+          Most relevant accomplishment or experience
+        </h2>
         <p className="mt-2 whitespace-pre-wrap text-sm text-pivot-ink-2">{application.experience_text}</p>
+      </section>
+
+      <section className="mt-6">
+        <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Why they want to join</h2>
+        <p className="mt-2 whitespace-pre-wrap text-sm text-pivot-ink-2">{application.why_join_text ?? "—"}</p>
       </section>
 
       <section className="mt-6">
@@ -75,10 +95,6 @@ export default async function AcquisitionApplicationDetailPage({ params }: { par
         <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-sm text-pivot-ink">
           <dt className="text-pivot-muted">LinkedIn</dt>
           <dd>{application.linkedin_url ?? "—"}</dd>
-          <dt className="text-pivot-muted">Website</dt>
-          <dd>{application.website_url ?? "—"}</dd>
-          <dt className="text-pivot-muted">Instagram / other</dt>
-          <dd>{application.instagram_url ?? "—"}</dd>
         </dl>
       </section>
 
@@ -94,13 +110,10 @@ export default async function AcquisitionApplicationDetailPage({ params }: { par
 
       <section className="mt-6 border-t border-pivot-line pt-6">
         <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Application</h2>
-        <p className="mt-2 text-sm text-pivot-ink">
-          Submitted {new Date(application.created_at).toLocaleString()}
-          {application.invited_at && <> — invited {new Date(application.invited_at).toLocaleString()}</>}
-        </p>
-        {!application.expert_invite_id && (
+        <p className="mt-2 text-sm text-pivot-ink">Submitted {new Date(application.created_at).toLocaleString()}</p>
+        {application.status !== "Approved" && (
           <div className="mt-3">
-            <ApproveInviteForm applicationId={application.id} hasEmail={Boolean(application.email)} />
+            <AcceptApplicationForm applicationId={application.id} hasAccount={Boolean(application.applicant_user_id)} />
           </div>
         )}
       </section>

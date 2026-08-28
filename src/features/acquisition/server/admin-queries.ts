@@ -167,20 +167,18 @@ async function getNominationCountsByLeadId(admin: ReturnType<typeof createAdminC
   return counts;
 }
 
-export type FoundingExpertApplicationFilters = {
+export type ExpertApplicationFilters = {
   dateFrom?: string;
   dateTo?: string;
   status?: string;
-  professionalType?: string;
   q?: string;
 };
 
-function applyApplicationFilters<T>(query: T, filters: FoundingExpertApplicationFilters): T {
+function applyApplicationFilters<T>(query: T, filters: ExpertApplicationFilters): T {
   let q = query as any; // eslint-disable-line @typescript-eslint/no-explicit-any
   if (filters.dateFrom) q = q.gte("created_at", filters.dateFrom);
   if (filters.dateTo) q = q.lte("created_at", filters.dateTo);
   if (filters.status) q = q.eq("status", filters.status);
-  if (filters.professionalType) q = q.eq("professional_type", filters.professionalType);
   if (filters.q) {
     const safe = filters.q.replace(/[,()%]/g, "");
     if (safe) q = q.or(`name.ilike.%${safe}%,email.ilike.%${safe}%,current_company.ilike.%${safe}%`);
@@ -188,15 +186,15 @@ function applyApplicationFilters<T>(query: T, filters: FoundingExpertApplication
   return q as T;
 }
 
-export async function getApplicationsForAdmin(filters: FoundingExpertApplicationFilters, page = 1) {
+export async function getApplicationsForAdmin(filters: ExpertApplicationFilters, page = 1) {
   const admin = createAdminClient();
   const from = (Math.max(1, page) - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
   const base = admin
-    .from("founding_expert_applications")
+    .from("expert_applications")
     .select(
-      "id, name, raw_phone, email, professional_type, current_role, current_company, expertise_topics, linkedin_url, status, source_page, utm_source, created_at",
+      "id, name, raw_phone, email, current_role, current_company, categories_requested, linkedin_url, status, source_page, utm_source, created_at",
       { count: "exact" },
     )
     .order("created_at", { ascending: false })
@@ -207,12 +205,12 @@ export async function getApplicationsForAdmin(filters: FoundingExpertApplication
   return { rows: data ?? [], total: count ?? 0, page: Math.max(1, page), pageSize: PAGE_SIZE };
 }
 
-export async function getAllApplicationsForExport(filters: FoundingExpertApplicationFilters) {
+export async function getAllApplicationsForExport(filters: ExpertApplicationFilters) {
   const admin = createAdminClient();
   const base = admin
-    .from("founding_expert_applications")
+    .from("expert_applications")
     .select(
-      "name, raw_phone, email, professional_type, current_role, current_company, expertise_topics, experience_text, linkedin_url, website_url, instagram_url, status, utm_source, created_at",
+      "name, raw_phone, email, current_role, current_company, categories_requested, experience_text, problems_solved_text, why_join_text, linkedin_url, status, utm_source, created_at",
     )
     .order("created_at", { ascending: false })
     .limit(10000);
@@ -224,7 +222,7 @@ export async function getAllApplicationsForExport(filters: FoundingExpertApplica
 
 export async function getApplicationByIdForAdmin(id: string) {
   const admin = createAdminClient();
-  const { data, error } = await admin.from("founding_expert_applications").select("*").eq("id", id).maybeSingle();
+  const { data, error } = await admin.from("expert_applications").select("*").eq("id", id).maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -238,7 +236,7 @@ export async function getAcquisitionSummaryForAdminHome() {
 
   const [{ count: leads }, { count: applications }, { count: nominations }, { count: leadsThisWeek }] = await Promise.all([
     admin.from("acquisition_leads").select("*", { count: "exact", head: true }),
-    admin.from("founding_expert_applications").select("*", { count: "exact", head: true }),
+    admin.from("expert_applications").select("*", { count: "exact", head: true }),
     admin.from("nominations").select("*", { count: "exact", head: true }).eq("source", "acquisition_landing"),
     admin.from("acquisition_leads").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
   ]);
@@ -278,11 +276,9 @@ const USER_FUNNEL_EVENTS: { label: string; eventType: string | null }[] = [
 
 const EXPERT_FUNNEL_EVENTS: { label: string; eventType: string | null }[] = [
   { label: "Landing Visitors", eventType: null },
-  { label: "Clicked Become a Founding Expert", eventType: "founding_expert_cta_clicked" },
   { label: "Application Started", eventType: "expert_application_started" },
-  { label: "Professional Type Completed", eventType: "expert_professional_type_completed" },
-  { label: "Expertise Completed", eventType: "expert_expertise_completed" },
-  { label: "Contact Completed", eventType: "expert_contact_completed" },
+  { label: "Identity Completed", eventType: "expert_application_identity_completed" },
+  { label: "Categories Completed", eventType: "expert_application_categories_completed" },
   { label: "Application Submitted", eventType: "expert_application_submitted" },
 ];
 
@@ -318,7 +314,7 @@ export async function getAcquisitionAnalytics(range: AnalyticsDateRange) {
       admin.from("acquisition_leads").select("id, categories_requested, problem_text, utm_source, referred_by_code, created_at"),
       "created_at",
     ).limit(ANALYTICS_ROW_CAP),
-    withRange(admin.from("founding_expert_applications").select("id, utm_source, created_at"), "created_at").limit(
+    withRange(admin.from("expert_applications").select("id, utm_source, created_at"), "created_at").limit(
       ANALYTICS_ROW_CAP,
     ),
     withRange(

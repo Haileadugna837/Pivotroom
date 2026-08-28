@@ -1,17 +1,18 @@
 "use client";
 
 import { useActionState } from "react";
-import { approveApplicationAndInvite, type ApproveApplicationState } from "@/features/acquisition/server/admin-actions";
+import { acceptExpertApplication, type AcceptApplicationState } from "@/features/acquisition/server/admin-actions";
 
-const initialState: ApproveApplicationState = {};
+const initialState: AcceptApplicationState = {};
 
-export function ApproveInviteForm({ applicationId, hasEmail }: { applicationId: string; hasEmail: boolean }) {
-  const [state, formAction, pending] = useActionState(approveApplicationAndInvite, initialState);
+export function AcceptApplicationForm({ applicationId, hasAccount }: { applicationId: string; hasAccount: boolean }) {
+  const [state, formAction, pending] = useActionState(acceptExpertApplication, initialState);
 
-  if (!hasEmail) {
+  if (!hasAccount) {
     return (
       <p className="text-sm text-pivot-muted">
-        No email on file — collect one before an invite can be sent.
+        This application has no linked account — it predates self-serve account creation and can&apos;t be granted
+        dashboard access this way.
       </p>
     );
   }
@@ -24,7 +25,7 @@ export function ApproveInviteForm({ applicationId, hasEmail }: { applicationId: 
         disabled={pending}
         className="w-fit rounded-md bg-pivot-ink px-4 py-1.5 text-sm text-pivot-paper disabled:opacity-50"
       >
-        {pending ? "Sending…" : "Approve & Send Invite"}
+        {pending ? "Accepting…" : "Accept application"}
       </button>
       {state.success && <p className="text-sm text-pivot-olive">{state.success}</p>}
       {state.error && <p className="text-sm text-pivot-danger">{state.error}</p>}

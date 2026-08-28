@@ -32,14 +32,20 @@ export default async function DashboardLayout({ children }: { children: React.Re
       { href: "/dashboard/expert/expertise", label: "Expertise", group: "Expert" },
     );
   } else if (expertProfile) {
-    // Has an expert row but not yet approved (pending/rejected/suspended) —
-    // let them view/manage their existing application. There's no open
-    // self-serve "Become an Expert" entry point anymore; new applications
-    // only start from an admin-sent invite link (see /become-an-expert).
+    // Has an expert row (accepted by admin, or admin-invited directly) but
+    // not yet approved for publishing — let them view/manage their
+    // application while it's locked: profile basics and expertise are
+    // self-serve editable here, but bookings/availability/payments stay
+    // gated (see the individual dashboard/expert/* pages) until an admin
+    // approves the finished profile.
     items.push(
       { href: "/dashboard/expert/profile", label: "Expert Application", group: "Expert" },
       { href: "/dashboard/expert/expertise", label: "Expertise", group: "Expert" },
     );
+  } else {
+    // No expert row yet — self-serve entry point into the public
+    // "Become an Expert" application at /become-an-expert.
+    items.push({ href: "/become-an-expert", label: "Become an Expert", group: "Expert" });
   }
 
   items.push({ href: "/dashboard/settings", label: "My Account" });

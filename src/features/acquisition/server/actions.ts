@@ -1,7 +1,7 @@
 "use server";
 
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getUser } from "@/lib/supabase/server";
+import { createClient, getUser } from "@/lib/supabase/server";
 import type { TablesInsert } from "@/lib/supabase/types";
 import { normalizePhone } from "@/features/acquisition/lib/phone";
 
@@ -192,52 +192,89 @@ export async function submitEarlyAccessLead(
   return { success: true, referralCode, leadId };
 }
 
-export type SubmitFoundingExpertApplicationState = { error?: string; success?: boolean };
+export type SubmitBecomeExpertApplicationState = { error?: string; success?: boolean };
 
-export async function submitFoundingExpertApplication(
+// The public, self-serve "Become an Expert" application. Unlike the old
+// invite-only wizard, this doubles as account creation: a visitor who
+// isn't signed in supplies an email/password right here and
+// supabase.auth.signUp() runs as part of submitting, so there's no
+// separate invite-email round trip. A signed-in visitor's existing
+// account is reused instead. Either way the application lands in
+// expert_applications for admin review; admin acceptance
+// (acceptExpertApplication, admin-actions.ts) is what grants the
+// applicant access to the existing "locked" dashboard.
+export async function submitBecomeExpertApplication(
   sessionId: string,
   input: {
-    name: string;
-    phone?: string;
-    email?: string;
-    professionalType: string;
-    professionalTypeSecondary?: string;
-    expertiseTopics: string[];
-    experienceText: string;
-    currentRole?: string;
-    currentCompany?: string;
-    yearsExperience?: number;
+    fullName: string;
+    currentTitle: string;
+    company?: string;
+    yearsExperienceRange: string;
     linkedinUrl?: string;
-    websiteUrl?: string;
-    instagramUrl?: string;
+    email?: string;
+    password?: string;
+    categories: string[];
+    problemsSolvedText: string;
+    experienceText: string;
+    whyJoinText: string;
+    preferredPriceEtb?: number;
+    initialAvailability?: string;
   },
-): Promise<SubmitFoundingExpertApplicationState> {
-  const name = input.name.trim();
-  if (!name || name.length < 2) {
-    return { error: "Enter your name." };
-  }
+): Promise<SubmitBecomeExpertApplicationState> {
+  const fullName = input.fullName.trim();
+  if (!fullName || fullName.length < 2) return { error: "Enter your name." };
+  if (!input.currentTitle.trim()) return { error: "Enter your current title." };
+  if (!input.yearsExperienceRange) return { error: "Select your years of experience." };
+  if (!input.problemsSolvedText.trim()) return { error: "Tell us what people should come to you for." };
+  if (!input.experienceText.trim()) return { error: "Tell us about your most relevant experience." };
+  if (!input.whyJoinText.trim()) return { error: "Tell us why you want to join." };
 
-  const rawPhone = input.phone?.trim();
-  const normalized = rawPhone ? normalizePhone(rawPhone) : null;
-  if (rawPhone && !normalized) {
-    return { error: "Enter a valid phone number." };
-  }
-  const email = input.email?.trim() || null;
-  if (!normalized && !email) {
-    return { error: "Enter a phone number or email so we can reach you." };
-  }
+  let applicantUserId: string;
+  let applicantEmail: string | null;
 
-  if (!input.professionalType) {
-    return { error: "Select what best describes you." };
-  }
-  if (input.expertiseTopics.length === 0) {
-    return { error: "Add at least one topic you can speak about." };
-  }
-  if (!input.experienceText.trim()) {
-    return { error: "Tell us briefly about your experience." };
+  const existingUser = await getUser();
+  if (existingUser) {
+    applicantUserId = existingUser.id;
+    applicantEmail = existingUser.email ?? null;
+  } else {
+    const email = input.email?.trim();
+    const password = input.password ?? "";
+    if (!email || password.length < 6) {
+      return { error: "Enter an email and a password (at least 6 characters) to create your account." };
+    }
+    const supabase = await createClient();
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: `${siteUrl}/auth/callback`,
+      },
+    });
+    if (signUpError || !signUpData.user) {
+      const alreadyRegistered = signUpError?.message.toLowerCase().includes("already registered");
+      return {
+        error: alreadyRegistered
+          ? "An account with this email already exists — log in first, then apply."
+          : (signUpError?.message ?? "Something went wrong creating your account."),
+      };
+    }
+    applicantUserId = signUpData.user.id;
+    applicantEmail = email;
   }
 
   const admin = createAdminClient();
+
+  const { data: existingApplication } = await admin
+    .from("expert_applications")
+    .select("id, status")
+    .eq("applicant_user_id", applicantUserId)
+    .neq("status", "Rejected")
+    .maybeSingle();
+  if (existingApplication) {
+    return { error: `You already have an application on file (status: ${existingApplication.status}).` };
+  }
 
   const { data: session } = await admin
     .from("acquisition_sessions")
@@ -246,22 +283,21 @@ export async function submitFoundingExpertApplication(
     .maybeSingle();
 
   const { data: inserted, error } = await admin
-    .from("founding_expert_applications")
+    .from("expert_applications")
     .insert({
-      name,
-      normalized_phone: normalized?.e164 ?? null,
-      raw_phone: rawPhone || null,
-      email,
-      professional_type: input.professionalType,
-      professional_type_secondary: input.professionalTypeSecondary || null,
-      expertise_topics: input.expertiseTopics,
-      experience_text: input.experienceText.trim(),
-      current_role: input.currentRole?.trim() || null,
-      current_company: input.currentCompany?.trim() || null,
-      years_experience: input.yearsExperience ?? null,
+      applicant_user_id: applicantUserId,
+      name: fullName,
+      email: applicantEmail,
+      current_role: input.currentTitle.trim(),
+      current_company: input.company?.trim() || null,
+      years_experience_range: input.yearsExperienceRange,
       linkedin_url: input.linkedinUrl?.trim() || null,
-      website_url: input.websiteUrl?.trim() || null,
-      instagram_url: input.instagramUrl?.trim() || null,
+      categories_requested: input.categories,
+      problems_solved_text: input.problemsSolvedText.trim(),
+      experience_text: input.experienceText.trim(),
+      why_join_text: input.whyJoinText.trim(),
+      preferred_price_etb: input.preferredPriceEtb ?? null,
+      initial_availability: input.initialAvailability || null,
       source_page: session?.source_page,
       utm_source: session?.utm_source,
       utm_medium: session?.utm_medium,
