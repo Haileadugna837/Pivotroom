@@ -346,6 +346,7 @@ export type Database = {
           professional_type: string | null
           professional_type_secondary: string | null
           raw_phone: string | null
+          rejection_reason: string | null
           session_id: string | null
           source_page: string | null
           status: string
@@ -383,6 +384,7 @@ export type Database = {
           professional_type?: string | null
           professional_type_secondary?: string | null
           raw_phone?: string | null
+          rejection_reason?: string | null
           session_id?: string | null
           source_page?: string | null
           status?: string
@@ -420,6 +422,7 @@ export type Database = {
           professional_type?: string | null
           professional_type_secondary?: string | null
           raw_phone?: string | null
+          rejection_reason?: string | null
           session_id?: string | null
           source_page?: string | null
           status?: string

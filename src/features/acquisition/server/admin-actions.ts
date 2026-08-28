@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
-import { notifyExpertApplicationAccepted } from "@/features/notifications/server/send";
+import { notifyExpertApplicationAccepted, notifyExpertApplicationRejected } from "@/features/notifications/server/send";
 import { DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 async function requireAdmin() {
@@ -188,4 +188,57 @@ export async function acceptExpertApplication(
   revalidatePath("/admin/acquisition/applications");
   revalidatePath(`/admin/acquisition/applications/${id}`);
   return { success: "Application accepted — the applicant can now log in and complete their profile." };
+}
+
+export type RejectApplicationState = { error?: string; success?: string };
+
+// Rejecting an application always goes through here (not the generic
+// updateApplicationStatus dropdown, which no longer offers "Rejected" —
+// see the applications detail page) so a rejection always notifies the
+// applicant by email with an optional reason, and the reason is kept on
+// the row for admin's own record.
+export async function rejectExpertApplication(
+  _prevState: RejectApplicationState,
+  formData: FormData,
+): Promise<RejectApplicationState> {
+  const adminUser = await requireAdmin();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return { error: "Missing application id" };
+  const reason = String(formData.get("reason") ?? "").trim() || null;
+
+  const admin = createAdminClient();
+  const { data: application, error: fetchError } = await admin
+    .from("expert_applications")
+    .select("id, email, name, status")
+    .eq("id", id)
+    .maybeSingle();
+  if (fetchError || !application) return { error: "Application not found." };
+  if (application.status === "Rejected") {
+    return { error: "This application has already been rejected." };
+  }
+
+  const { error: updateError } = await admin
+    .from("expert_applications")
+    .update({ status: "Rejected", rejection_reason: reason, updated_at: new Date().toISOString() })
+    .eq("id", id);
+  if (updateError) return { error: updateError.message };
+
+  await logAdminAction(admin, {
+    adminId: adminUser.id,
+    action: "expert_application_rejected",
+    targetTable: "expert_applications",
+    targetId: id,
+    details: reason ? { reason } : undefined,
+  });
+
+  if (application.email) {
+    await notifyExpertApplicationRejected({ email: application.email, name: application.name, reason });
+  }
+
+  revalidatePath("/admin/acquisition/applications");
+  revalidatePath(`/admin/acquisition/applications/${id}`);
+  return {
+    success:
+      "The applicant has been notified by email of the outcome. They've been asked to check the email address they applied with over the next few days.",
+  };
 }

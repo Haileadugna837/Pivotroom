@@ -387,16 +387,21 @@ export function BecomeExpertApplicationForm({
                   <div className="mt-4.5 grid grid-cols-1 gap-3.5 sm:grid-cols-2">
                     <div>
                       <label className="mb-2 block text-[10px] font-semibold tracking-[0.12em] text-pivot-ink uppercase">
-                        Preferred starting price
+                        Preferred starting price (per hour)
                       </label>
                       <input
                         value={preferredPriceEtb}
                         onChange={(e) => setPreferredPriceEtb(e.target.value)}
                         type="number"
                         min="0"
-                        placeholder="ETB per session"
-                        className="w-full border border-pivot-line bg-pivot-paper px-3.5 py-3 text-pivot-ink outline-none"
+                        placeholder="ETB per hour"
+                        className="w-full border border-pivot-line bg-pivot-paper px-3.5 py-3 text-pivot-ink outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                       />
+                      <p className="mt-1.5 text-[11px] leading-relaxed text-pivot-muted">
+                        Sessions are billed in 15-minute increments — this hourly figure is just a starting
+                        reference and will be divided down to a 15-minute minimum unit once you set your final
+                        price.
+                      </p>
                     </div>
                     <div>
                       <label className="mb-2 block text-[10px] font-semibold tracking-[0.12em] text-pivot-ink uppercase">

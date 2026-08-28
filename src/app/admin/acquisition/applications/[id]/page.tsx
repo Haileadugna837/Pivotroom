@@ -5,12 +5,17 @@ import { getApplicationByIdForAdmin } from "@/features/acquisition/server/admin-
 import { updateApplicationNote, updateApplicationStatus } from "@/features/acquisition/server/admin-actions";
 import { acquisitionCategoryLabel } from "@/features/acquisition/config";
 import { AcceptApplicationForm } from "@/features/acquisition/components/admin/accept-application-form";
+import { RejectApplicationForm } from "@/features/acquisition/components/admin/reject-application-form";
 
 export const metadata: Metadata = {
   title: "Expert Application",
 };
 
-const STATUS_OPTIONS = ["New", "Under Review", "Shortlisted", "Contacted", "Approved", "Waitlisted", "Rejected", "Onboarding", "Published"];
+// "Rejected" is deliberately not offered here — rejecting always goes
+// through the dedicated Reject form below, which notifies the applicant
+// by email with an optional reason. updateApplicationStatus still
+// validates "Rejected" as a legal value server-side (defense in depth).
+const STATUS_OPTIONS = ["New", "Under Review", "Shortlisted", "Contacted", "Approved", "Waitlisted", "Onboarding", "Published"];
 
 export default async function AcquisitionApplicationDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -57,8 +62,8 @@ export default async function AcquisitionApplicationDetailPage({ params }: { par
           <dd>{[application.current_role, application.current_company].filter(Boolean).join(" @ ") || "—"}</dd>
           <dt className="text-pivot-muted">Years of experience</dt>
           <dd>{application.years_experience_range ?? "—"}</dd>
-          <dt className="text-pivot-muted">Preferred starting price</dt>
-          <dd>{application.preferred_price_etb != null ? `${application.preferred_price_etb} ETB` : "—"}</dd>
+          <dt className="text-pivot-muted">Preferred starting price (per hour)</dt>
+          <dd>{application.preferred_price_etb != null ? `${application.preferred_price_etb} ETB/hr` : "—"}</dd>
           <dt className="text-pivot-muted">Initial availability</dt>
           <dd>{application.initial_availability ?? "—"}</dd>
         </dl>
@@ -111,11 +116,16 @@ export default async function AcquisitionApplicationDetailPage({ params }: { par
       <section className="mt-6 border-t border-pivot-line pt-6">
         <h2 className="text-xs font-medium uppercase tracking-wide text-pivot-muted">Application</h2>
         <p className="mt-2 text-sm text-pivot-ink">Submitted {new Date(application.created_at).toLocaleString()}</p>
-        {application.status !== "Approved" && (
-          <div className="mt-3">
+        {application.status === "Rejected" ? (
+          <p className="mt-3 text-sm text-pivot-ink-2">
+            Rejected. {application.rejection_reason ? `Reason sent: "${application.rejection_reason}"` : "No reason was given to the applicant."}
+          </p>
+        ) : application.status !== "Approved" ? (
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:gap-8">
             <AcceptApplicationForm applicationId={application.id} hasAccount={Boolean(application.applicant_user_id)} />
+            <RejectApplicationForm applicationId={application.id} />
           </div>
-        )}
+        ) : null}
       </section>
 
       <section className="mt-8 border-t border-pivot-line pt-6">

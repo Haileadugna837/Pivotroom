@@ -28,7 +28,7 @@ export function BecomeExpertHowItWorks() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.4, delay: i * 0.08 }}
-              className="flex min-h-[260px] flex-col border-r border-pivot-line py-5 pr-7 last:border-r-0"
+              className="flex min-h-[260px] flex-col border-r border-pivot-line py-5 pr-7 pl-7 first:pl-0 last:border-r-0"
             >
               <div className="text-[11px] tracking-[0.13em] text-pivot-muted">{step.n}</div>
               <h3 className="mt-auto mb-3 font-serif text-[28px] leading-none font-normal text-pivot-ink">
