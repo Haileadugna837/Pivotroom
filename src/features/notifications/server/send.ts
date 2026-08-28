@@ -45,6 +45,24 @@ export async function notifyExpertApplicationAccepted({ email, name }: { email: 
   });
 }
 
+export async function notifyExpertApplicationRejected({
+  email,
+  name,
+  reason,
+}: {
+  email: string;
+  name: string;
+  reason: string | null;
+}) {
+  await sendEmail({
+    to: email,
+    subject: "Update on your Pivotroom expert application",
+    html: `<p>Hi ${name},</p><p>Thank you for taking the time to apply to become an expert on Pivotroom. After careful review, we won't be moving forward with your application at this time.</p>${
+      reason ? `<p>${reason}</p>` : ""
+    }<p>We appreciate the time you put into your application, and you're welcome to apply again in the future.</p>`,
+  });
+}
+
 export async function notifyAdminPaymentSubmitted(bookingId: string) {
   await sendEmail({
     to: ADMIN_EMAILS,
