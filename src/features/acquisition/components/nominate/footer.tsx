@@ -11,7 +11,7 @@ export function NominateFooter() {
           <Link href="/experts" className="hover:text-pivot-ink">
             Experts
           </Link>
-          <Link href="/founding-experts" className="hover:text-pivot-ink">
+          <Link href="/become-an-expert" className="hover:text-pivot-ink">
             For experts
           </Link>
         </div>

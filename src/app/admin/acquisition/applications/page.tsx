@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { getApplicationsForAdmin } from "@/features/acquisition/server/admin-queries";
-import { PROFESSIONAL_TYPES } from "@/features/acquisition/config";
+import { acquisitionCategoryLabel } from "@/features/acquisition/config";
 
 export const metadata: Metadata = {
-  title: "Founding Expert Applications",
+  title: "Expert Applications",
 };
 
 const STATUS_OPTIONS = ["", "New", "Under Review", "Shortlisted", "Contacted", "Approved", "Waitlisted", "Rejected", "Onboarding", "Published"];
@@ -20,7 +20,6 @@ export default async function AcquisitionApplicationsPage({
     dateFrom: params.from,
     dateTo: params.to,
     status: params.status,
-    professionalType: params.type,
     q: params.q,
   };
 
@@ -43,8 +42,8 @@ export default async function AcquisitionApplicationsPage({
     <div className="mx-auto max-w-6xl bg-pivot-paper px-6 py-10">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-pivot-ink">Founding Expert Applications</h1>
-          <p className="mt-1 text-sm text-pivot-muted">Everyone who applied to become a Founding Expert.</p>
+          <h1 className="text-xl font-semibold text-pivot-ink">Expert Applications</h1>
+          <p className="mt-1 text-sm text-pivot-muted">Everyone who applied to become a Pivotroom expert.</p>
         </div>
         <div className="flex gap-2">
           <Link href={exportFilteredHref} className="rounded-md border border-pivot-line px-3 py-1.5 text-sm text-pivot-ink">
@@ -76,17 +75,6 @@ export default async function AcquisitionApplicationsPage({
           </select>
         </label>
         <label className="text-xs text-pivot-ink">
-          Professional type
-          <select name="type" defaultValue={params.type ?? ""} className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none">
-            <option value="">Any</option>
-            {PROFESSIONAL_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="text-xs text-pivot-ink">
           Search name / email / company
           <input type="text" name="q" defaultValue={params.q ?? ""} placeholder="Keyword" className="mt-1 block border border-pivot-line bg-pivot-paper px-2 py-1.5 text-sm text-pivot-ink outline-none" />
         </label>
@@ -109,9 +97,8 @@ export default async function AcquisitionApplicationsPage({
               <tr className="border-b border-pivot-line text-left text-xs uppercase tracking-wide text-pivot-muted">
                 <th className="py-2 pr-3">Date</th>
                 <th className="py-2 pr-3">Name</th>
-                <th className="py-2 pr-3">Type</th>
                 <th className="py-2 pr-3">Role</th>
-                <th className="py-2 pr-3">Expertise</th>
+                <th className="py-2 pr-3">Categories</th>
                 <th className="py-2 pr-3">Source</th>
                 <th className="py-2 pr-3">Status</th>
               </tr>
@@ -127,11 +114,12 @@ export default async function AcquisitionApplicationsPage({
                       {row.name}
                     </Link>
                   </td>
-                  <td className="py-2 pr-3">{row.professional_type}</td>
                   <td className="py-2 pr-3">
                     {[row.current_role, row.current_company].filter(Boolean).join(" @ ") || "—"}
                   </td>
-                  <td className="py-2 pr-3">{row.expertise_topics.slice(0, 2).join(", ") || "—"}</td>
+                  <td className="py-2 pr-3">
+                    {(row.categories_requested ?? []).slice(0, 2).map(acquisitionCategoryLabel).join(", ") || "—"}
+                  </td>
                   <td className="py-2 pr-3">{row.utm_source ?? row.source_page ?? "Direct"}</td>
                   <td className="py-2 pr-3">{row.status}</td>
                 </tr>

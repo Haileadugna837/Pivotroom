@@ -58,31 +58,3 @@ export const ACQUISITION_CATEGORIES: AcquisitionCategory[] = [
 export function acquisitionCategoryLabel(key: string): string {
   return ACQUISITION_CATEGORIES.find((c) => c.key === key)?.label ?? key;
 }
-
-export const PROFESSIONAL_TYPES = [
-  "Founder",
-  "Executive",
-  "Investor",
-  "Operator",
-  "Specialist",
-  "Creator",
-  "Professional",
-  "Other",
-] as const;
-
-export const EXPERTISE_TOPIC_SUGGESTIONS = [
-  "Scaling businesses",
-  "Real estate investing",
-  "Raising capital",
-  "Marketing strategy",
-  "Sales leadership",
-  "Exporting",
-  "Technology leadership",
-  "Career development",
-  "Product management",
-  "Fundraising",
-  "Operations",
-  "Brand building",
-];
-
-export const MAX_EXPERTISE_TOPICS = 5;

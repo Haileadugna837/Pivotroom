@@ -46,7 +46,7 @@ export default async function AcquisitionAnalyticsPage({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold text-pivot-ink">Acquisition Analytics</h1>
-          <p className="mt-1 text-sm text-pivot-muted">Phase 1 early-access &amp; Founding Expert acquisition.</p>
+          <p className="mt-1 text-sm text-pivot-muted">Phase 1 early-access &amp; expert acquisition.</p>
         </div>
         <div className="flex flex-wrap gap-2 text-sm">
           {PRESETS.map((p) => (

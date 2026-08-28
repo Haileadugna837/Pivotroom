@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isAdminEmail } from "@/lib/admin";
-import { notifyExpertInvite } from "@/features/notifications/server/send";
+import { notifyExpertApplicationAccepted } from "@/features/notifications/server/send";
+import { DEFAULT_TIMEZONE } from "@/lib/timezones";
 
 async function requireAdmin() {
   const supabase = await createClient();
@@ -92,15 +93,15 @@ export async function updateApplicationStatus(formData: FormData) {
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("founding_expert_applications")
+    .from("expert_applications")
     .update({ status, updated_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw error;
 
   await logAdminAction(admin, {
     adminId: adminUser.id,
-    action: "founding_expert_application_status_changed",
-    targetTable: "founding_expert_applications",
+    action: "expert_application_status_changed",
+    targetTable: "expert_applications",
     targetId: id,
     details: { status },
   });
@@ -116,71 +117,75 @@ export async function updateApplicationNote(formData: FormData) {
 
   const admin = createAdminClient();
   const { error } = await admin
-    .from("founding_expert_applications")
+    .from("expert_applications")
     .update({ admin_note: note || null, updated_at: new Date().toISOString() })
     .eq("id", id);
   if (error) throw error;
 
-  await logAdminAction(admin, { adminId: adminUser.id, action: "founding_expert_application_note_updated", targetTable: "founding_expert_applications", targetId: id });
+  await logAdminAction(admin, { adminId: adminUser.id, action: "expert_application_note_updated", targetTable: "expert_applications", targetId: id });
   revalidatePath(`/admin/acquisition/applications/${id}`);
 }
 
-export type ApproveApplicationState = { error?: string; success?: string };
+export type AcceptApplicationState = { error?: string; success?: string };
 
-// Bridges an approved Founding Expert application into the existing,
-// already-shipped expert_invites mechanism — no second onboarding
-// pipeline. Requires an email on file since expert_invites.email is
-// required; applications submitted with phone-only need one collected
-// (e.g. by contacting the applicant) before this can be used.
-export async function approveApplicationAndInvite(
-  _prevState: ApproveApplicationState,
+// Admin acceptance of a "Become an Expert" application. Unlike the old
+// Founding Expert flow, the applicant's account already exists (created
+// inline when they submitted, or reused if they were already signed in —
+// see submitBecomeExpertApplication), so there's no invite-email bridge
+// needed. Accepting just upserts a minimal `experts` row for them, which
+// is what grants access to the existing "locked" dashboard
+// (dashboard/expert/profile + expertise pages) — bookings/availability/
+// payments stay locked until an admin separately approves the finished
+// profile via the existing approveExpert action.
+export async function acceptExpertApplication(
+  _prevState: AcceptApplicationState,
   formData: FormData,
-): Promise<ApproveApplicationState> {
+): Promise<AcceptApplicationState> {
   const adminUser = await requireAdmin();
   const id = String(formData.get("id") ?? "");
   if (!id) return { error: "Missing application id" };
 
   const admin = createAdminClient();
   const { data: application, error: fetchError } = await admin
-    .from("founding_expert_applications")
-    .select("id, email, name")
+    .from("expert_applications")
+    .select("id, email, name, applicant_user_id, preferred_price_etb, status")
     .eq("id", id)
     .maybeSingle();
   if (fetchError || !application) return { error: "Application not found." };
-  if (!application.email) return { error: "This application has no email on file — collect one before sending an invite." };
+  if (!application.applicant_user_id) {
+    return { error: "This application has no linked account, so it can't be granted dashboard access." };
+  }
+  if (application.status === "Approved") {
+    return { error: "This application has already been accepted." };
+  }
 
-  const token = crypto.randomUUID();
-  const { error: inviteError } = await admin
-    .from("expert_invites")
-    .insert({ email: application.email, token, invited_by: adminUser.id });
-  if (inviteError) return { error: inviteError.message };
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  const inviteUrl = `${siteUrl}/become-an-expert?invite=${token}`;
-  await notifyExpertInvite({ email: application.email, inviteUrl });
-
-  const { data: inviteRow } = await admin.from("expert_invites").select("id").eq("token", token).single();
+  const { error: upsertError } = await admin.from("experts").upsert({
+    id: application.applicant_user_id,
+    currency: "ETB",
+    price_per_15_min: application.preferred_price_etb ?? null,
+    timezone: DEFAULT_TIMEZONE,
+  });
+  if (upsertError) return { error: upsertError.message };
 
   const { error: updateError } = await admin
-    .from("founding_expert_applications")
-    .update({
-      status: "Onboarding",
-      expert_invite_id: inviteRow?.id ?? null,
-      invited_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })
+    .from("expert_applications")
+    .update({ status: "Approved", updated_at: new Date().toISOString() })
     .eq("id", id);
   if (updateError) return { error: updateError.message };
 
   await logAdminAction(admin, {
     adminId: adminUser.id,
-    action: "founding_expert_application_approved_and_invited",
-    targetTable: "founding_expert_applications",
+    action: "expert_application_accepted",
+    targetTable: "expert_applications",
     targetId: id,
-    details: { email: application.email },
+    details: { applicant_user_id: application.applicant_user_id },
   });
+
+  if (application.email) {
+    await notifyExpertApplicationAccepted({ email: application.email, name: application.name });
+  }
 
   revalidatePath("/admin/acquisition/applications");
   revalidatePath(`/admin/acquisition/applications/${id}`);
-  return { success: `Invite sent to ${application.email}.` };
+  return { success: "Application accepted — the applicant can now log in and complete their profile." };
 }
