@@ -12,6 +12,7 @@ import { AcquisitionProblemsSection } from "@/features/acquisition/components/la
 import { AcquisitionPeopleSection } from "@/features/acquisition/components/landing/people-section";
 import { AcquisitionHowItWorks } from "@/features/acquisition/components/landing/how-it-works";
 import { AcquisitionBeliefSection } from "@/features/acquisition/components/landing/belief-section";
+import { AcquisitionForExpertsSection } from "@/features/acquisition/components/landing/for-experts-section";
 import { AcquisitionFaqSection } from "@/features/acquisition/components/landing/faq-section";
 import { AcquisitionFinalCtaSection } from "@/features/acquisition/components/landing/final-cta-section";
 import { AcquisitionFooter } from "@/features/acquisition/components/landing/footer";
@@ -33,6 +34,7 @@ export function AcquisitionLandingClient({ experts }: { experts: ExpertPreviewCa
       <AcquisitionPeopleSection experts={experts} />
       <AcquisitionHowItWorks />
       <AcquisitionBeliefSection />
+      <AcquisitionForExpertsSection />
       <AcquisitionFaqSection />
       <AcquisitionFinalCtaSection />
       <AcquisitionFooter />

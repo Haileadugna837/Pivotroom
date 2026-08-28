@@ -1,4 +1,5 @@
 import { EarlyAccessCtaLink } from "@/features/acquisition/components/landing/early-access-cta-link";
+import { ForExpertsCtaLink } from "@/features/acquisition/components/landing/for-experts-cta-link";
 
 export function AcquisitionNav() {
   return (
@@ -20,6 +21,7 @@ export function AcquisitionNav() {
           <a href="#faq" className="hover:text-pivot-accent">
             FAQ
           </a>
+          <ForExpertsCtaLink className="hover:text-pivot-accent">For experts</ForExpertsCtaLink>
         </div>
         <EarlyAccessCtaLink className="inline-flex min-h-[46px] items-center justify-center rounded-full bg-pivot-ink px-[18px] text-sm font-medium text-pivot-paper">
           Get early access ↗

@@ -1,3 +1,5 @@
+import { ForExpertsCtaLink } from "@/features/acquisition/components/landing/for-experts-cta-link";
+
 export function AcquisitionFooter() {
   return (
     <footer className="border-t border-pivot-line py-14 pb-7">
@@ -21,6 +23,7 @@ export function AcquisitionFooter() {
           <a href="#faq" className="hover:text-pivot-accent">
             FAQ
           </a>
+          <ForExpertsCtaLink className="hover:text-pivot-accent">For experts</ForExpertsCtaLink>
         </div>
       </div>
     </footer>
