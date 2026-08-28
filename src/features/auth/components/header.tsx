@@ -17,6 +17,9 @@ export async function Header() {
         <Link href="/experts" className="hidden md:inline">
           Find an expert
         </Link>
+        <Link href="/become-an-expert" className="hidden md:inline">
+          Become an expert
+        </Link>
         <HeaderAuthNav isSignedIn={Boolean(user)} />
       </nav>
     </header>
