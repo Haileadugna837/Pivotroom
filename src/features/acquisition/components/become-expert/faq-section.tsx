@@ -16,6 +16,10 @@ const FAQS = [
     a: "Yes, where supported. In-person sessions should use approved professional or public locations rather than private homes.",
   },
   {
+    q: "Can I choose between online and in-person sessions?",
+    a: "Yes. You are not limited to one format — you can offer sessions online, in person, or both, and update your preference anytime from your profile.",
+  },
+  {
     q: "Does every application get accepted?",
     a: "No. Pivotroom is curated. Applications are reviewed for credibility, specificity, reliability and whether the experience is useful to the marketplace.",
   },
