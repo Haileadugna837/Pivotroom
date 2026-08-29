@@ -159,10 +159,14 @@ export async function acceptExpertApplication(
     return { error: "This application has already been accepted." };
   }
 
+  // The application collects a *per-hour* reference price
+  // (preferred_price_etb), but experts.price_per_15_min is the actual
+  // per-15-minute rate the marketplace bills from — divide by 4 rather
+  // than copying the hourly figure straight across.
   const { error: upsertError } = await admin.from("experts").upsert({
     id: application.applicant_user_id,
     currency: "ETB",
-    price_per_15_min: application.preferred_price_etb ?? null,
+    price_per_15_min: application.preferred_price_etb != null ? application.preferred_price_etb / 4 : null,
     timezone: DEFAULT_TIMEZONE,
   });
   if (upsertError) return { error: upsertError.message };
